@@ -1,0 +1,36 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="silhouetteGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2D1B3D;stop-opacity:0.6" />
+      <stop offset="50%" style="stop-color:#4A2B5A;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#E8B4B8;stop-opacity:0.3" />
+    </linearGradient>
+    
+    <radialGradient id="glowGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#E8B4B8;stop-opacity:0.2" />
+      <stop offset="70%" style="stop-color:#F4A261;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:transparent;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Simple geometric shapes only -->
+  <g fill="url(#silhouetteGradient)">
+    <!-- Simple circles -->
+    <circle cx="150" cy="150" r="25" opacity="0.3"/>
+    <circle cx="650" cy="450" r="30" opacity="0.3"/>
+    <circle cx="400" cy="500" r="20" opacity="0.4"/>
+    <circle cx="300" cy="200" r="15" opacity="0.3"/>
+    <circle cx="500" cy="300" r="18" opacity="0.3"/>
+    
+    <!-- Simple rectangles -->
+    <rect x="200" y="250" width="40" height="40" rx="8" opacity="0.3"/>
+    <rect x="550" y="180" width="35" height="35" rx="6" opacity="0.3"/>
+    
+    <!-- Simple triangles -->
+    <polygon points="350,180 370,160 390,180" opacity="0.3"/>
+    <polygon points="410,180 430,160 450,180" opacity="0.3"/>
+  </g>
+  
+  <!-- Very subtle glow effect -->
+  <circle cx="400" cy="300" r="150" fill="url(#glowGradient)"/>
+</svg>

@@ -1,0 +1,560 @@
+@import "tailwindcss";
+
+:root {
+  --velvet: #2D1B3D;
+  --velvet-light: #4A2B5A;
+  --pink: #E8B4B8;
+  --pink-light: #F4D1D4;
+  --pink-dark: #D4A5A9;
+  --apricot: #F4A261;
+  --apricot-light: #F7C8A0;
+  --apricot-dark: #E76F51;
+  --cream: #FEFAE0;
+  --background: #ffffff;
+  --foreground: #2D1B3D;
+  --accent: #E8B4B8;
+  --text-primary: #2D1B3D;
+  --text-secondary: #6B7280;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: 'Cormorant Garamond', serif;
+  --font-serif: 'Playfair Display', serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* Performance optimizations */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-dancing), cursive !important;
+  line-height: 1.7;
+  font-weight: 400;
+  font-size: 1.25rem; /* 20px - økt fra 18px */
+  overflow-x: hidden;
+}
+
+/* Font classes */
+.font-serif {
+  font-family: var(--font-playfair), serif !important;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.font-display {
+  font-family: var(--font-parisienne), cursive !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em;
+}
+
+.font-body {
+  font-family: var(--font-dancing), cursive !important;
+  font-weight: 400;
+  line-height: 1.8;
+  font-size: 1.25rem; /* 20px - økt fra 18px */
+}
+
+.font-body-light {
+  font-family: var(--font-dancing), cursive !important;
+  font-weight: 400;
+  line-height: 1.7;
+  font-size: 1.25rem; /* 20px - økt fra 18px */
+}
+
+.font-small {
+  font-family: var(--font-dancing), cursive !important;
+  font-weight: 400;
+  line-height: 1.6;
+  font-size: 1rem; /* 16px - økt fra 14.4px */
+}
+
+.font-caption {
+  font-family: var(--font-dancing), cursive !important;
+  font-weight: 400;
+  line-height: 1.5;
+  font-size: 0.95rem; /* 15.2px - økt fra 12.8px */
+}
+
+/* Ensure all text elements use proper fonts */
+p, div, label, input, textarea, button {
+  font-family: var(--font-dancing), cursive !important;
+}
+
+/* Span elements inherit parent font unless specifically overridden */
+span {
+  font-family: inherit !important;
+}
+
+/* ALL headings use Parisienne for romantic elegance */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-parisienne), 'Parisienne', cursive !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em;
+}
+
+/* Specific targeting for heading elements to ensure they override any other styles */
+.font-display, 
+h1.font-display, 
+h2.font-display, 
+h3.font-display {
+  font-family: var(--font-parisienne), 'Parisienne', cursive !important;
+  font-weight: 400 !important;
+}
+
+/* FORCE hero title to use Parisienne - highest specificity */
+section h1,
+section h1 span {
+  font-family: 'Parisienne', cursive !important;
+  font-weight: 400 !important;
+}
+
+/* Specific styling for small text elements - increased for accessibility */
+.text-sm {
+  font-family: var(--font-dancing), cursive !important;
+  font-size: 1rem !important; /* 16px - økt fra 14px */
+  line-height: 1.6 !important;
+}
+
+.text-xs {
+  font-family: var(--font-dancing), cursive !important;
+  font-size: 0.95rem !important; /* 15.2px - økt fra 12px */
+  line-height: 1.5 !important;
+}
+
+/* Footer and copyright text */
+footer, .copyright {
+  font-family: var(--font-dancing), cursive !important;
+}
+
+/* Utility classes */
+.text-accent {
+  color: var(--accent);
+}
+
+.bg-accent {
+  background-color: var(--accent);
+}
+
+.border-accent {
+  border-color: var(--accent);
+}
+
+/* Custom height for story-2 image adjustment */
+.h-34 {
+  height: 8.5rem; /* 136px - 5% higher than h-32 (128px) */
+}
+
+/* Custom width for story-3 image adjustment */
+.w-17\/20 {
+  width: 85%; /* 15% narrower than w-full (100%) */
+}
+
+.w-19\/20 {
+  width: 95%; /* 5% narrower than w-full (100%) */
+}
+
+/* Enhanced gradient backgrounds */
+.bg-velvet-gradient {
+  background: linear-gradient(135deg, var(--velvet) 0%, var(--velvet-light) 100%);
+}
+
+.bg-pink-gradient {
+  background: linear-gradient(135deg, var(--pink) 0%, var(--pink-light) 100%);
+}
+
+.bg-apricot-gradient {
+  background: linear-gradient(135deg, var(--apricot) 0%, var(--apricot-light) 100%);
+}
+
+.bg-velvet-pink-gradient {
+  background: linear-gradient(135deg, var(--velvet) 0%, var(--pink) 50%, var(--apricot) 100%);
+}
+
+/* Enhanced shadows with better performance */
+.shadow-velvet {
+  box-shadow: 0 10px 25px rgba(45, 27, 61, 0.15);
+}
+
+.shadow-pink {
+  box-shadow: 0 10px 25px rgba(232, 180, 184, 0.2);
+}
+
+.shadow-apricot {
+  box-shadow: 0 10px 25px rgba(244, 162, 97, 0.2);
+}
+
+/* Text gradients */
+.text-gradient-velvet {
+  background: linear-gradient(135deg, #8C8C8C 0%, #B8B8B8 30%, #A0A0A0 60%, #909090 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: shimmer 3s ease-in-out infinite alternate;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Hero Parallax Effect */
+.hero-parallax {
+  background-attachment: fixed;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.text-gradient-pink {
+  background: linear-gradient(135deg, var(--pink) 0%, var(--apricot) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Elegant borders */
+.border-velvet {
+  border-color: var(--velvet);
+}
+
+.border-pink {
+  border-color: var(--pink);
+}
+
+.border-apricot {
+  border-color: var(--apricot);
+}
+
+/* Enhanced hover effects with better performance */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(45, 27, 61, 0.2);
+}
+
+/* Enhanced glassmorphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-enhanced {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px rgba(45, 27, 61, 0.1);
+}
+
+/* Enhanced animations with better performance */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Wedding-specific title animations */
+@keyframes titleGlow {
+  0%, 100% {
+    text-shadow: 
+      0 0 20px rgba(232, 180, 184, 0.5),
+      0 0 40px rgba(232, 180, 184, 0.3),
+      0 0 60px rgba(232, 180, 184, 0.1);
+  }
+  50% {
+    text-shadow: 
+      0 0 30px rgba(232, 180, 184, 0.7),
+      0 0 60px rgba(232, 180, 184, 0.5),
+      0 0 90px rgba(232, 180, 184, 0.3);
+  }
+}
+
+@keyframes titleFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(0.5deg);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Wedding title specific animations */
+.animate-title-glow {
+  animation: titleGlow 3s ease-in-out infinite;
+}
+
+.animate-title-float {
+  animation: titleFloat 4s ease-in-out infinite;
+}
+
+/* Decorative elements - more subtle and elegant */
+.decorative-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--pink) 20%, var(--pink-light) 50%, var(--pink) 80%, transparent 100%);
+  border-radius: 1px;
+  opacity: 0.4;
+  box-shadow: 0 0 8px rgba(232, 180, 184, 0.3);
+}
+
+/* Background image optimizations */
+.bg-image-optimized {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Background patterns */
+.bg-pattern-romantic {
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(232, 180, 184, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(244, 162, 97, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(45, 27, 61, 0.05) 0%, transparent 50%);
+  background-size: 400px 400px, 300px 300px, 200px 200px;
+  background-position: 0 0, 100px 100px, 50px 50px;
+}
+
+.bg-abstract-shapes {
+  background-image: 
+    linear-gradient(45deg, transparent 40%, rgba(232, 180, 184, 0.1) 50%, transparent 60%),
+    linear-gradient(-45deg, transparent 40%, rgba(244, 162, 97, 0.1) 50%, transparent 60%);
+  background-size: 100px 100px;
+}
+
+/* Floating animation for decorative elements */
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+  }
+  50% { 
+    transform: translateY(-10px) rotate(1deg); 
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-float-delayed {
+  animation: float 3s ease-in-out infinite;
+  animation-delay: 1.5s;
+  will-change: transform;
+}
+
+/* Enhanced scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(45, 27, 61, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, var(--pink), var(--apricot));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, var(--apricot), var(--pink));
+}
+
+/* Focus styles for better accessibility */
+*:focus {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+/* Selection styling */
+::selection {
+  background: var(--pink);
+  color: white;
+}
+
+::-moz-selection {
+  background: var(--pink);
+  color: white;
+}
+
+/* Loading animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Bounce animation */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Responsive image scaling */
+@media (max-width: 768px) {
+  .hero-bg-image {
+    transform: scale(1.2);
+  }
+}
+
+@media (min-width: 769px) {
+  .hero-bg-image {
+    transform: scale(1.1);
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-bg-image {
+    transform: scale(1.05);
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
