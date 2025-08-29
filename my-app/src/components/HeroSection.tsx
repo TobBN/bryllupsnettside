@@ -7,32 +7,34 @@ import { HeroSectionProps } from '@/types';
 export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setIsLoaded(true);
+    setIsMobile(window.innerWidth <= 768);
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <section 
-      className="hero-parallax relative h-screen flex items-center justify-center text-center overflow-hidden"
-      style={{
-        backgroundImage: 'url(/couple-bg.jpg)',
-        backgroundAttachment: 'fixed',
-        backgroundPosition: 'center center',
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover'
-      }}
-    >
-      {/* Fallback Image for better loading */}
+    <section className="relative h-screen flex items-center justify-center text-center overflow-hidden">
+      {/* Background Image with mobile-friendly approach */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: 'url(/couple-bg.jpg)',
+          backgroundAttachment: isMobile ? 'scroll' : 'fixed'
+        }}
+      />
+      
+      {/* Fallback Image for mobile and better loading */}
       <Image
         src="/couple-bg.jpg"
         alt="Romantic background image of a couple"
         fill
         priority
-        className={`object-cover object-center hero-bg-image transition-opacity duration-1000 opacity-0 ${
-          isLoaded ? 'lg:opacity-0' : 'opacity-100'
+        className={`object-cover object-center hero-bg-image transition-opacity duration-1000 md:hidden ${
+          isLoaded ? 'opacity-100' : 'opacity-0'
         }`}
         sizes="100vw"
         quality={90}
@@ -40,8 +42,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
         blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
       />
 
-      {/* Enhanced gradient overlay with multiple layers */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#2D1B3D]/80 via-[#4A2B5A]/60 to-[#E8B4B8]/40 z-10"></div>
+      {/* Subtle gradient overlay - much lighter for mobile */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#2D1B3D]/30 via-[#4A2B5A]/20 to-[#E8B4B8]/10 z-10"></div>
       
       {/* Subtle animated background pattern */}
       <div className="absolute inset-0 bg-pattern-romantic opacity-30 z-5"></div>
