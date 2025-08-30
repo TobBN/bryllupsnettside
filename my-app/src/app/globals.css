@@ -530,6 +530,39 @@ footer, .copyright {
   }
 }
 
+/* iOS-specific optimizations */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari specific styles */
+  .hero-parallax {
+    background-attachment: scroll !important;
+  }
+  
+  /* Optimize transforms for iOS */
+  * {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  
+  /* Improve scrolling performance on iOS */
+  html, body {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* iOS Safari specific fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  /* Force hardware acceleration for better performance */
+  .hero-bg-image,
+  [style*="transform"] {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+  }
+}
+
 /* Print styles */
 @media print {
   .no-print {
