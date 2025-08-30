@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Parisienne, Playfair_Display, Cormorant_Garamond, Dancing_Script } from 'next/font/google';
+import Script from "next/script";
 import "./globals.css";
 
 const parisienne = Parisienne({
@@ -54,9 +55,19 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Parisienne:wght@400&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="antialiased font-sans">
         {children}
+        <Script id="service-worker-registration">
+          {`
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
+              });
+            }
+          `}
+        </Script>
       </body>
     </html>
   );
