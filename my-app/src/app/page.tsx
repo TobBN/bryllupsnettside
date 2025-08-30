@@ -19,6 +19,7 @@ export default function Home() {
     seconds: 0
   });
   const [isLoaded, setIsLoaded] = useState(true); // Start with loaded=true to prevent blocking
+  const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
     // Set initial time and loaded state immediately
@@ -62,6 +63,19 @@ export default function Home() {
     return () => document.removeEventListener('click', handleSmoothScroll);
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowButton(window.scrollY > 500);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FEFAE0] via-white to-[#F4D1D4]">
       {/* Loading state */}
@@ -93,7 +107,7 @@ export default function Home() {
         className="fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white rounded-full shadow-2xl hover-lift transition-all duration-300 opacity-0 hover:opacity-100 group z-40"
         aria-label="Rull til toppen"
         style={{
-          opacity: typeof window !== 'undefined' && window.scrollY > 500 ? 1 : 0
+          opacity: showButton ? 1 : 0
         }}
       >
         <svg className="w-6 h-6 mx-auto transform group-hover:-translate-y-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
