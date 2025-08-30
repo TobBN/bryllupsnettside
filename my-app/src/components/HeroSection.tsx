@@ -1,29 +1,95 @@
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CountdownTimer } from './CountdownTimer';
 // import { calculateTimeLeft, WEDDING_DATE } from '@/utils/dateUtils';
 import { HeroSectionProps } from '@/types';
+import { isIOS as isIOSDevice, supportsBackgroundAttachmentFixed } from '@/utils/deviceUtils';
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [parallaxOffset, setParallaxOffset] = useState(0);
+  const heroRef = useRef<HTMLElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsLoaded(true);
-    setIsMobile(window.innerWidth <= 768);
+    
+    // Detect iOS using utility functions
+    const checkDevice = () => {
+      setIsIOS(isIOSDevice());
+    };
+
+    checkDevice();
+    
+    // Handle resize
+    const handleResize = () => {
+      checkDevice();
+    };
+
+    window.addEventListener('resize', handleResize);
+    
     const timer = setTimeout(() => setIsVisible(true), 100);
-    return () => clearTimeout(timer);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
+  // JavaScript-based parallax for iOS
+  useEffect(() => {
+    if (!isIOS || !bgRef.current) return;
+
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (!heroRef.current) return;
+          
+          const rect = heroRef.current.getBoundingClientRect();
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const heroTop = rect.top + scrollTop;
+          const heroHeight = rect.height;
+          
+          // Calculate parallax offset
+          const scrolled = scrollTop - heroTop;
+          const rate = scrolled * -0.5; // Parallax rate
+          
+          // Only apply parallax when hero is in view
+          if (scrolled >= -heroHeight && scrolled <= heroHeight) {
+            setParallaxOffset(rate);
+          }
+          
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isIOS]);
+
   return (
-    <section className="relative h-screen flex items-center justify-center text-center overflow-hidden">
-      {/* Background Image with mobile-friendly approach */}
+    <section 
+      ref={heroRef}
+      className="relative h-screen flex items-center justify-center text-center overflow-hidden"
+    >
+      {/* Background Image with iOS-compatible parallax */}
       <div 
+        ref={bgRef}
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: 'url(/couple-bg.jpg)',
-          backgroundAttachment: isMobile ? 'scroll' : 'fixed'
+          backgroundAttachment: supportsBackgroundAttachmentFixed() ? 'fixed' : 'scroll',
+          transform: isIOS ? `translateY(${parallaxOffset}px)` : 'none',
+          willChange: isIOS ? 'transform' : 'auto'
         }}
       />
       
