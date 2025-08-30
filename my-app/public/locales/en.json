@@ -1,0 +1,25 @@
+{
+  "common": {
+    "loading": "Loading wedding website...",
+    "scrollToTop": "Scroll to top"
+  },
+  "countdown": {
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds"
+  },
+  "hero": {
+    "saveTheDate": "Save the date",
+    "date": "July 24, 2026",
+    "location": "Østgaard, Halden"
+  },
+  "footer": {
+    "heading": "Alexandra & Tobias",
+    "tagline": "We look forward to sharing this special day with you 👩‍❤️‍💋‍👨",
+    "contact": "Contact",
+    "copyright": "© {year} Alexandra & Tobias. All rights reserved.",
+    "madeWith": "Made with ❤️ from Saltnes",
+    "language": "Language"
+  }
+}

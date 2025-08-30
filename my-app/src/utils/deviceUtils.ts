@@ -49,3 +49,4 @@ export const getDeviceInfo = () => {
     maxTouchPoints: typeof window !== 'undefined' ? navigator.maxTouchPoints : 0
   };
 };
+
