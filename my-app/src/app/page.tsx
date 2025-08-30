@@ -19,6 +19,7 @@ export default function Home() {
     seconds: 0
   });
   const [isLoaded, setIsLoaded] = useState(true); // Start with loaded=true to prevent blocking
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
 
   useEffect(() => {
     // Set initial time and loaded state immediately
@@ -40,6 +41,44 @@ export default function Home() {
       clearTimeout(loadedTimer);
     };
   }, []);
+
+  // Register service worker
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  }, []);
+
+  // Update permission state on mount
+  useEffect(() => {
+    if (typeof Notification !== 'undefined') {
+      setNotificationPermission(Notification.permission);
+    }
+  }, []);
+
+  const requestNotificationPermission = async () => {
+    if (typeof Notification === 'undefined' || !('serviceWorker' in navigator)) return;
+    const permission = await Notification.requestPermission();
+    setNotificationPermission(permission);
+    if (permission === 'granted') {
+      const registration = await navigator.serviceWorker.ready;
+      registration.active?.postMessage({
+        type: 'scheduleNotifications',
+        weddingDate: WEDDING_DATE,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (notificationPermission === 'granted' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.active?.postMessage({
+          type: 'scheduleNotifications',
+          weddingDate: WEDDING_DATE,
+        });
+      });
+    }
+  }, [notificationPermission]);
 
   // Add smooth scrolling for navigation
   useEffect(() => {
@@ -86,6 +125,15 @@ export default function Home() {
       </main>
 
       <Footer />
+
+      {notificationPermission !== 'granted' && (
+        <button
+          onClick={requestNotificationPermission}
+          className="fixed bottom-8 left-8 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white px-4 py-2 rounded-full shadow-2xl hover-lift transition-all duration-300 z-40"
+        >
+          Aktiver varsler
+        </button>
+      )}
 
       {/* Scroll to top button */}
       <button
