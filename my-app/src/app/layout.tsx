@@ -1,35 +1,6 @@
 import type { Metadata } from "next";
-import { Parisienne, Playfair_Display, Cormorant_Garamond, Dancing_Script } from 'next/font/google';
 import "./globals.css";
 import { IntlProvider } from '@/components/IntlProvider';
-
-const parisienne = Parisienne({
-  weight: '400',
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-parisienne',
-});
-
-const playfair = Playfair_Display({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-playfair',
-});
-
-const cormorant = Cormorant_Garamond({
-  weight: ['300', '400', '500', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-cormorant',
-});
-
-const dancingScript = Dancing_Script({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-dancing',
-});
 
 export const metadata: Metadata = {
   title: "Alexandra & Tobias - Bryllup 2026",
@@ -50,11 +21,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="no" className={`scroll-smooth ${parisienne.variable} ${playfair.variable} ${cormorant.variable} ${dancingScript.variable}`}>
+    <html lang="no" className="scroll-smooth">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Parisienne:wght@400&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Parisienne:wght@400&family=Dancing+Script:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body className="antialiased font-sans">
         <IntlProvider>
