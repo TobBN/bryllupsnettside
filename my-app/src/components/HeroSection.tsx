@@ -38,41 +38,78 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
     };
   }, []);
 
-  // JavaScript-based parallax for iOS
+  // Enhanced JavaScript-based parallax for iOS
   useEffect(() => {
     if (!isIOS || !bgRef.current) return;
 
     let ticking = false;
+    let lastTime = 0;
 
     const handleScroll = () => {
+      const currentTime = performance.now();
+      
+      // Throttle to 60fps
+      if (currentTime - lastTime < 16) return;
+      lastTime = currentTime;
+
       if (!ticking) {
         requestAnimationFrame(() => {
           if (!heroRef.current) return;
           
-          const rect = heroRef.current.getBoundingClientRect();
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          const heroTop = rect.top + scrollTop;
-          const heroHeight = rect.height;
+          const scrollY = window.scrollY || window.pageYOffset;
+          const heroRect = heroRef.current.getBoundingClientRect();
+          const heroHeight = heroRect.height;
+          const heroTop = heroRect.top + scrollY;
           
-          // Calculate parallax offset
-          const scrolled = scrollTop - heroTop;
-          const rate = scrolled * -0.5; // Parallax rate
+          // Calculate how much of the hero is visible
+          const heroBottom = heroTop + heroHeight;
+          const viewportHeight = window.innerHeight;
           
-          // Only apply parallax when hero is in view
-          if (scrolled >= -heroHeight && scrolled <= heroHeight) {
-            setParallaxOffset(rate);
+          // Parallax effect: move background slower than scroll
+          let offset = 0;
+          
+          if (scrollY < heroBottom && scrollY > heroTop - viewportHeight) {
+            // Calculate parallax offset based on scroll position relative to hero
+            const scrollProgress = (scrollY - (heroTop - viewportHeight)) / (heroHeight + viewportHeight);
+            offset = scrollProgress * heroHeight * 0.3; // 30% parallax effect
           }
           
+          setParallaxOffset(offset);
           ticking = false;
         });
         ticking = true;
       }
     };
 
+    // Use passive listener for better performance
     window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Initial calculation
+    handleScroll();
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isIOS]);
+
+  // Alternative iOS parallax using CSS custom properties
+  useEffect(() => {
+    if (!isIOS) return;
+
+    const updateCSSParallax = () => {
+      const scrollY = window.scrollY || window.pageYOffset;
+      
+      // Calculate parallax value as CSS custom property
+      const parallaxValue = scrollY * 0.5; // 50% parallax effect
+      
+      // Set CSS custom property on document root
+      document.documentElement.style.setProperty('--parallax-offset', `${parallaxValue}px`);
+    };
+
+    window.addEventListener('scroll', updateCSSParallax, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', updateCSSParallax);
     };
   }, [isIOS]);
 
@@ -81,17 +118,36 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
       ref={heroRef}
       className="relative h-screen flex items-center justify-center text-center overflow-hidden"
     >
-      {/* Background Image with iOS-compatible parallax */}
+      {/* Background Image with enhanced iOS-compatible parallax */}
       <div 
         ref={bgRef}
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: 'url(/couple-bg.jpg)',
           backgroundAttachment: supportsBackgroundAttachmentFixed() ? 'fixed' : 'scroll',
-          transform: isIOS ? `translateY(${parallaxOffset}px)` : 'none',
-          willChange: isIOS ? 'transform' : 'auto'
+          transform: isIOS ? `translate3d(0, ${parallaxOffset}px, 0)` : 'none',
+          willChange: isIOS ? 'transform' : 'auto',
+          // iOS-specific optimizations
+          WebkitTransform: isIOS ? `translate3d(0, ${parallaxOffset}px, 0)` : 'none',
+          WebkitBackfaceVisibility: isIOS ? 'hidden' : 'visible',
+          backfaceVisibility: isIOS ? 'hidden' : 'visible'
         }}
       />
+      
+      {/* Alternative iOS parallax using CSS custom properties */}
+      {isIOS && (
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat ios-parallax-fallback"
+          style={{
+            backgroundImage: 'url(/couple-bg.jpg)',
+            transform: 'translate3d(0, var(--parallax-offset, 0px), 0)',
+            WebkitTransform: 'translate3d(0, var(--parallax-offset, 0px), 0)',
+            willChange: 'transform',
+            WebkitBackfaceVisibility: 'hidden',
+            backfaceVisibility: 'hidden'
+          }}
+        />
+      )}
       
       {/* Fallback Image for mobile and better loading */}
       <Image

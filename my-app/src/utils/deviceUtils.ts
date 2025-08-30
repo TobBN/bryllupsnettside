@@ -5,8 +5,14 @@
 export const isIOS = (): boolean => {
   if (typeof window === 'undefined') return false;
   
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  // More comprehensive iOS detection
+  const userAgent = navigator.userAgent;
+  const platform = navigator.platform;
+  
+  return /iPad|iPhone|iPod/.test(userAgent) || 
+         (platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
+         /CriOS|FxiOS|OPiOS|mercury/.test(userAgent) ||
+         (platform === 'MacIntel' && /Safari/.test(userAgent) && !/Chrome/.test(userAgent));
 };
 
 export const isSafari = (): boolean => {
