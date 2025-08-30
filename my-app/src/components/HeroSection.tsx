@@ -1,51 +1,98 @@
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CountdownTimer } from './CountdownTimer';
 // import { calculateTimeLeft, WEDDING_DATE } from '@/utils/dateUtils';
 import { HeroSectionProps } from '@/types';
+import { isIOS as isIOSDevice, supportsBackgroundAttachmentFixed } from '@/utils/deviceUtils';
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [parallaxOffset, setParallaxOffset] = useState(0);
+  const heroRef = useRef<HTMLElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsLoaded(true);
-    setIsMobile(window.innerWidth <= 768);
+    
+    // Detect iOS using utility functions
+    const checkDevice = () => {
+      setIsIOS(isIOSDevice());
+    };
+
+    checkDevice();
+    
+    // Handle resize
+    const handleResize = () => {
+      checkDevice();
+    };
+
+    window.addEventListener('resize', handleResize);
+    
     const timer = setTimeout(() => setIsVisible(true), 100);
-    return () => clearTimeout(timer);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
+  // JavaScript-based parallax for iOS
+  useEffect(() => {
+    if (!isIOS || !bgRef.current) return;
+
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (!heroRef.current) return;
+          
+          const rect = heroRef.current.getBoundingClientRect();
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const heroTop = rect.top + scrollTop;
+          const heroHeight = rect.height;
+          
+          // Calculate parallax offset
+          const scrolled = scrollTop - heroTop;
+          const rate = scrolled * -0.5; // Parallax rate
+          
+          // Only apply parallax when hero is in view
+          if (scrolled >= -heroHeight && scrolled <= heroHeight) {
+            setParallaxOffset(rate);
+          }
+          
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isIOS]);
+
   return (
-    <section className={`relative h-screen flex items-center justify-center text-center overflow-hidden ${isMobile ? 'hero-section-mobile' : ''}`}>
-      {/* Desktop: CSS Background with parallax */}
+    <section 
+      ref={heroRef}
+      className="relative h-screen flex items-center justify-center text-center overflow-hidden"
+    >
+      {/* Background Image with iOS-compatible parallax and proper head positioning */}
       <div 
-        className="absolute inset-0 bg-cover bg-no-repeat hidden md:block"
+        ref={bgRef}
+        className="absolute inset-0 bg-cover bg-no-repeat"
         style={{
           backgroundImage: 'url(/couple-bg.jpg)',
-          backgroundAttachment: 'fixed',
-          backgroundPosition: 'center 30%' // Justerer for å få med hodet
+          backgroundAttachment: supportsBackgroundAttachmentFixed() ? 'fixed' : 'scroll',
+          backgroundPosition: 'center 30%', // Justerer for å få med hodet
+          transform: isIOS ? `translateY(${parallaxOffset}px)` : 'none',
+          willChange: isIOS ? 'transform' : 'auto'
         }}
       />
-      
-      {/* Mobile: Next.js Image with scroll parallax simulation */}
-      <div className="absolute inset-0 md:hidden">
-        <Image
-          src="/couple-bg.jpg"
-          alt="Romantic background image of a couple"
-          fill
-          priority
-          className="object-cover transition-opacity duration-1000"
-          style={{ 
-            objectPosition: 'center 30%', // Samme posisjonering som desktop
-            opacity: isLoaded ? 1 : 0
-          }}
-          sizes="100vw"
-          quality={90}
-          placeholder="blur"
-          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-        />
-      </div>
 
       {/* Subtle gradient overlay - much lighter for mobile */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#2D1B3D]/30 via-[#4A2B5A]/20 to-[#E8B4B8]/10 z-10"></div>
