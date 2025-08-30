@@ -21,14 +21,23 @@ export const Footer: React.FC<FooterProps> = () => {
             <h3 className="font-display text-3xl md:text-4xl text-white mb-4">
               {t('heading')}
             </h3>
-            
+
             <div className="w-24 h-1 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] mx-auto rounded-full"></div>
-            
+
             <p className="font-body text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
               {t('tagline')}
             </p>
           </div>
-          
+
+          <nav>
+            <a
+              href="/gallery"
+              className="font-body text-white/80 hover:text-white transition-colors"
+            >
+              Galleri
+            </a>
+          </nav>
+
           {/* Contact information */}
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 max-w-2xl mx-auto">
             <h4 className="font-body font-medium text-white mb-4">{t('contact')}</h4>
