@@ -1,7 +1,13 @@
+"use client";
+
 import { FooterProps } from '@/types';
+import { useTranslations } from 'next-intl';
+import { useLocaleContext } from './IntlProvider';
 
 export const Footer: React.FC<FooterProps> = () => {
   const currentYear = new Date().getFullYear();
+  const t = useTranslations('footer');
+  const { locale, setLocale } = useLocaleContext();
 
   return (
     <footer className="bg-gradient-to-br from-[#2D1B3D] via-[#4A2B5A] to-[#2D1B3D] text-white relative overflow-hidden">
@@ -13,19 +19,19 @@ export const Footer: React.FC<FooterProps> = () => {
           {/* Main footer content */}
           <div className="space-y-6">
             <h3 className="font-display text-3xl md:text-4xl text-white mb-4">
-              Alexandra & Tobias
+              {t('heading')}
             </h3>
             
             <div className="w-24 h-1 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] mx-auto rounded-full"></div>
             
             <p className="font-body text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
-              Vi gleder oss til å dele denne spesielle dagen med dere 👩‍❤️‍💋‍👨
+              {t('tagline')}
             </p>
           </div>
           
           {/* Contact information */}
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 max-w-2xl mx-auto">
-            <h4 className="font-body font-medium text-white mb-4">Kontakt</h4>
+            <h4 className="font-body font-medium text-white mb-4">{t('contact')}</h4>
             <div className="grid md:grid-cols-2 gap-4 text-base">
               <div className="text-center">
                 <p className="font-body text-white/80">Alexandra</p>
@@ -44,11 +50,25 @@ export const Footer: React.FC<FooterProps> = () => {
           {/* Copyright */}
           <div className="text-center">
             <p className="font-body-light text-white/60">
-              © {currentYear} Alexandra & Tobias. Alle rettigheter forbeholdt.
+              {t('copyright', {year: currentYear})}
             </p>
             <p className="font-small text-white/40 mt-2">
-              Laget med ❤️ fra Saltnes
+              {t('madeWith')}
             </p>
+            <div className="mt-4">
+              <label htmlFor="language-select" className="sr-only">
+                {t('language')}
+              </label>
+              <select
+                id="language-select"
+                value={locale}
+                onChange={(e) => setLocale(e.target.value as 'no' | 'en')}
+                className="bg-white/10 text-white px-3 py-1 rounded-md"
+              >
+                <option value="no">Norsk</option>
+                <option value="en">English</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
