@@ -18,16 +18,12 @@ export default function Home() {
     minutes: 0,
     seconds: 0
   });
-  const [isLoaded, setIsLoaded] = useState(true); // Start with loaded=true to prevent blocking
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Set initial time and loaded state immediately
+    // Set initial time and mark content as loaded
     setTimeLeft(calculateTimeLeft(WEDDING_DATE));
-    
-    // Set loaded state with a minimal delay to ensure smooth transition
-    const loadedTimer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 100);
+    setIsLoaded(true);
 
     // Start countdown timer
     const timer = setInterval(() => {
@@ -37,7 +33,6 @@ export default function Home() {
 
     return () => {
       clearInterval(timer);
-      clearTimeout(loadedTimer);
     };
   }, []);
 
