@@ -1,48 +1,17 @@
-import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { CountdownTimer } from './CountdownTimer';
 // import { calculateTimeLeft, WEDDING_DATE } from '@/utils/dateUtils';
 import { HeroSectionProps } from '@/types';
-import { isIOS as isIOSDevice, supportsBackgroundAttachmentFixed } from '@/utils/deviceUtils';
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
-  const [parallaxOffset, setParallaxOffset] = useState(0);
   const heroRef = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setIsLoaded(true);
-    
-    // Detect iOS using utility functions
-    const checkDevice = () => {
-      setIsIOS(isIOSDevice());
-    };
-
-    checkDevice();
-    
-    // Handle resize
-    const handleResize = () => {
-      checkDevice();
-    };
-
-    window.addEventListener('resize', handleResize);
-    
     const timer = setTimeout(() => setIsVisible(true), 100);
-    
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => clearTimeout(timer);
   }, []);
-
-  // Disable parallax on iOS for better UX - just use normal background
-  useEffect(() => {
-    // No parallax needed - let iOS use normal scroll behavior
-    setParallaxOffset(0);
-  }, [isIOS]);
 
   return (
     <section 
@@ -59,15 +28,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
         isolation: 'isolate'
       } as React.CSSProperties}
     >
-      {/* Background Image with iOS-compatible parallax and proper head positioning */}
-      <div 
+      {/* Fixed background image for cross-browser support */}
+      <div
         ref={bgRef}
-        className="absolute inset-0 bg-cover bg-no-repeat"
+        className="hero-bg-image fixed inset-0 bg-cover bg-no-repeat"
         style={{
           backgroundImage: 'url(/couple-bg.jpg)',
-          backgroundAttachment: supportsBackgroundAttachmentFixed() ? 'fixed' : 'scroll',
           backgroundPosition: 'center 30%', // Justerer for å få med hodet
           backgroundSize: 'cover',
+          zIndex: -1,
           transform: 'none', // Disable parallax transforms completely
           willChange: 'auto',
           // iOS Safari specific optimizations
@@ -76,7 +45,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
           // Prevent iOS zoom on double-tap
           touchAction: 'manipulation',
           // Improve rendering performance
-          contain: 'layout style paint'
+          contain: 'layout style paint',
+          pointerEvents: 'none'
         }}
       />
 
