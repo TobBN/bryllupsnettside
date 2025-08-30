@@ -537,75 +537,20 @@ footer, .copyright {
     background-attachment: scroll !important;
   }
   
-  /* Optimize transforms for iOS */
-  * {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-  }
-  
   /* Improve scrolling performance on iOS */
   html, body {
     -webkit-overflow-scrolling: touch;
   }
-  
+}
+
+/* Simple iOS parallax support */
+@supports (-webkit-touch-callout: none) {
   /* Force hardware acceleration for hero background */
   section[class*="h-screen"] > div[class*="absolute inset-0"] {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    perspective: 1000;
-    will-change: transform;
-  }
-}
-
-/* iOS Safari specific fixes */
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
-  /* Force hardware acceleration for better performance */
-  .hero-bg-image,
-  [style*="transform"] {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    perspective: 1000;
-  }
-}
-
-/* Enhanced iOS Safari support */
-@supports (-webkit-touch-callout: none) and (max-width: 768px) {
-  /* Portrait mode specific optimizations */
-  section[class*="h-screen"] {
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
-  }
-  
-  /* Ensure smooth parallax on iOS */
-  section[class*="h-screen"] > div[class*="absolute inset-0"] {
-    -webkit-transform-style: preserve-3d;
-    transform-style: preserve-3d;
-    -webkit-will-change: transform;
     will-change: transform;
   }
-}
-
-/* iOS Parallax Fallback */
-.ios-parallax-fallback {
-  z-index: -1;
-  -webkit-transform: translate3d(0, var(--parallax-offset, 0px), 0);
-  transform: translate3d(0, var(--parallax-offset, 0px), 0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -webkit-perspective: 1000;
-  perspective: 1000;
-  will-change: transform;
-}
-
-/* CSS Custom Property for iOS parallax */
-:root {
-  --parallax-offset: 0px;
 }
 
 /* Print styles */
