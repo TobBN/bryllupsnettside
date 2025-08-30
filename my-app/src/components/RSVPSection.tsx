@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import { RSVPSectionProps } from '@/types';
 import { DecorativeLine } from './DecorativeLine';

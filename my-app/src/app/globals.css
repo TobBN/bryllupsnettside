@@ -15,6 +15,10 @@
   --accent: #E8B4B8;
   --text-primary: #2D1B3D;
   --text-secondary: #6B7280;
+  --font-parisienne: 'Parisienne', cursive;
+  --font-playfair: 'Playfair Display', serif;
+  --font-cormorant: 'Cormorant Garamond', serif;
+  --font-dancing: 'Dancing Script', cursive;
 }
 
 @theme inline {
