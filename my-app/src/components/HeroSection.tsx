@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
 import { CountdownTimer } from './CountdownTimer';
 // import { calculateTimeLeft, WEDDING_DATE } from '@/utils/dateUtils';
