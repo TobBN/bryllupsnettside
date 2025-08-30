@@ -1,16 +1,20 @@
+"use client";
+
 import { CountdownCard } from './CountdownCard';
 import { TimeLeft } from '@/types';
+import { useTranslations } from 'next-intl';
 
 interface CountdownTimerProps {
   timeLeft: TimeLeft;
 }
 
 export const CountdownTimer: React.FC<CountdownTimerProps> = ({ timeLeft }) => {
+  const t = useTranslations('countdown');
   const countdownItems = [
-    { label: 'Dager', value: timeLeft.days, color: 'from-[#E8B4B8]/75 to-[#F4A261]/75' },
-    { label: 'Timer', value: timeLeft.hours, color: 'from-[#F4A261]/75 to-[#E76F51]/75' },
-    { label: 'Minutter', value: timeLeft.minutes, color: 'from-[#E76F51]/75 to-[#4A2B5A]/75' },
-    { label: 'Sekunder', value: timeLeft.seconds, color: 'from-[#4A2B5A]/75 to-[#E8B4B8]/75' }
+    { label: t('days'), value: timeLeft.days, color: 'from-[#E8B4B8]/75 to-[#F4A261]/75' },
+    { label: t('hours'), value: timeLeft.hours, color: 'from-[#F4A261]/75 to-[#E76F51]/75' },
+    { label: t('minutes'), value: timeLeft.minutes, color: 'from-[#E76F51]/75 to-[#4A2B5A]/75' },
+    { label: t('seconds'), value: timeLeft.seconds, color: 'from-[#4A2B5A]/75 to-[#E8B4B8]/75' }
   ];
 
   return (
