@@ -100,6 +100,25 @@ Footer med kontaktinformasjon og copyright.
    http://localhost:3000
    ```
 
+## 🧪 Testing
+
+Kjør enhetstester:
+```bash
+npm test
+```
+
+## 🚀 Bygg og deploy
+
+1. Bygg prosjektet:
+```bash
+npm run build
+```
+2. Start produksjonsserveren:
+```bash
+npm start
+```
+3. Deploy til ønsket plattform (f.eks. Vercel eller Netlify).
+
 ## 📱 Responsivitet
 
 Nettsiden er fullt responsiv med:

@@ -1,12 +1,16 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
 import { CountdownTimer } from './CountdownTimer';
 // import { calculateTimeLeft, WEDDING_DATE } from '@/utils/dateUtils';
 import { HeroSectionProps } from '@/types';
+import { useTranslations } from 'next-intl';
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
   const [isVisible, setIsVisible] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations('hero');
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -83,11 +87,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
                aria-hidden="true"></div>
         </header>
 
-        <p className="font-body-light text-xl md:text-2xl lg:text-3xl text-white/95 mb-10 tracking-wide animate-fade-in-up" 
+        <p className="font-body-light text-xl md:text-2xl lg:text-3xl text-white/95 mb-10 tracking-wide animate-fade-in-up"
            style={{ animationDelay: '0.8s' }}>
-          Save the date
+          {t('saveTheDate')}
           <br />
-          24. juli 2026
+          {t('date')}
         </p>
 
         {/* Countdown */}
@@ -97,7 +101,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
 
         {/* Date/time as simple text (no box) */}
         <div className="mt-8 animate-fade-in-up" style={{ animationDelay: '1.2s' }}>
-          <p className="font-body text-xl md:text-2xl text-white/95 mb-1 font-medium">Østgaard, Halden</p>
+          <p className="font-body text-xl md:text-2xl text-white/95 mb-1 font-medium">{t('location')}</p>
         </div>
 
         {/* Scroll indicator - positioned 30px below bottom */}
