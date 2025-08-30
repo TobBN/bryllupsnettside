@@ -558,15 +558,42 @@ footer, .copyright {
     background-attachment: scroll !important;
   }
   
-  /* Optimize transforms for iOS */
-  * {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-  }
-  
   /* Improve scrolling performance on iOS */
   html, body {
     -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+  }
+  
+  /* Fix iOS text scaling issues */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  /* Optimize fonts for iOS rendering */
+  body, * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-smooth: always;
+  }
+  
+  /* Fix iOS viewport issues */
+  body {
+    position: relative;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+  
+  /* Optimize sections for iOS */
+  section {
+    position: relative;
+    isolation: isolate;
+  }
+  
+  /* Fix iOS viewport height issues */
+  .h-screen {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
   }
 }
 

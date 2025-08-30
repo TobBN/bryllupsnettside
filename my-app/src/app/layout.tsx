@@ -35,6 +35,14 @@ export const metadata: Metadata = {
   description: "Velkommen til vårt bryllup den 24. juli 2026 på Villa Paradiso, Oslo",
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // Prevent iOS zoom issues
+  viewportFit: 'cover' // Handle iPhone notch
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

@@ -80,6 +80,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
     <section 
       ref={heroRef}
       className="relative h-screen flex items-center justify-center text-center overflow-hidden"
+      style={{
+        // iOS Safari viewport fixes
+        minHeight: '100vh',
+        // Prevent iOS bounce scroll
+        WebkitOverflowScrolling: 'auto',
+        // Fix iOS rendering issues
+        WebkitTransform: 'translateZ(0)',
+        transform: 'translateZ(0)',
+        isolation: 'isolate'
+      } as React.CSSProperties}
     >
       {/* Background Image with iOS-compatible parallax and proper head positioning */}
       <div 
@@ -89,8 +99,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
           backgroundImage: 'url(/couple-bg.jpg)',
           backgroundAttachment: supportsBackgroundAttachmentFixed() ? 'fixed' : 'scroll',
           backgroundPosition: 'center 30%', // Justerer for å få med hodet
-          transform: isIOS ? `translateY(${parallaxOffset}px)` : 'none',
-          willChange: isIOS ? 'transform' : 'auto'
+          backgroundSize: 'cover',
+          transform: isIOS ? `translate3d(0, ${parallaxOffset}px, 0)` : 'none',
+          willChange: isIOS ? 'transform' : 'auto',
+          // iOS Safari specific optimizations
+          WebkitTransform: isIOS ? `translate3d(0, ${parallaxOffset}px, 0)` : 'none',
+          WebkitBackfaceVisibility: 'hidden',
+          backfaceVisibility: 'hidden',
+          // Prevent iOS zoom on double-tap
+          touchAction: 'manipulation',
+          // Improve rendering performance
+          contain: 'layout style paint'
         }}
       />
 
