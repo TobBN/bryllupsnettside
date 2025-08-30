@@ -66,14 +66,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
                role="presentation" 
                aria-hidden="true"></div>
           
-          <h1 className="text-6xl md:text-8xl lg:text-9xl leading-tight md:leading-[1.05] lg:leading-[1.02] text-white mb-6 drop-shadow-2xl tracking-wide animate-fade-in-up" style={{ fontFamily: 'Parisienne, cursive !important', fontWeight: '400 !important', letterSpacing: '0.01em' }}>
-            <span className="inline-block animate-fade-in-up" style={{ animationDelay: '0.2s', fontFamily: 'Parisienne, cursive !important', fontWeight: '400 !important' }}>
+          <h1 className="text-6xl md:text-8xl lg:text-9xl leading-tight md:leading-[1.05] lg:leading-[1.02] text-white mb-6 drop-shadow-2xl animate-fade-in-up font-display font-normal">
+            <span className="inline-block animate-fade-in-up animate-delay-200">
               Alexandra
             </span>
-            <span className="inline-block mx-6 text-gradient-velvet animate-fade-in-up" style={{ animationDelay: '0.4s', fontFamily: 'Parisienne, cursive !important', fontWeight: '400 !important' }}>
+            <span className="inline-block mx-6 text-gradient-velvet animate-fade-in-up animate-delay-400">
               &
             </span>
-            <span className="inline-block animate-fade-in-up" style={{ animationDelay: '0.6s', fontFamily: 'Parisienne, cursive !important', fontWeight: '400 !important' }}>
+            <span className="inline-block animate-fade-in-up animate-delay-600">
               Tobias
             </span>
           </h1>
@@ -83,20 +83,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
                aria-hidden="true"></div>
         </header>
 
-        <p className="font-body-light text-xl md:text-2xl lg:text-3xl text-white/95 mb-10 tracking-wide animate-fade-in-up" 
-           style={{ animationDelay: '0.8s' }}>
+        <p className="font-body-light text-xl md:text-2xl lg:text-3xl text-white/95 mb-10 tracking-wide animate-fade-in-up animate-delay-800">
           Save the date
           <br />
           24. juli 2026
         </p>
 
         {/* Countdown */}
-        <div className="animate-fade-in-up" style={{ animationDelay: '1s' }}>
+        <div className="animate-fade-in-up animate-delay-1000">
           <CountdownTimer timeLeft={timeLeft} />
         </div>
 
         {/* Date/time as simple text (no box) */}
-        <div className="mt-8 animate-fade-in-up" style={{ animationDelay: '1.2s' }}>
+        <div className="mt-8 animate-fade-in-up animate-delay-1200">
           <p className="font-body text-xl md:text-2xl text-white/95 mb-1 font-medium">Østgaard, Halden</p>
         </div>
 
