@@ -226,6 +226,27 @@ footer, .copyright {
   background-size: cover;
 }
 
+/* iOS Parallax Alternative - simulate fixed background */
+@supports (-webkit-touch-callout: none) {
+  .hero-section-mobile {
+    position: relative;
+  }
+  
+  .hero-section-mobile::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/couple-bg.jpg');
+    background-size: cover;
+    background-position: center 30%;
+    background-repeat: no-repeat;
+    z-index: -1;
+  }
+}
+
 .text-gradient-pink {
   background: linear-gradient(135deg, var(--pink) 0%, var(--apricot) 100%);
   -webkit-background-clip: text;
