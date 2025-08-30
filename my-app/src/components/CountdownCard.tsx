@@ -1,10 +1,17 @@
 import { CountdownCardProps } from '@/types';
 
 export const CountdownCard: React.FC<CountdownCardProps> = ({ value, label, gradient, animationDelay }) => {
+  const delayClasses: Record<number, string> = {
+    0: '',
+    1: 'animate-delay-100',
+    2: 'animate-delay-200',
+    3: 'animate-delay-300',
+  };
+  const delayClass = delayClasses[Math.round(animationDelay * 10)] || '';
+
   return (
-    <div 
-      className={`relative bg-gradient-to-br ${gradient} text-white/95 rounded-2xl p-4 md:p-6 shadow-2xl hover-lift transition-all duration-500 transform hover:scale-105`} 
-      style={{ animationDelay: `${animationDelay}s`, opacity: 0.9 }}
+    <div
+      className={`relative bg-gradient-to-br ${gradient} text-white/95 rounded-2xl p-4 md:p-6 shadow-2xl hover-lift transition-all duration-500 transform hover:scale-105 opacity-90 ${delayClass}`}
     >
       <div className="absolute inset-0 bg-white/10 rounded-2xl mix-blend-overlay pointer-events-none"></div>
       <div className="text-center relative">
