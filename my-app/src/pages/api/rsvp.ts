@@ -1,9 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { promises as fs } from 'fs';
-import path from 'path';
 import { RSVPData } from '@/types';
-
-const filePath = path.join(process.cwd(), 'data', 'rsvps.json');
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,10 +12,24 @@ export default async function handler(
 
   try {
     const newRsvp: RSVPData = req.body;
-    const fileData = await fs.readFile(filePath, 'utf8').catch(() => '[]');
-    const rsvps: RSVPData[] = JSON.parse(fileData);
-    rsvps.push(newRsvp);
-    await fs.writeFile(filePath, JSON.stringify(rsvps, null, 2));
+
+    const storageUrl = process.env.RSVP_STORAGE_URL;
+    if (!storageUrl) {
+      console.error('RSVP_STORAGE_URL environment variable is not set');
+      return res
+        .status(500)
+        .json({ message: 'RSVP storage is not configured' });
+    }
+
+    const response = await fetch(storageUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newRsvp),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to persist RSVP: ${response.statusText}`);
+    }
 
     return res.status(200).json({ message: 'RSVP saved' });
   } catch (error) {
