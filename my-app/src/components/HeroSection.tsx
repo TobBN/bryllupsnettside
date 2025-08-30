@@ -38,42 +38,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
     };
   }, []);
 
-  // JavaScript-based parallax for iOS
+  // Disable parallax on iOS for better UX - just use normal background
   useEffect(() => {
-    if (!isIOS || !bgRef.current) return;
-
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          if (!heroRef.current) return;
-          
-          const rect = heroRef.current.getBoundingClientRect();
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          const heroTop = rect.top + scrollTop;
-          const heroHeight = rect.height;
-          
-          // Calculate parallax offset
-          const scrolled = scrollTop - heroTop;
-          const rate = scrolled * -0.5; // Parallax rate
-          
-          // Only apply parallax when hero is in view
-          if (scrolled >= -heroHeight && scrolled <= heroHeight) {
-            setParallaxOffset(rate);
-          }
-          
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    // No parallax needed - let iOS use normal scroll behavior
+    setParallaxOffset(0);
   }, [isIOS]);
 
   return (
@@ -100,10 +68,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
           backgroundAttachment: supportsBackgroundAttachmentFixed() ? 'fixed' : 'scroll',
           backgroundPosition: 'center 30%', // Justerer for å få med hodet
           backgroundSize: 'cover',
-          transform: isIOS ? `translate3d(0, ${parallaxOffset}px, 0)` : 'none',
-          willChange: isIOS ? 'transform' : 'auto',
+          transform: 'none', // Disable parallax transforms completely
+          willChange: 'auto',
           // iOS Safari specific optimizations
-          WebkitTransform: isIOS ? `translate3d(0, ${parallaxOffset}px, 0)` : 'none',
           WebkitBackfaceVisibility: 'hidden',
           backfaceVisibility: 'hidden',
           // Prevent iOS zoom on double-tap
