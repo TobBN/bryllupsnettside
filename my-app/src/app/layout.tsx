@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Parisienne, Playfair_Display, Cormorant_Garamond, Dancing_Script } from 'next/font/google';
 import "./globals.css";
+import { IntlProvider } from '@/components/IntlProvider';
 
 const parisienne = Parisienne({
   weight: '400',
@@ -56,7 +57,9 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Parisienne:wght@400&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="antialiased font-sans">
-        {children}
+        <IntlProvider>
+          {children}
+        </IntlProvider>
       </body>
     </html>
   );
