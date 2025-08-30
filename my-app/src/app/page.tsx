@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { TimeLeft } from "@/types";
 import { calculateTimeLeft, WEDDING_DATE } from "@/utils/dateUtils";
+import { useTranslations } from 'next-intl';
 import { 
   HeroSection, 
   StorySection, 
@@ -12,6 +13,7 @@ import {
 } from "@/components";
 
 export default function Home() {
+  const t = useTranslations('common');
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
@@ -19,6 +21,7 @@ export default function Home() {
     seconds: 0
   });
   const [isLoaded, setIsLoaded] = useState(true); // Start with loaded=true to prevent blocking
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
 
   useEffect(() => {
     // Set initial time and loaded state immediately
@@ -40,6 +43,44 @@ export default function Home() {
       clearTimeout(loadedTimer);
     };
   }, []);
+
+  // Register service worker
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  }, []);
+
+  // Update permission state on mount
+  useEffect(() => {
+    if (typeof Notification !== 'undefined') {
+      setNotificationPermission(Notification.permission);
+    }
+  }, []);
+
+  const requestNotificationPermission = async () => {
+    if (typeof Notification === 'undefined' || !('serviceWorker' in navigator)) return;
+    const permission = await Notification.requestPermission();
+    setNotificationPermission(permission);
+    if (permission === 'granted') {
+      const registration = await navigator.serviceWorker.ready;
+      registration.active?.postMessage({
+        type: 'scheduleNotifications',
+        weddingDate: WEDDING_DATE,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (notificationPermission === 'granted' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.active?.postMessage({
+          type: 'scheduleNotifications',
+          weddingDate: WEDDING_DATE,
+        });
+      });
+    }
+  }, [notificationPermission]);
 
   // Add smooth scrolling for navigation
   useEffect(() => {
@@ -69,7 +110,7 @@ export default function Home() {
         <div className="fixed inset-0 z-50 bg-gradient-to-br from-[#FEFAE0] to-[#F4D1D4] flex items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-[#E8B4B8] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="font-body text-[#2D1B3D] text-lg">Laster bryllupsnettside...</p>
+            <p className="font-body text-[#2D1B3D] text-lg">{t('loading')}</p>
           </div>
         </div>
       )}
@@ -87,11 +128,20 @@ export default function Home() {
 
       <Footer />
 
+      {notificationPermission !== 'granted' && (
+        <button
+          onClick={requestNotificationPermission}
+          className="fixed bottom-8 left-8 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white px-4 py-2 rounded-full shadow-2xl hover-lift transition-all duration-300 z-40"
+        >
+          Aktiver varsler
+        </button>
+      )}
+
       {/* Scroll to top button */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         className="fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white rounded-full shadow-2xl hover-lift transition-all duration-300 opacity-0 hover:opacity-100 group z-40"
-        aria-label="Rull til toppen"
+        aria-label={t('scrollToTop')}
         style={{
           opacity: typeof window !== 'undefined' && window.scrollY > 500 ? 1 : 0
         }}

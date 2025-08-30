@@ -52,3 +52,10 @@ export interface CountdownCardProps {
   gradient: string;
   animationDelay: number;
 }
+
+export interface Guest {
+  id: string;
+  name: string;
+  email?: string;
+  attending: boolean;
+}
