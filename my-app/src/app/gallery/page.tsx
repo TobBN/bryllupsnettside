@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Footer } from "@/components";
+import { Footer } from "@/components/Footer";
 
 const images = [
   "/images/story-1.jpg",
