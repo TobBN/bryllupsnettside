@@ -21,30 +21,37 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Store in localStorage for now
-    const rsvpData = {
-      ...formData,
-      isAttending,
-      timestamp: new Date().toISOString()
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsSubmitting(true);
+
+      const rsvpData = {
+        ...formData,
+        isAttending,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        const res = await fetch('/api/rsvp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(rsvpData)
+        });
+
+        if (!res.ok) {
+          throw new Error('Failed to submit RSVP');
+        }
+
+        setIsSubmitted(true);
+        setFormData({ name: '', phone: '', allergies: '' });
+        setIsAttending(null);
+        setShowForm(false);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsSubmitting(false);
+      }
     };
-    
-    const existingRSVPs = JSON.parse(localStorage.getItem('rsvps') || '[]');
-    existingRSVPs.push(rsvpData);
-    localStorage.setItem('rsvps', JSON.stringify(existingRSVPs));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setFormData({ name: '', phone: '', allergies: '' });
-    setIsAttending(null);
-    setShowForm(false);
-  };
 
   const handleAttendanceChoice = (attending: boolean) => {
     setIsAttending(attending);
