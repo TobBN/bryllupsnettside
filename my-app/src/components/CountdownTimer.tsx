@@ -18,7 +18,7 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({ timeLeft }) => {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-4xl mx-auto" role="timer" aria-live="polite">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 md:gap-6 max-w-2xl sm:max-w-3xl lg:max-w-4xl mx-auto" role="timer" aria-live="polite">
       {countdownItems.map((item, index) => (
         <CountdownCard
           key={item.label}

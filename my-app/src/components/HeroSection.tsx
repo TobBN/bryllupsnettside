@@ -15,7 +15,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
 
   return (
     <section
-      className="relative flex min-h-[70vh] items-end justify-center"
+      className="relative flex min-h-screen items-end justify-center pb-16"
       aria-label="Forside"
     >
       {/* Fixed background image - iOS-safe implementation */}
@@ -26,62 +26,76 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
           backgroundSize: "cover",
           backgroundPosition: "center 30%",
           backgroundRepeat: "no-repeat",
-          // iOS-safe: avoid background-attachment: fixed
         }}
       />
       
       {/* Dim overlay for text readability */}
       <div className="absolute inset-0 bg-black/30" />
       
-      {/* Content card that scrolls over the fixed background */}
+      {/* Content card - proportional scaling */}
       <div
-        className={`relative z-10 mx-4 mb-16 w-full max-w-3xl rounded-2xl bg-white/30 p-8 backdrop-blur-sm
-        shadow-xl transition-opacity duration-700 ${mounted ? "opacity-100" : "opacity-0"}`}
+        className={`relative z-10 mx-4 w-full
+        max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl
+        rounded-2xl bg-white/25 backdrop-blur-sm
+        p-6 sm:p-8 md:p-10 lg:p-12
+        shadow-2xl transition-all duration-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
       >
-        {/* Decorative line */}
-        <div className="w-32 h-1 bg-gradient-to-r from-transparent via-[#E8B4B8] to-transparent mx-auto mb-6" 
+        {/* Decorative line - scales with container */}
+        <div className="w-16 sm:w-20 md:w-24 lg:w-32 h-0.5 sm:h-1 
+                        bg-gradient-to-r from-transparent via-[#E8B4B8] to-transparent 
+                        mx-auto mb-4 sm:mb-6" 
              role="presentation" 
              aria-hidden="true"></div>
         
-        {/* Main heading */}
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold text-white drop-shadow-lg text-center mb-4"
+        {/* Main heading - proportional text scaling */}
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 
+                       font-semibold text-white drop-shadow-lg text-center mb-3 sm:mb-4"
             style={{ fontFamily: 'Parisienne, cursive' }}>
           <span className="inline-block">Alexandra</span>
-          <span className="inline-block mx-4 text-[#E8B4B8]">&</span>
+          <span className="inline-block mx-2 sm:mx-3 md:mx-4 text-[#E8B4B8]">&</span>
           <span className="inline-block">Tobias</span>
         </h1>
 
-        {/* Date and location */}
-        <p className="text-center text-lg md:text-xl text-white/95 mb-6">
-          {t('saveTheDate')}
-          <br />
-          <span className="text-xl md:text-2xl font-medium">{t('date')}</span>
-          <br />
-          {t('location')}
-        </p>
+        {/* Date and location - consistent scaling */}
+        <div className="text-center text-white/95 mb-4 sm:mb-6 space-y-1 sm:space-y-2">
+          <p className="text-sm sm:text-base md:text-lg">
+            {t('saveTheDate')}
+          </p>
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium">
+            {t('date')}
+          </p>
+          <p className="text-sm sm:text-base md:text-lg">
+            {t('location')}
+          </p>
+        </div>
 
-        {/* Countdown timer */}
-        <div className="mb-6">
+        {/* Countdown timer - scales with container */}
+        <div className="mb-4 sm:mb-6">
           <CountdownTimer timeLeft={timeLeft} />
         </div>
 
-        {/* Decorative line */}
-        <div className="w-40 h-1 bg-gradient-to-r from-transparent via-[#E8B4B8] to-transparent mx-auto" 
+        {/* Bottom decorative line */}
+        <div className="w-20 sm:w-24 md:w-28 lg:w-40 h-0.5 sm:h-1 
+                        bg-gradient-to-r from-transparent via-[#E8B4B8] to-transparent 
+                        mx-auto" 
              role="presentation" 
              aria-hidden="true"></div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white/70 rounded-full mt-2 animate-pulse"></div>
+      {/* Scroll indicator - consistent size */}
+      <div className="absolute bottom-6 sm:bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <div className="w-5 sm:w-6 h-8 sm:h-10 border-2 border-white/50 rounded-full flex justify-center">
+          <div className="w-1 h-2 sm:h-3 bg-white/70 rounded-full mt-1 sm:mt-2 animate-pulse"></div>
         </div>
       </div>
 
-      {/* Floating decorative elements */}
-      <div className="absolute top-20 left-10 w-4 h-4 bg-[#E8B4B8]/30 rounded-full animate-float"></div>
-      <div className="absolute top-32 right-20 w-3 h-3 bg-[#F4A261]/30 rounded-full animate-float-delayed"></div>
-      <div className="absolute bottom-32 left-20 w-2 h-2 bg-[#4A2B5A]/30 rounded-full animate-float"></div>
+      {/* Floating decorative elements - scale with screen */}
+      <div className="absolute top-16 sm:top-20 left-6 sm:left-10 
+                      w-3 sm:w-4 h-3 sm:h-4 bg-[#E8B4B8]/30 rounded-full animate-float"></div>
+      <div className="absolute top-24 sm:top-32 right-12 sm:right-20 
+                      w-2 sm:w-3 h-2 sm:h-3 bg-[#F4A261]/30 rounded-full animate-float-delayed"></div>
+      <div className="absolute bottom-24 sm:bottom-32 left-12 sm:left-20 
+                      w-2 h-2 bg-[#4A2B5A]/30 rounded-full animate-float"></div>
     </section>
   );
 };
