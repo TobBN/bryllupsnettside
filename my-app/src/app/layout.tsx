@@ -3,8 +3,13 @@ import "./globals.css";
 import { IntlProvider } from '@/components/IntlProvider';
 
 export const metadata: Metadata = {
-  title: "Alexandra & Tobias - Bryllup 2026",
-  description: "Velkommen til vårt bryllup den 24. juli 2026 på Villa Paradiso, Oslo",
+  title: "Alexandra & Tobias",
+  description: "Bryllupsnettside",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  }
 };
 
 export const viewport = {
@@ -30,7 +35,18 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased font-sans">
+      <body className="relative antialiased font-sans bg-[#FEFAE0] text-[#2D1B3D]">
+        {/* Fixed hero background visible on home */}
+        <div
+          id="fixed-hero-bg"
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 -z-10 opacity-100"
+          style={{
+            backgroundImage: "url('/couple-bg.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center 30%",
+          }}
+        />
         <IntlProvider>
           {children}
         </IntlProvider>

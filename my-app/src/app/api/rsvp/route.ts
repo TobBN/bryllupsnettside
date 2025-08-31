@@ -1,21 +1,45 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { RSVPData } from '@/types';
-
-const filePath = path.join(process.cwd(), 'data', 'rsvps.json');
+import { supabaseServer } from '@/lib/supabase';
 
 export const POST = async (req: Request) => {
   try {
-    const newRsvp = (await req.json()) as RSVPData;
-    const fileData = await fs.readFile(filePath, 'utf8').catch(() => '[]');
-    const rsvps: RSVPData[] = JSON.parse(fileData);
-    rsvps.push(newRsvp);
-    await fs.writeFile(filePath, JSON.stringify(rsvps, null, 2));
-    return NextResponse.json({ message: 'RSVP saved' }, { status: 200 });
+    const body = await req.json();
+    const name = (body?.name ?? '').toString().trim();
+    // Map old payload to new schema
+    const response: 'yes' | 'no' | 'maybe' = body?.isAttending === true
+      ? 'yes'
+      : body?.isAttending === false
+      ? 'no'
+      : 'maybe';
+
+    if (!name) {
+      return NextResponse.json({ ok: false, error: 'Mangler navn' }, { status: 400 });
+    }
+
+    const messageParts: string[] = [];
+    if (body?.phone) messageParts.push(`Phone: ${String(body.phone)}`);
+    if (body?.allergies) messageParts.push(`Allergies: ${String(body.allergies)}`);
+    if (body?.timestamp) messageParts.push(`Timestamp: ${String(body.timestamp)}`);
+    const message = messageParts.length ? messageParts.join(' | ') : null;
+
+    const supabase = supabaseServer();
+    const { error } = await supabase.from('rsvp').insert({
+      name,
+      email: null,
+      attendees: null,
+      response,
+      message,
+    });
+
+    if (error) {
+      console.error('Supabase insert error:', error);
+      return NextResponse.json({ ok: false, error: 'DB-feil' }, { status: 500 });
+    }
+
+    return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error) {
     console.error('Error saving RSVP:', error);
-    return NextResponse.json({ message: 'Error saving RSVP' }, { status: 500 });
+    return NextResponse.json({ ok: false, error: 'Uventet feil' }, { status: 500 });
   }
 };
 

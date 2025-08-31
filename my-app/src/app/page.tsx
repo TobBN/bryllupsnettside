@@ -58,18 +58,7 @@ export default function Home() {
     }
   }, []);
 
-  const requestNotificationPermission = async () => {
-    if (typeof Notification === 'undefined' || !('serviceWorker' in navigator)) return;
-    const permission = await Notification.requestPermission();
-    setNotificationPermission(permission);
-    if (permission === 'granted') {
-      const registration = await navigator.serviceWorker.ready;
-      registration.active?.postMessage({
-        type: 'scheduleNotifications',
-        weddingDate: WEDDING_DATE,
-      });
-    }
-  };
+  // Removed notification permission request logic
 
   useEffect(() => {
     if (notificationPermission === 'granted' && 'serviceWorker' in navigator) {
@@ -128,14 +117,7 @@ export default function Home() {
 
       <Footer />
 
-      {notificationPermission !== 'granted' && (
-        <button
-          onClick={requestNotificationPermission}
-          className="fixed bottom-8 left-8 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white px-4 py-2 rounded-full shadow-2xl hover-lift transition-all duration-300 z-40"
-        >
-          Aktiver varsler
-        </button>
-      )}
+      {/* Removed alert/notification button */}
 
       {/* Scroll to top button */}
       <button

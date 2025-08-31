@@ -2,12 +2,10 @@
 
 import { FooterProps } from '@/types';
 import { useTranslations } from 'next-intl';
-import { useLocaleContext } from './IntlProvider';
 
 export const Footer: React.FC<FooterProps> = () => {
   const currentYear = new Date().getFullYear();
   const t = useTranslations('footer');
-  const { locale, setLocale } = useLocaleContext();
 
   return (
     <footer className="bg-gradient-to-br from-[#2D1B3D] via-[#4A2B5A] to-[#2D1B3D] text-white relative overflow-hidden">
@@ -64,20 +62,6 @@ export const Footer: React.FC<FooterProps> = () => {
             <p className="font-small text-white/40 mt-2">
               {t('madeWith')}
             </p>
-            <div className="mt-4">
-              <label htmlFor="language-select" className="sr-only">
-                {t('language')}
-              </label>
-              <select
-                id="language-select"
-                value={locale}
-                onChange={(e) => setLocale(e.target.value as 'no' | 'en')}
-                className="bg-white/10 text-white px-3 py-1 rounded-md"
-              >
-                <option value="no">Norsk</option>
-                <option value="en">English</option>
-              </select>
-            </div>
           </div>
         </div>
       </div>
