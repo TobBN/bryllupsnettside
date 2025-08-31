@@ -18,14 +18,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
       className="relative flex min-h-screen items-end justify-center pb-16"
       aria-label="Forside"
     >
-      {/* Fixed background image - iOS-safe implementation */}
+      {/* Background image - cross-platform implementation */}
       <div
-        className="fixed inset-0 -z-10"
+        className="absolute inset-0 -z-10"
         style={{
           backgroundImage: "url('/couple-bg.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center 30%",
           backgroundRepeat: "no-repeat",
+          // Use absolute instead of fixed for better desktop compatibility
         }}
       />
       
