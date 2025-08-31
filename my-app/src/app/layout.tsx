@@ -36,17 +36,6 @@ export default function RootLayout({
         />
       </head>
       <body className="relative antialiased font-sans bg-[#FEFAE0] text-[#2D1B3D]">
-        {/* Fixed hero background visible on home */}
-        <div
-          id="fixed-hero-bg"
-          aria-hidden="true"
-          className="pointer-events-none fixed inset-0 -z-10 opacity-100"
-          style={{
-            backgroundImage: "url('/couple-bg.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center 30%",
-          }}
-        />
         <IntlProvider>
           {children}
         </IntlProvider>
