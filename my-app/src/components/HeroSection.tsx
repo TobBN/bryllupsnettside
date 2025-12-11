@@ -13,6 +13,24 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
     setMounted(true);
   }, []);
 
+  // Determine greeting text based on days until wedding
+  const getGreetingText = (): string => {
+    const daysUntilWedding = timeLeft.days;
+    
+    // If wedding is today or has passed
+    if (daysUntilWedding === 0) {
+      return t('welcomeToWedding');
+    }
+    
+    // If 1 day until wedding (day before)
+    if (daysUntilWedding === 1) {
+      return t('welcomeToWedding');
+    }
+    
+    // If 2 days or more until wedding
+    return t('weAreGettingMarried');
+  };
+
   return (
     <>
       {/* Global fixed background for iOS-safe scroll-over effect */}
@@ -61,7 +79,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
           {/* Date and location - consistent scaling */}
           <div className="text-center text-white/95 mb-4 sm:mb-6 space-y-1 sm:space-y-2">
             <p className="text-sm sm:text-base md:text-lg">
-              {t('saveTheDate')}
+              {getGreetingText()}
             </p>
             <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium">
               {t('date')}

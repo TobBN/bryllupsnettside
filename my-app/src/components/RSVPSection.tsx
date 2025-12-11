@@ -14,6 +14,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -26,6 +27,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       setIsSubmitting(true);
+      setSubmitError(null);
 
       const rsvpData = {
         ...formData,
@@ -40,16 +42,20 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
           body: JSON.stringify(rsvpData)
         });
 
+        const data = await res.json();
+
         if (!res.ok) {
-          throw new Error('Failed to submit RSVP');
+          throw new Error(data.error || 'Kunne ikke sende RSVP. Prøv igjen.');
         }
 
         setIsSubmitted(true);
         setFormData({ name: '', phone: '', allergies: '' });
         setIsAttending(null);
         setShowForm(false);
+        setSubmitError(null);
       } catch (error) {
         console.error(error);
+        setSubmitError(error instanceof Error ? error.message : 'En uventet feil oppstod. Prøv igjen.');
       } finally {
         setIsSubmitting(false);
       }
@@ -58,6 +64,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
   const handleAttendanceChoice = (attending: boolean) => {
     setIsAttending(attending);
     setShowForm(true);
+    setSubmitError(null);
   };
 
   const resetForm = () => {
@@ -65,6 +72,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
     setIsAttending(null);
     setShowForm(false);
     setFormData({ name: '', phone: '', allergies: '' });
+    setSubmitError(null);
   };
 
   return (
@@ -148,6 +156,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                         value={formData.name}
                         onChange={handleInputChange}
                         required
+                        autoComplete="name"
                         className="w-full px-6 py-4 border-2 border-[#E8B4B8]/30 rounded-2xl font-body text-[#2D1B3D] focus:outline-none focus:ring-4 focus:ring-[#E8B4B8]/20 focus:border-[#E8B4B8] transition-all duration-300 text-lg"
                         placeholder="Ditt navn"
                         aria-required="true"
@@ -165,6 +174,8 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                         value={formData.phone}
                         onChange={handleInputChange}
                         required
+                        autoComplete="tel"
+                        inputMode="tel"
                         className="w-full px-6 py-4 border-2 border-[#E8B4B8]/30 rounded-2xl font-body text-[#2D1B3D] focus:outline-none focus:ring-4 focus:ring-[#E8B4B8]/20 focus:border-[#E8B4B8] transition-all duration-300 text-lg"
                         placeholder="Ditt telefonnummer"
                         aria-required="true"
@@ -193,6 +204,12 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                     )}
                   </div>
                   
+                  {submitError && (
+                    <div className="mt-6 p-4 bg-red-50 border-2 border-red-200 rounded-2xl">
+                      <p className="font-body text-red-700 text-center">{submitError}</p>
+                    </div>
+                  )}
+                  
                   <div className="flex flex-col sm:flex-row gap-4 mt-10">
                     <button
                       type="submit"
@@ -211,7 +228,10 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                     
                     <button
                       type="button"
-                      onClick={() => setShowForm(false)}
+                      onClick={() => {
+                        setShowForm(false);
+                        setSubmitError(null);
+                      }}
                       className="flex-1 bg-[#6B7280] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-velvet hover-lift transition-all duration-300 text-lg"
                     >
                       Tilbake
