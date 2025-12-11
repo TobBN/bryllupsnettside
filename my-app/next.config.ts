@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
+  // Configure for next-intl compatibility with Next.js 15
+  turbopack: {},
 };
 
 export default nextConfig;
