@@ -12,6 +12,7 @@ import {
   Footer 
 } from "@/components";
 
+
 export default function Home() {
   const t = useTranslations('common');
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
