@@ -1,5 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import { Footer } from "@/components/Footer";
+
+// Force dynamic rendering to avoid SSG and ENVIRONMENT_FALLBACK error
+export const dynamic = 'force-dynamic';
 
 const images = [
   "/images/story-1.jpg",
