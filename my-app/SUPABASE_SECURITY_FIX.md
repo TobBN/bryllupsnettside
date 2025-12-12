@@ -26,6 +26,8 @@ Kjør `supabase_security_fix.sql` i Supabase SQL Editor:
 4. Lim inn i SQL Editor
 5. Klikk **Run**
 
+**Hvis du allerede har kjørt den første versjonen**, kjør `supabase_security_fix_optimized.sql` i stedet for å fikse performance-warnings.
+
 ## Hva gjør fiksen?
 
 ### RLS Policies
@@ -40,6 +42,10 @@ Kjør `supabase_security_fix.sql` i Supabase SQL Editor:
 
 ### Function Security
 - ✅ Fikser `search_path` sikkerhetsproblem
+
+### Performance Optimaliseringer
+- ✅ Bruker `(select auth.role())` i stedet for `auth.role()` for bedre ytelse
+- ✅ Konsoliderer policies for å unngå multiple_permissive_policies warnings
 
 ## Verifisering
 
