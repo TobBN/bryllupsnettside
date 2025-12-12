@@ -1,8 +1,47 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { WeddingDetailsSectionProps } from '@/types';
 import { DecorativeLine } from './DecorativeLine';
+
+interface WeddingDetailsContent {
+  title: string;
+  venue: {
+    title: string;
+    description: string;
+    website: string;
+    websiteLabel: string;
+    address: string;
+    mapsLink: string;
+  };
+  dressCode: {
+    title: string;
+    general: string;
+    men: {
+      title: string;
+      description: string;
+    };
+    women: {
+      title: string;
+      description: string;
+    };
+    note: string;
+  };
+  gifts: {
+    title: string;
+    description: string;
+    links: Array<{
+      url: string;
+      label: string;
+    }>;
+    vipps: string;
+  };
+  food: {
+    title: string;
+    description: string;
+    allergyNote: string;
+  };
+}
 
 interface DetailBoxProps {
   title: string;
@@ -60,6 +99,14 @@ const DetailBox: React.FC<DetailBoxProps> = ({ title, icon, children, isExpanded
 
 export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () => {
   const [expandedBox, setExpandedBox] = useState<string | null>(null);
+  const [content, setContent] = useState<WeddingDetailsContent | null>(null);
+
+  useEffect(() => {
+    fetch('/api/content')
+      .then(res => res.json())
+      .then(data => setContent(data.weddingDetails))
+      .catch(err => console.error('Error loading wedding details content:', err));
+  }, []);
 
   const toggleBox = (title: string) => {
     if (expandedBox === title) setExpandedBox(null);
@@ -74,43 +121,43 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
           id="details-heading"
           className="text-4xl md:text-6xl leading-tight text-[#2D1B3D] mb-8 text-center"
         >
-          Selve dagen
+          {content?.title || 'Selve dagen'}
         </h2>
         <DecorativeLine className="mb-16" />
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           {/* Sted */}
           <DetailBox
-            title="Sted"
+            title={content?.venue.title || 'Sted'}
             icon={
               <svg className="w-12 h-12 text-[#2D1B3D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             }
-            isExpanded={expandedBox === 'Sted'}
-            onToggle={() => toggleBox('Sted')}
+            isExpanded={expandedBox === (content?.venue.title || 'Sted')}
+            onToggle={() => toggleBox(content?.venue.title || 'Sted')}
           >
             <div className="space-y-4">
               <p className="font-body text-[#4A2B5A] leading-relaxed">
-                Vielse og fest på Garder Østgaard i Halden
+                {content?.venue.description || 'Vielse og fest på Garder Østgaard i Halden'}
               </p>
               <div className="space-y-2">
                 <a 
-                  href="https://www.garder-ostgaard.no" 
+                  href={content?.venue.website || 'https://www.garder-ostgaard.no'} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="font-body text-[#E76F51] hover:text-[#2D1B3D] transition-colors block"
                 >
-                  www.garder-ostgaard.no
+                  {content?.venue.websiteLabel || 'www.garder-ostgaard.no'}
                 </a>
                 <a 
-                  href="https://maps.google.com/?q=Brødenveien+31,+1763+Halden" 
+                  href={content?.venue.mapsLink || 'https://maps.google.com/?q=Brødenveien+31,+1763+Halden'} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="font-body text-[#E76F51] hover:text-[#2D1B3D] transition-colors block"
                 >
-                  📍 Brødenveien 31, 1763 Halden
+                  📍 {content?.venue.address || 'Brødenveien 31, 1763 Halden'}
                 </a>
               </div>
             </div>
@@ -118,36 +165,36 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
 
           {/* Antrekk */}
           <DetailBox
-            title="Antrekk"
+            title={content?.dressCode.title || 'Antrekk'}
             icon={
               <svg className="w-12 h-12 text-[#2D1B3D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             }
-            isExpanded={expandedBox === 'Antrekk'}
-            onToggle={() => toggleBox('Antrekk')}
+            isExpanded={expandedBox === (content?.dressCode.title || 'Antrekk')}
+            onToggle={() => toggleBox(content?.dressCode.title || 'Antrekk')}
           >
             <div className="space-y-4">
-              <h4 className="text-xl leading-snug text-[#2D1B3D]">Mørk dress / sommerformell</h4>
+              <h4 className="text-xl leading-snug text-[#2D1B3D]">{content?.dressCode.general || 'Mørk dress / sommerformell'}</h4>
               
               <div className="space-y-3">
                 <div>
-                  <h5 className="font-body font-medium text-[#4A2B5A] mb-2">Herrer:</h5>
+                  <h5 className="font-body font-medium text-[#4A2B5A] mb-2">{content?.dressCode.men.title || 'Herrer:'}</h5>
                   <p className="font-body text-[#4A2B5A] leading-relaxed">
-                  Mørk dress, slips eller sløyfe, skjorte som tåler juli-varme. Lys sommerdress er lov hvis sola koker.
+                    {content?.dressCode.men.description || 'Mørk dress, slips eller sløyfe, skjorte som tåler juli-varme. Lys sommerdress er lov hvis sola koker.'}
                   </p>
                 </div>
                 
                 <div>
-                  <h5 className="font-body font-medium text-[#4A2B5A] mb-2">Damer:</h5>
+                  <h5 className="font-body font-medium text-[#4A2B5A] mb-2">{content?.dressCode.women.title || 'Damer:'}</h5>
                   <p className="font-body text-[#4A2B5A] leading-relaxed">
-                    Cocktailkjole, lang kjole eller en elegant sommerkjole – gjerne lett og sommerlig, men fortsatt pyntet.
+                    {content?.dressCode.women.description || 'Cocktailkjole, lang kjole eller en elegant sommerkjole – gjerne lett og sommerlig, men fortsatt pyntet.'}
                   </p>
                 </div>
                 
                 <div className="bg-[#F4D1D4]/20 p-3 rounded-lg">
                   <p className="font-body text-[#4A2B5A] leading-relaxed">
-                    <strong>Poenget:</strong> Pent, sommerlig og høytidelig. Kle deg så du ser bra ut på bilder, men fortsatt kan spise, drikke og danse hele kvelden.
+                    <strong>Poenget:</strong> {content?.dressCode.note || 'Pent, sommerlig og høytidelig. Kle deg så du ser bra ut på bilder, men fortsatt kan spise, drikke og danse hele kvelden.'}
                   </p>
                 </div>
               </div>
@@ -156,48 +203,35 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
 
           {/* Gaveønsker */}
           <DetailBox
-            title="Gaveønsker"
+            title={content?.gifts.title || 'Gaveønsker'}
             icon={
               <svg className="w-12 h-12 text-[#2D1B3D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             }
-            isExpanded={expandedBox === 'Gaveønsker'}
-            onToggle={() => toggleBox('Gaveønsker')}
+            isExpanded={expandedBox === (content?.gifts.title || 'Gaveønsker')}
+            onToggle={() => toggleBox(content?.gifts.title || 'Gaveønsker')}
           >
             <div className="space-y-4">
               <p className="font-body text-[#4A2B5A] leading-relaxed">
-                Vi blir både glade for gaver fra ønskelisten og pengebidrag til vår bryllupsreise
+                {content?.gifts.description || 'Vi blir både glade for gaver fra ønskelisten og pengebidrag til vår bryllupsreise'}
               </p>
               <div className="space-y-2">
-                <a 
-                  href="https://www.onsk.no" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="font-body text-[#E76F51] hover:text-[#2D1B3D] transition-colors block"
-                >
-                  🎁 Ønskeliste fra Onsk.no
-                </a>
-                <a 
-                  href="https://www.vinmonopolet.no"
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="font-body text-[#E76F51] hover:text-[#2D1B3D] transition-colors block"
-                >
-                  🍷 Vin fra Vinmonopolet
-                </a>
-                <a 
-                  href="https://stas.app" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="font-body text-[#E76F51] hover:text-[#2D1B3D] transition-colors block"
-                >
-                  🏠 Alternativ 3 (stas.app)
-                </a>
+                {content?.gifts.links.map((link, index) => (
+                  <a 
+                    key={index}
+                    href={link.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="font-body text-[#E76F51] hover:text-[#2D1B3D] transition-colors block"
+                  >
+                    {link.label}
+                  </a>
+                ))}
                 <div className="pt-2 border-t border-[#E8B4B8]/30">
                   <p className="font-body text-[#4A2B5A]">
-                    💰 <strong>Vipps:</strong> til bryllupsreise
+                    {content?.gifts.vipps || '💰 Vipps: til bryllupsreise'}
                   </p>
                 </div>
               </div>
@@ -206,22 +240,22 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
 
           {/* Mat */}
           <DetailBox
-            title="Mat"
+            title={content?.food.title || 'Mat'}
             icon={
               <svg className="w-12 h-12 text-[#2D1B3D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 3v18M8 3v18M20 3v10a4 4 0 01-4 4h-4" />
               </svg>
             }
-            isExpanded={expandedBox === 'Mat'}
-            onToggle={() => toggleBox('Mat')}
+            isExpanded={expandedBox === (content?.food.title || 'Mat')}
+            onToggle={() => toggleBox(content?.food.title || 'Mat')}
           >
             <div className="space-y-4">
               <p className="font-body text-[#4A2B5A] leading-relaxed">
-                Meny kommer...
+                {content?.food.description || 'Meny kommer...'}
               </p>
               <div className="pt-2 border-t border-[#E8B4B8]/30">
                 <p className="font-small text-[#6B7280] italic">
-                  * Allergier meldes fra om i RSVP
+                  {content?.food.allergyNote || '* Allergier meldes fra om i RSVP'}
                 </p>
               </div>
             </div>

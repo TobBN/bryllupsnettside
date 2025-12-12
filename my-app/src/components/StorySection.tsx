@@ -1,9 +1,21 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StorySectionProps } from '@/types';
 import { DecorativeLine } from './DecorativeLine';
+
+interface TimelineItem {
+  date: string;
+  title: string;
+  text: string;
+}
+
+interface StoryContent {
+  title: string;
+  subtitle: string;
+  timeline: TimelineItem[];
+}
 
 interface ImageModalProps {
   src: string;
@@ -52,6 +64,14 @@ const ImageModal: React.FC<ImageModalProps> = ({ src, alt, isOpen, onClose }) =>
 
 export const StorySection: React.FC<StorySectionProps> = () => {
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null);
+  const [content, setContent] = useState<StoryContent | null>(null);
+
+  useEffect(() => {
+    fetch('/api/content')
+      .then(res => res.json())
+      .then(data => setContent(data.story))
+      .catch(err => console.error('Error loading story content:', err));
+  }, []);
 
   const storyImages = [
     { src: "/images/story-1.jpg", alt: "Alexandra og Tobias", position: "center 30%" },
@@ -60,16 +80,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
     { src: "/images/story-4.jpg", alt: "Alexandra og Tobias", position: "center 40%" }
   ];
 
-  const timeline = [
-    { date: "Våren 2016", title: "Vi møttes", text: "En solfull dag i Son – en gåtur, en nedlagt jernbanelinje langs sjøen, og en klem som ble starten på alt." },
-    { date: "Sommeren 2018", title: "Vår nye hverdag", text: "Midnattsol og mørketid, familieliv og små eventyr som gjorde oss til verdens beste team." },
-    { date: "September 2018", title: "Familien øker", text: "Leah, vårt første barn, kommer til verden og sammen er vi nå tre." },
-    { date: "Oktober 2019", title: "Familien øker igjen", text: "Lucas kommer som nummer to, lykken er stor og søvnmangelen merkes." },
-    { date: "Mars 2021", title: "Familien øker enda en gang", text: "Live ankommer familien som en virvelvind, vi er nå fem i huset." },
-    { date: "Oktober 2022", title: "Forlovelsen", text: "Et «ja» på bursdagen til Alexandra, med barna rundt oss, og utsikt over vannet og fremtiden." },
-    { date: "Juli 2024", title: "Hjemkomsten", text: "Vi flytter tilbake til Sør-Norge, og begynner å bygge vårt nye liv her." },
-    { date: "Sommeren 2026", title: "Bryllup", text: "Vi gleder oss til å feire kjærligheten sammen med dere alle." }
-  ];
+  const timeline = content?.timeline || [];
 
   const handleImageClick = (src: string, alt: string) => setSelectedImage({ src, alt });
   const closeModal = () => setSelectedImage(null);
@@ -82,10 +93,10 @@ export const StorySection: React.FC<StorySectionProps> = () => {
       <div className="container mx-auto px-4 relative z-10">
         <DecorativeLine className="mb-8" />
         <h2 id="story-heading" className="text-4xl md:text-6xl lg:text-7xl leading-tight text-[#2D1B3D] mb-6 text-center" style={{ fontFamily: 'Parisienne, cursive' }}>
-          Vår historie
+          {content?.title || 'Vår historie'}
         </h2>
         <p className="font-body text-lg md:text-xl text-[#4A2B5A]/90 max-w-3xl mx-auto text-center mb-14 leading-[1.9]">
-          Et lite tilbakeblikk på vår reise sammen
+          {content?.subtitle || 'Et lite tilbakeblikk på vår reise sammen'}
         </p>
         <DecorativeLine className="mb-12" />
 

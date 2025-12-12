@@ -1,0 +1,28 @@
+{
+  "common": {
+    "loading": "Laster bryllupsnettside...",
+    "scrollToTop": "Rull til toppen"
+  },
+  "countdown": {
+    "days": "Dager",
+    "hours": "Timer",
+    "minutes": "Minutter",
+    "seconds": "Sekunder"
+  },
+  "hero": {
+    "saveTheDate": "Save the date",
+    "weAreGettingMarried": "Vi gifter oss den",
+    "welcomeToWedding": "Velkommen til bryllup",
+    "weddingApproaching": "Bryllupet nærmer seg",
+    "date": "24. juli 2026",
+    "location": "Østgaard, Halden"
+  },
+  "footer": {
+    "heading": "Alexandra & Tobias",
+    "tagline": "Vi gleder oss til å dele denne spesielle dagen med dere 👩‍❤️‍💋‍👨",
+    "contact": "Kontakt",
+    "copyright": "© {year} Alexandra & Tobias. Alle rettigheter forbeholdt.",
+    "madeWith": "Laget med ❤️ fra Saltnes",
+    "language": "Språk"
+  }
+}

@@ -5,12 +5,27 @@ import { CountdownTimer } from './CountdownTimer';
 import { HeroSectionProps } from '@/types';
 import { useTranslations } from 'next-intl';
 
+interface HeroContent {
+  date: string;
+  location: string;
+  names: {
+    bride: string;
+    groom: string;
+  };
+}
+
 export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
   const [mounted, setMounted] = useState(false);
+  const [content, setContent] = useState<HeroContent | null>(null);
   const t = useTranslations('hero');
 
   useEffect(() => {
     setMounted(true);
+    // Fetch content from API
+    fetch('/api/content')
+      .then(res => res.json())
+      .then(data => setContent(data.hero))
+      .catch(err => console.error('Error loading hero content:', err));
   }, []);
 
   // Determine greeting text based on days until wedding
@@ -71,9 +86,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 
                          font-semibold text-white drop-shadow-lg text-center mb-3 sm:mb-4"
               style={{ fontFamily: 'Parisienne, cursive' }}>
-            <span className="inline-block">Alexandra</span>
+            <span className="inline-block">{content?.names.bride || 'Alexandra'}</span>
             <span className="inline-block mx-2 sm:mx-3 md:mx-4 text-[#E8B4B8]">&</span>
-            <span className="inline-block">Tobias</span>
+            <span className="inline-block">{content?.names.groom || 'Tobias'}</span>
           </h1>
 
           {/* Date and location - consistent scaling */}
@@ -82,10 +97,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
               {getGreetingText()}
             </p>
             <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium">
-              {t('date')}
+              {content?.date || t('date')}
             </p>
             <p className="text-sm sm:text-base md:text-lg">
-              {t('location')}
+              {content?.location || t('location')}
             </p>
           </div>
 
