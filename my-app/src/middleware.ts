@@ -21,9 +21,7 @@ function getSupabaseOrigin(): string | null {
 export function middleware(request: NextRequest) {
   const nonce = generateNonce();
   const supabaseOrigin = getSupabaseOrigin();
-  const isProd = process.env.NODE_ENV === 'production';
-
-  // Propagate nonce to Next.js
+    // Propagate nonce to Next.js
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-nonce', nonce);
 
@@ -42,9 +40,7 @@ export function middleware(request: NextRequest) {
   // - No unsafe-inline/unsafe-eval in production
   // - No broad scheme allowlist like img-src https:
   const connectSrc = ["'self'", supabaseOrigin].filter(Boolean).join(' ');
-  const scriptSrc = isProd
-    ? ["'self'", 'unsafe-inline' 'unsafe-eval'].join(' ')
-    : ["'self'", 'unsafe-inline' 'unsafe-eval', "'unsafe-eval'"].join(' '); // dev-only HMR convenience
+  const scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval'";
 
   const csp = [
     "default-src 'self'",
