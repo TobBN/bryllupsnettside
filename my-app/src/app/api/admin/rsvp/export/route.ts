@@ -44,14 +44,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Transform data for Excel
+    // Transform data for Excel - only include fields that are actually used in the form
     const excelData = (rsvps || []).map((rsvp) => ({
+      'Kommer?': rsvp.response === 'yes' ? 'Ja' : rsvp.response === 'no' ? 'Nei' : 'Kanskje',
       Navn: rsvp.name || '',
       Telefon: rsvp.phone || '-',
-      Email: rsvp.email || '-',
-      Svar: rsvp.response === 'yes' ? 'Ja' : rsvp.response === 'no' ? 'Nei' : 'Kanskje',
       Allergier: rsvp.allergies || '-',
-      Melding: rsvp.message || '-',
       Dato: rsvp.created_at ? new Date(rsvp.created_at).toLocaleDateString('no-NO') : '-',
       Tid: rsvp.created_at ? new Date(rsvp.created_at).toLocaleTimeString('no-NO') : '-',
     }));
@@ -62,12 +60,10 @@ export async function GET(request: NextRequest) {
 
     // Set column widths
     worksheet['!cols'] = [
+      { wch: 12 }, // Kommer?
       { wch: 25 }, // Navn
       { wch: 15 }, // Telefon
-      { wch: 30 }, // Email
-      { wch: 10 }, // Svar
       { wch: 30 }, // Allergier
-      { wch: 40 }, // Melding
       { wch: 12 }, // Dato
       { wch: 10 }, // Tid
     ];
