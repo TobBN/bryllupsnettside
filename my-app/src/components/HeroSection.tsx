@@ -64,9 +64,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
         <div
           className={`relative z-20 mx-4 w-full
           max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl
-          rounded-2xl bg-white/25 backdrop-blur-sm
+          rounded-2xl bg-white/20 backdrop-blur-sm
           p-6 sm:p-8 md:p-10 lg:p-12
-          shadow-2xl transition-all duration-700 motion-reduce:transition-none ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"} motion-reduce:translate-y-0`}
+          shadow-2xl transition-all duration-700 motion-reduce:transition-none motion-reduce:transform-none ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"} motion-reduce:translate-y-0`}
         >
           {/* Decorative line - scales with container */}
           <div className="w-16 sm:w-20 md:w-24 lg:w-32 h-0.5 sm:h-1 
