@@ -1,8 +1,12 @@
 # Vercel Miljøvariabel Setup
 
-## ADMIN_PASSWORD
+## ADMIN_PASSWORD (Påkrevd)
 
 For å kunne bruke admin-siden (`/admin`), må du sette opp miljøvariabelen `ADMIN_PASSWORD` i Vercel.
+
+## COOKIE_SECRET (Anbefalt)
+
+For bedre sikkerhet, sett også opp `COOKIE_SECRET` for å signere cookies. Hvis ikke satt, brukes `ADMIN_PASSWORD` som fallback.
 
 ### Generert passord
 **Passord:** `M5yTeFdRGP4nLB7ncugcmg4KB`

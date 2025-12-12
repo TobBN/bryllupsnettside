@@ -1,29 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { existsSync } from 'fs';
+import { verifyCookie, validateContentStructure, logSecurityEvent, getClientIdentifier } from '@/lib/security';
 
 const CONTENT_FILE_PATH = join(process.cwd(), 'data', 'content.json');
-const LOG_PATH = join(process.cwd(), '.cursor', 'debug.log');
 
-// Helper to verify admin session
+// Helper to verify admin session with signed cookie
 function isAuthenticated(request: NextRequest): boolean {
   const session = request.cookies.get('admin_session');
-  // #region agent log
-  try { appendFileSync(LOG_PATH, JSON.stringify({location:'api/content/route.ts:12',message:'isAuthenticated check',data:{hasSession:!!session,sessionValue:session?.value,isAuthenticated:session?.value === 'authenticated'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n'); } catch {}
-  // #endregion
-  return session?.value === 'authenticated';
+  
+  if (!session?.value) {
+    return false;
+  }
+  
+  // Verify signed cookie
+  const verifiedValue = verifyCookie(session.value);
+  return verifiedValue === 'authenticated';
 }
 
 export async function GET(request: NextRequest) {
-  // #region agent log
-  try { appendFileSync(LOG_PATH, JSON.stringify({location:'api/content/route.ts:19',message:'GET /api/content called',data:{hasAuthCheck:false},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n'); } catch {}
-  // #endregion
+  // GET endpoint is public (used by website components)
+  // No authentication required for reading content
   try {
     const content = readFileSync(CONTENT_FILE_PATH, 'utf-8');
-    // #region agent log
-    try { appendFileSync(LOG_PATH, JSON.stringify({location:'api/content/route.ts:23',message:'GET returning content without auth check',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n'); } catch {}
-    // #endregion
     return NextResponse.json(JSON.parse(content));
   } catch (error) {
     console.error('Error reading content:', error);
@@ -35,8 +35,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const clientId = getClientIdentifier(request);
+  
   // Check authentication
   if (!isAuthenticated(request)) {
+    logSecurityEvent('unauthorized_content_update', { clientId }, 'warning');
     return NextResponse.json(
       { error: 'Ikke autentisert' },
       { status: 401 }
@@ -48,8 +51,18 @@ export async function POST(request: NextRequest) {
     
     // Validate that body is an object
     if (!body || typeof body !== 'object') {
+      logSecurityEvent('invalid_content_format', { clientId }, 'warning');
       return NextResponse.json(
         { error: 'Ugyldig dataformat' },
+        { status: 400 }
+      );
+    }
+
+    // Validate content structure
+    if (!validateContentStructure(body)) {
+      logSecurityEvent('invalid_content_structure', { clientId }, 'warning');
+      return NextResponse.json(
+        { error: 'Ugyldig innholdsstruktur' },
         { status: 400 }
       );
     }
@@ -63,8 +76,10 @@ export async function POST(request: NextRequest) {
     // Write to file
     writeFileSync(CONTENT_FILE_PATH, JSON.stringify(body, null, 2), 'utf-8');
     
+    logSecurityEvent('content_updated', { clientId }, 'info');
     return NextResponse.json({ success: true });
   } catch (error) {
+    logSecurityEvent('content_update_error', { clientId, error: String(error) }, 'error');
     console.error('Error writing content:', error);
     return NextResponse.json(
       { error: 'Kunne ikke lagre innhold' },
