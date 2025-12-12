@@ -2,8 +2,8 @@
 
 import {ReactNode, createContext, useContext, useState} from 'react';
 import {NextIntlClientProvider} from 'next-intl';
-import no from '../../public/locales/no.json';
-import en from '../../public/locales/en.json';
+import no from '@/locales/no.json';
+import en from '@/locales/en.json';
 
 const messages = {no, en} as const;
 type Locale = keyof typeof messages;
