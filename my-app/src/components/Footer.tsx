@@ -24,6 +24,7 @@ export const Footer: React.FC<FooterProps> = () => {
   const currentYear = new Date().getFullYear();
   const t = useTranslations('footer');
   const [content, setContent] = useState<FooterContent | null>(null);
+  const [showContact, setShowContact] = useState(false);
 
   useEffect(() => {
     fetch('/api/content')
@@ -56,10 +57,25 @@ export const Footer: React.FC<FooterProps> = () => {
             </a>
           </nav>
 
-          {/* Compact contact line */}
-          <p className="font-body text-sm text-white/70">
-            {content?.contact.title || t('contact')}: {content?.contact.bride.name || 'Alexandra'} ({content?.contact.bride.phone || '+47 950 20 606'}) • {content?.contact.groom.name || 'Tobias'} ({content?.contact.groom.phone || '+47 905 95 348'})
-          </p>
+          {/* Contact info - clickable */}
+          <div className="space-y-2">
+            <p className="font-body text-sm text-white/80">
+              Ta kontakt med oss direkte for spørsmål
+            </p>
+            <button
+              onClick={() => setShowContact(!showContact)}
+              className="font-body text-sm text-white/70 hover:text-white transition-colors underline cursor-pointer"
+              aria-expanded={showContact}
+              aria-label={showContact ? 'Skjul kontaktinformasjon' : 'Vis kontaktinformasjon'}
+            >
+              {showContact ? 'Skjul kontaktinfo' : 'Vis kontaktinfo'}
+            </button>
+            {showContact && (
+              <p className="font-body text-sm text-white/70 mt-2">
+                {content?.contact.bride.name || 'Alexandra'}: {content?.contact.bride.phone || '+47 950 20 606'} • {content?.contact.groom.name || 'Tobias'}: {content?.contact.groom.phone || '+47 905 95 348'}
+              </p>
+            )}
+          </div>
           
           {/* Copyright */}
           <div className="text-center">

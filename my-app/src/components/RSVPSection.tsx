@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { RSVPSectionProps } from '@/types';
 import { DecorativeLine } from './DecorativeLine';
 
@@ -15,6 +15,31 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Handle hash navigation for QR code direct access
+  useEffect(() => {
+    const handleHashNavigation = () => {
+      if (window.location.hash === '#rsvp') {
+        const rsvpElement = document.getElementById('rsvp');
+        if (rsvpElement) {
+          // Small delay to ensure page is fully loaded
+          setTimeout(() => {
+            rsvpElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        }
+      }
+    };
+
+    // Check on mount
+    handleHashNavigation();
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashNavigation);
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashNavigation);
+    };
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -50,7 +75,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
 
         setIsSubmitted(true);
         setFormData({ name: '', phone: '', allergies: '' });
-        setIsAttending(null);
+        // Keep isAttending to show correct heading after submission
         setShowForm(false);
         setSubmitError(null);
       } catch (error) {
@@ -126,10 +151,6 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="bg-white/80 backdrop-blur-md rounded-3xl p-8 md:p-10 border border-[#E8B4B8]/30 shadow-2xl">
-                  <h3 className="text-3xl md:text-4xl text-[#2D1B3D] mb-8 text-center">
-                    {isAttending ? '🎉 Vi gleder oss til å se deg!' : '💝 Vi forstår, takk for svar'}
-                  </h3>
-                  
                   <div className="space-y-6">
                     <div>
                       <label htmlFor="name" className="block font-body font-medium text-[#4A2B5A] mb-3 text-lg">
@@ -230,9 +251,9 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
         ) : (
           <div className="max-w-3xl mx-auto text-center">
             <div className="bg-white/80 backdrop-blur-md rounded-3xl p-10 border border-[#E8B4B8]/30 shadow-2xl">
-              <div className="text-8xl mb-8">🎉</div>
+              <div className="text-8xl mb-8">{isAttending ? '🎉' : '💝'}</div>
               <h3 className="text-3xl md:text-4xl text-[#2D1B3D] mb-6">
-                Takk for svar!
+                {isAttending ? '🎉 Vi gleder oss til å se deg!' : '💝 Vi forstår, takk for svar'}
               </h3>
               <p className="font-body text-xl text-[#4A2B5A] leading-relaxed mb-8">
                 {isAttending 

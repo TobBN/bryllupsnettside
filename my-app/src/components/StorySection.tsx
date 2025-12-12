@@ -86,16 +86,16 @@ export const StorySection: React.FC<StorySectionProps> = () => {
   const closeModal = () => setSelectedImage(null);
 
   return (
-    <section id="our-story" className="py-24 md:py-32 bg-gradient-to-b from-[#F4D1D4]/25 via-[#FEFAE0]/60 to-[#E8B4B8]/25 relative overflow-hidden">
-      <div className="absolute inset-0 bg-pattern-romantic opacity-20"></div>
-      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#2D1B3D]/10 to-transparent pointer-events-none"></div>
+    <section id="our-story" className="py-24 md:py-32 bg-gradient-to-b from-[#F4D1D4]/20 via-[#FEFAE0]/50 to-[#E8B4B8]/20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-pattern-romantic opacity-15"></div>
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#2D1B3D]/5 to-transparent pointer-events-none"></div>
       
       <div className="container mx-auto px-4 relative z-10">
         <DecorativeLine className="mb-8" />
-        <h2 id="story-heading" className="text-4xl md:text-6xl lg:text-7xl leading-tight text-[#2D1B3D] mb-6 text-center">
+        <h2 id="story-heading" className="text-4xl md:text-6xl lg:text-7xl leading-tight text-[#2D1B3D] mb-6 text-center drop-shadow-sm">
           {content?.title || 'Vår historie'}
         </h2>
-        <p className="font-body text-lg md:text-xl text-[#4A2B5A]/90 max-w-3xl mx-auto text-center mb-14 leading-[1.9]">
+        <p className="font-body text-lg md:text-xl text-[#4A2B5A] max-w-3xl mx-auto text-center mb-14 leading-[1.9] drop-shadow-sm">
           {content?.subtitle || 'Et lite tilbakeblikk på vår reise sammen'}
         </p>
         <DecorativeLine className="mb-12" />
@@ -105,9 +105,9 @@ export const StorySection: React.FC<StorySectionProps> = () => {
             {timeline.map((item, idx) => (
               <li key={idx} className="mb-10 ml-2">
                 <span className="absolute -left-3 mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-[#E8B4B8] to-[#F4A261] shadow-velvet"></span>
-                <p className="font-small text-[#6B7280] mb-1">{item.date}</p>
-                <h3 className="text-2xl md:text-3xl leading-snug text-[#2D1B3D] mb-2">{item.title}</h3>
-                <p className="font-body text-[#4A2B5A] leading-[1.9]">{item.text}</p>
+                <p className="font-small text-[#4A2B5A] mb-1 font-medium">{item.date}</p>
+                <h3 className="text-2xl md:text-3xl leading-snug text-[#2D1B3D] mb-2 drop-shadow-sm">{item.title}</h3>
+                <p className="font-body text-[#2D1B3D]/90 leading-[1.9] drop-shadow-sm">{item.text}</p>
               </li>
             ))}
           </ol>
