@@ -65,6 +65,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ src, alt, isOpen, onClose }) =>
 export const StorySection: React.FC<StorySectionProps> = () => {
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null);
   const [content, setContent] = useState<StoryContent | null>(null);
+  const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     fetch('/api/content')
@@ -85,6 +86,18 @@ export const StorySection: React.FC<StorySectionProps> = () => {
   const handleImageClick = (src: string, alt: string) => setSelectedImage({ src, alt });
   const closeModal = () => setSelectedImage(null);
 
+  const toggleItem = (index: number) => {
+    setExpandedItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
+
   return (
     <section id="our-story" className="py-24 md:py-32 bg-gradient-to-b from-[#F4D1D4]/20 via-[#FEFAE0]/50 to-[#E8B4B8]/20 relative overflow-hidden">
       <div className="absolute inset-0 bg-pattern-romantic opacity-15"></div>
@@ -102,14 +115,44 @@ export const StorySection: React.FC<StorySectionProps> = () => {
 
         <div className="grid md:grid-cols-2 gap-16 items-start">
           <ol className="relative border-l-2 border-[#E8B4B8]/50 pl-6">
-            {timeline.map((item, idx) => (
-              <li key={idx} className="mb-10 ml-2">
-                <span className="absolute -left-3 mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-[#E8B4B8] to-[#F4A261] shadow-velvet"></span>
-                <p className="font-small text-[#4A2B5A] mb-1 font-medium">{item.date}</p>
-                <h3 className="text-2xl md:text-3xl leading-snug text-[#2D1B3D] mb-2 drop-shadow-sm">{item.title}</h3>
-                <p className="font-body text-[#2D1B3D]/90 leading-[1.9] drop-shadow-sm">{item.text}</p>
-              </li>
-            ))}
+            {timeline.map((item, idx) => {
+              const isExpanded = expandedItems.has(idx);
+              return (
+                <li key={idx} className="mb-10 ml-2">
+                  <span className="absolute -left-3 mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-[#E8B4B8] to-[#F4A261] shadow-velvet"></span>
+                  <button
+                    onClick={() => toggleItem(idx)}
+                    className="w-full text-left focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]/50 rounded-lg p-2 -ml-2 transition-colors hover:bg-[#E8B4B8]/10"
+                    aria-expanded={isExpanded}
+                    aria-controls={`timeline-content-${idx}`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="font-small text-[#4A2B5A] mb-1 font-medium">{item.date}</p>
+                        <h3 className="text-2xl md:text-3xl leading-snug text-[#2D1B3D] drop-shadow-sm">{item.title}</h3>
+                      </div>
+                      <svg
+                        className={`w-6 h-6 text-[#2D1B3D] transition-transform duration-300 flex-shrink-0 ml-4 ${isExpanded ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </button>
+                  <div
+                    id={`timeline-content-${idx}`}
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                      isExpanded ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <p className="font-body text-[#2D1B3D]/90 leading-[1.9] drop-shadow-sm pl-2">{item.text}</p>
+                  </div>
+                </li>
+              );
+            })}
           </ol>
 
           <div role="img" aria-label="Bilder fra vår historie" className="grid grid-cols-2 gap-6">
