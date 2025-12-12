@@ -120,7 +120,7 @@ export default function Home() {
       )}
 
       {/* Main content */}
-      <main className={isLoaded ? 'opacity-100' : 'opacity-0'} style={{ transition: 'opacity 0.5s ease-in-out' }}>
+      <main className={`${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 ease-in-out`}>
         <HeroSection timeLeft={timeLeft} />
         <div className="h-8 bg-gradient-to-b from-transparent via-[#F4D1D4]/10 to-transparent" />
         <StorySection />
