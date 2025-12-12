@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function DELETE(request: NextRequest) {
+export async function DELETE() {
   const response = NextResponse.json({ success: true });
   response.cookies.delete('admin_session');
   return response;

@@ -82,7 +82,6 @@ export default function AdminPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [content, setContent] = useState<ContentData | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     // Check if already authenticated
@@ -97,7 +96,7 @@ export default function AdminPage() {
       if (response.ok) {
         setIsAuthenticated(true);
       }
-    } catch (e) {
+    } catch {
       setIsAuthenticated(false);
     }
   };
@@ -109,8 +108,8 @@ export default function AdminPage() {
         const data = await response.json();
         setContent(data);
       }
-    } catch (e) {
-      console.error('Error loading content:', e);
+    } catch (error) {
+      console.error('Error loading content:', error);
     }
   };
 
@@ -135,7 +134,7 @@ export default function AdminPage() {
       } else {
         setError(data.error || 'Ugyldig passord');
       }
-    } catch (e) {
+    } catch {
       setError('Feil ved innlogging');
     } finally {
       setLoading(false);
@@ -147,8 +146,8 @@ export default function AdminPage() {
       await fetch('/api/admin/auth', { method: 'DELETE' });
       setIsAuthenticated(false);
       setContent(null);
-    } catch (e) {
-      console.error('Logout error:', e);
+    } catch (error) {
+      console.error('Logout error:', error);
     }
   };
 
@@ -173,17 +172,18 @@ export default function AdminPage() {
         const data = await response.json();
         setError(data.error || 'Kunne ikke lagre');
       }
-    } catch (e) {
+    } catch {
       setError('Feil ved lagring');
     } finally {
       setLoading(false);
     }
   };
 
-  const updateContent = (path: string[], value: any) => {
+  const updateContent = (path: string[], value: unknown) => {
     if (!content) return;
     
     const newContent = { ...content };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let current: any = newContent;
     
     for (let i = 0; i < path.length - 1; i++) {
