@@ -7,9 +7,14 @@
 -- ============================================
 DROP POLICY IF EXISTS "Allow public read access" ON website_content;
 DROP POLICY IF EXISTS "Allow service role write access" ON website_content;
+DROP POLICY IF EXISTS "Allow service role insert access" ON website_content;
+DROP POLICY IF EXISTS "Allow service role update access" ON website_content;
+DROP POLICY IF EXISTS "Allow service role delete access" ON website_content;
 DROP POLICY IF EXISTS "Allow public insert" ON rsvps;
 DROP POLICY IF EXISTS "Allow service role read access" ON rsvps;
 DROP POLICY IF EXISTS "Allow service role write access" ON rsvps;
+DROP POLICY IF EXISTS "Allow service role update access" ON rsvps;
+DROP POLICY IF EXISTS "Allow service role delete access" ON rsvps;
 
 -- ============================================
 -- 2. Enable Row Level Security (RLS) on website_content
@@ -21,12 +26,20 @@ CREATE POLICY "Allow public read access" ON website_content
   FOR SELECT
   USING (true);
 
--- Policy: Only service role can write (via API with service_role key)
--- Using (select auth.role()) for better performance (fixes auth_rls_initplan warning)
-CREATE POLICY "Allow service role write access" ON website_content
-  FOR ALL
+-- Policy: Only service role can insert/update/delete
+-- Separate from SELECT to avoid multiple_permissive_policies warning
+CREATE POLICY "Allow service role insert access" ON website_content
+  FOR INSERT
+  WITH CHECK ((select auth.role()) = 'service_role');
+
+CREATE POLICY "Allow service role update access" ON website_content
+  FOR UPDATE
   USING ((select auth.role()) = 'service_role')
   WITH CHECK ((select auth.role()) = 'service_role');
+
+CREATE POLICY "Allow service role delete access" ON website_content
+  FOR DELETE
+  USING ((select auth.role()) = 'service_role');
 
 -- ============================================
 -- 3. Enable Row Level Security (RLS) on rsvps
