@@ -75,6 +75,18 @@ interface ContentData {
   };
 }
 
+interface RSVPItem {
+  id: string;
+  response: string;
+  responseRaw: 'yes' | 'no' | 'maybe';
+  name: string;
+  phone: string;
+  allergies: string;
+  createdAt: string;
+  dateFormatted: string;
+  timeFormatted: string;
+}
+
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
@@ -82,6 +94,9 @@ export default function AdminPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [content, setContent] = useState<ContentData | null>(null);
+  const [rsvps, setRsvps] = useState<RSVPItem[]>([]);
+  const [rsvpsLoading, setRsvpsLoading] = useState(false);
+  const [showRsvpList, setShowRsvpList] = useState(false);
 
   useEffect(() => {
     // Check if already authenticated
@@ -204,6 +219,41 @@ export default function AdminPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadRsvps = async () => {
+    setRsvpsLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/admin/rsvp/list');
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.error || 'Kunne ikke hente RSVP-data');
+        setRsvpsLoading(false);
+        return;
+      }
+
+      const result = await response.json();
+      if (result.success && result.data) {
+        setRsvps(result.data);
+      } else {
+        setError('Kunne ikke hente RSVP-data');
+      }
+    } catch {
+      setError('Feil ved henting av RSVP-data');
+    } finally {
+      setRsvpsLoading(false);
+    }
+  };
+
+  const handleToggleRsvpList = () => {
+    if (!showRsvpList && rsvps.length === 0) {
+      // Load RSVPs when showing list for the first time
+      loadRsvps();
+    }
+    setShowRsvpList(!showRsvpList);
   };
 
   const handleExportRSVP = async () => {
@@ -870,27 +920,116 @@ export default function AdminPage() {
           <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
             <h2 className="text-2xl font-bold text-[#2D1B3D] mb-4">RSVP Eksport</h2>
             <p className="text-sm text-[#4A2B5A] mb-4">
-              Last ned alle RSVP-svar som Excel-fil (.xlsx)
+              Se alle RSVP-svar i listen eller last ned som Excel-fil (.xlsx)
             </p>
-            <button
-              onClick={handleExportRSVP}
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-[#4A2B5A] to-[#2D1B3D] text-white py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-semibold flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Eksporterer...</span>
-                </>
-              ) : (
-                <>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <span>Last ned RSVP-svar (Excel)</span>
-                </>
-              )}
-            </button>
+            
+            <div className="flex gap-3 mb-4">
+              <button
+                onClick={handleToggleRsvpList}
+                disabled={rsvpsLoading}
+                className="flex-1 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-semibold flex items-center justify-center gap-2"
+              >
+                {rsvpsLoading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Laster...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg 
+                      className={`w-5 h-5 transition-transform ${showRsvpList ? 'rotate-180' : ''}`} 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                    <span>{showRsvpList ? 'Skjul RSVP-liste' : 'Vis RSVP-liste'}</span>
+                  </>
+                )}
+              </button>
+              
+              <button
+                onClick={handleExportRSVP}
+                disabled={loading}
+                className="flex-1 bg-gradient-to-r from-[#4A2B5A] to-[#2D1B3D] text-white py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-semibold flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Eksporterer...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span>Last ned Excel</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* RSVP List Table */}
+            {showRsvpList && (
+              <div className="mt-6">
+                {rsvpsLoading ? (
+                  <div className="text-center py-8">
+                    <div className="w-12 h-12 border-4 border-[#E8B4B8] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-[#4A2B5A]">Laster RSVP-data...</p>
+                  </div>
+                ) : rsvps.length === 0 ? (
+                  <div className="text-center py-8 text-[#4A2B5A]">
+                    <p>Ingen RSVP-svar registrert ennå.</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-[#F4D1D4] text-[#2D1B3D]">
+                          <th className="px-4 py-3 text-left font-semibold border border-[#E8B4B8]">Kommer?</th>
+                          <th className="px-4 py-3 text-left font-semibold border border-[#E8B4B8]">Navn</th>
+                          <th className="px-4 py-3 text-left font-semibold border border-[#E8B4B8]">Telefon</th>
+                          <th className="px-4 py-3 text-left font-semibold border border-[#E8B4B8]">Allergier</th>
+                          <th className="px-4 py-3 text-left font-semibold border border-[#E8B4B8]">Dato og tid</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rsvps.map((rsvp, index) => (
+                          <tr 
+                            key={rsvp.id} 
+                            className={index % 2 === 0 ? 'bg-white' : 'bg-[#FEFAE0]/50'}
+                          >
+                            <td className="px-4 py-3 border border-[#E8B4B8]">
+                              <span 
+                                className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                                  rsvp.responseRaw === 'yes' 
+                                    ? 'bg-green-100 text-green-800' 
+                                    : rsvp.responseRaw === 'no'
+                                    ? 'bg-red-100 text-red-800'
+                                    : 'bg-yellow-100 text-yellow-800'
+                                }`}
+                              >
+                                {rsvp.response}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 border border-[#E8B4B8] text-[#2D1B3D]">{rsvp.name}</td>
+                            <td className="px-4 py-3 border border-[#E8B4B8] text-[#4A2B5A]">{rsvp.phone}</td>
+                            <td className="px-4 py-3 border border-[#E8B4B8] text-[#4A2B5A]">{rsvp.allergies}</td>
+                            <td className="px-4 py-3 border border-[#E8B4B8] text-[#4A2B5A]">
+                              {rsvp.dateFormatted} {rsvp.timeFormatted}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    <p className="text-sm text-[#4A2B5A] mt-4 text-center">
+                      Totalt {rsvps.length} {rsvps.length === 1 ? 'svar' : 'svar'}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </section>
 
           {/* Save Button */}
