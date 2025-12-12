@@ -1,9 +1,9 @@
--- Security Fixes for Supabase Database
--- Run this AFTER the initial migration (supabase_migration_complete.sql)
--- This fixes critical security issues found by Supabase Database Linter
+-- Optimized Security Fixes for Supabase Database
+-- Run this to fix performance warnings from Database Linter
+-- This replaces the previous security_fix.sql with optimized policies
 
 -- ============================================
--- 1. Drop old policies first (if they exist from previous migration)
+-- 1. Drop old policies (if they exist)
 -- ============================================
 DROP POLICY IF EXISTS "Allow public read access" ON website_content;
 DROP POLICY IF EXISTS "Allow service role write access" ON website_content;
@@ -17,12 +17,13 @@ DROP POLICY IF EXISTS "Allow service role write access" ON rsvps;
 ALTER TABLE website_content ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Allow public read access (for website components)
+-- Using (select auth.role()) for better performance
 CREATE POLICY "Allow public read access" ON website_content
   FOR SELECT
   USING (true);
 
 -- Policy: Only service role can write (via API with service_role key)
--- Using (select auth.role()) for better performance (fixes auth_rls_initplan warning)
+-- Using (select auth.role()) for better performance
 CREATE POLICY "Allow service role write access" ON website_content
   FOR ALL
   USING ((select auth.role()) = 'service_role')
@@ -34,20 +35,20 @@ CREATE POLICY "Allow service role write access" ON website_content
 ALTER TABLE rsvps ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Allow public insert (for RSVP form submissions)
+-- Combined policy for INSERT only
 CREATE POLICY "Allow public insert" ON rsvps
   FOR INSERT
   WITH CHECK (true);
 
 -- Policy: Only service role can read/update/delete
--- Combined into single policy to avoid multiple_permissive_policies warning
--- Using (select auth.role()) for better performance
+-- Combined policy using (select auth.role()) for better performance
 CREATE POLICY "Allow service role full access" ON rsvps
   FOR ALL
   USING ((select auth.role()) = 'service_role')
   WITH CHECK ((select auth.role()) = 'service_role');
 
 -- ============================================
--- 3. Fix function search_path security issue
+-- 4. Fix function search_path security issue
 -- ============================================
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER
@@ -60,13 +61,4 @@ BEGIN
     RETURN NEW;
 END;
 $$;
-
--- ============================================
--- 4. Optional: Remove unused indexes (performance optimization)
--- ============================================
--- Uncomment these if you want to remove unused indexes
--- Note: These may become useful later, so keeping them is fine
--- DROP INDEX IF EXISTS idx_rsvps_created_at;
--- DROP INDEX IF EXISTS idx_rsvps_response;
--- DROP INDEX IF EXISTS idx_rsvps_name;
 
