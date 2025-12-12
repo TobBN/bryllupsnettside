@@ -1,11 +1,36 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import { FooterProps } from '@/types';
 import { useTranslations } from 'next-intl';
+
+interface FooterContent {
+  heading: string;
+  tagline: string;
+  contact: {
+    title: string;
+    bride: {
+      name: string;
+      phone: string;
+    };
+    groom: {
+      name: string;
+      phone: string;
+    };
+  };
+}
 
 export const Footer: React.FC<FooterProps> = () => {
   const currentYear = new Date().getFullYear();
   const t = useTranslations('footer');
+  const [content, setContent] = useState<FooterContent | null>(null);
+
+  useEffect(() => {
+    fetch('/api/content')
+      .then(res => res.json())
+      .then(data => setContent(data.footer))
+      .catch(err => console.error('Error loading footer content:', err));
+  }, []);
 
   return (
     <footer className="bg-gradient-to-br from-[#2D1B3D] via-[#4A2B5A] to-[#2D1B3D] text-white relative overflow-hidden">
@@ -17,13 +42,13 @@ export const Footer: React.FC<FooterProps> = () => {
           {/* Main footer content */}
           <div className="space-y-6">
             <h3 className="font-display text-3xl md:text-4xl text-white mb-4">
-              {t('heading')}
+              {content?.heading || t('heading')}
             </h3>
 
             <div className="w-24 h-1 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] mx-auto rounded-full"></div>
 
             <p className="font-body text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
-              {t('tagline')}
+              {content?.tagline || t('tagline')}
             </p>
           </div>
 
@@ -38,15 +63,15 @@ export const Footer: React.FC<FooterProps> = () => {
 
           {/* Contact information */}
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 max-w-2xl mx-auto">
-            <h4 className="font-body font-medium text-white mb-4">{t('contact')}</h4>
+            <h4 className="font-body font-medium text-white mb-4">{content?.contact.title || t('contact')}</h4>
             <div className="grid md:grid-cols-2 gap-4 text-base">
               <div className="text-center">
-                <p className="font-body text-white/80">Alexandra</p>
-                <p className="font-body text-white/60">+47 950 20 606</p>
+                <p className="font-body text-white/80">{content?.contact.bride.name || 'Alexandra'}</p>
+                <p className="font-body text-white/60">{content?.contact.bride.phone || '+47 950 20 606'}</p>
               </div>
               <div className="text-center">
-                <p className="font-body text-white/80">Tobias</p>
-                <p className="font-body text-white/60">+47 905 95 348</p>
+                <p className="font-body text-white/80">{content?.contact.groom.name || 'Tobias'}</p>
+                <p className="font-body text-white/60">{content?.contact.groom.phone || '+47 905 95 348'}</p>
               </div>
             </div>
           </div>
