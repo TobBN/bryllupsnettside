@@ -35,17 +35,26 @@ CREATE POLICY "Allow service role write access" ON website_content
 ALTER TABLE rsvps ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Allow public insert (for RSVP form submissions)
--- Combined policy for INSERT only
 CREATE POLICY "Allow public insert" ON rsvps
   FOR INSERT
   WITH CHECK (true);
 
--- Policy: Only service role can read/update/delete
--- Combined policy using (select auth.role()) for better performance
-CREATE POLICY "Allow service role full access" ON rsvps
-  FOR ALL
+-- Policy: Only service role can read (for admin export)
+-- Separate SELECT policy to avoid multiple_permissive_policies warning
+CREATE POLICY "Allow service role read access" ON rsvps
+  FOR SELECT
+  USING ((select auth.role()) = 'service_role');
+
+-- Policy: Only service role can update
+CREATE POLICY "Allow service role update access" ON rsvps
+  FOR UPDATE
   USING ((select auth.role()) = 'service_role')
   WITH CHECK ((select auth.role()) = 'service_role');
+
+-- Policy: Only service role can delete
+CREATE POLICY "Allow service role delete access" ON rsvps
+  FOR DELETE
+  USING ((select auth.role()) = 'service_role');
 
 -- ============================================
 -- 4. Fix function search_path security issue
