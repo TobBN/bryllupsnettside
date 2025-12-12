@@ -95,13 +95,27 @@ export function logSecurityEvent(event: string, data: Record<string, unknown>, s
 
 // Validate and sanitize JSON content structure
 export function validateContentStructure(content: unknown): boolean {
-  if (!content || typeof content !== 'object') return false;
+  if (!content || typeof content !== 'object') {
+    // #region agent log
+    logSecurityEvent('validate_structure_fail', { reason: 'not_object', type: typeof content }, 'info');
+    // #endregion
+    return false;
+  }
   
   const requiredFields = ['hero', 'story', 'weddingDetails', 'footer'];
   const obj = content as Record<string, unknown>;
   
   for (const field of requiredFields) {
-    if (!(field in obj) || typeof obj[field] !== 'object') {
+    if (!(field in obj)) {
+      // #region agent log
+      logSecurityEvent('validate_structure_fail', { reason: 'missing_field', field, availableFields: Object.keys(obj) }, 'info');
+      // #endregion
+      return false;
+    }
+    if (typeof obj[field] !== 'object' || obj[field] === null) {
+      // #region agent log
+      logSecurityEvent('validate_structure_fail', { reason: 'field_not_object', field, fieldType: typeof obj[field] }, 'info');
+      // #endregion
       return false;
     }
   }
