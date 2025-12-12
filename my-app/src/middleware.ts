@@ -43,19 +43,19 @@ export function middleware(request: NextRequest) {
   // - No broad scheme allowlist like img-src https:
   const connectSrc = ["'self'", supabaseOrigin].filter(Boolean).join(' ');
   const scriptSrc = isProd
-    ? ["'self'", `'nonce-${nonce}'`].join(' ')
-    : ["'self'", `'nonce-${nonce}'`, "'unsafe-eval'"].join(' '); // dev-only HMR convenience
+    ? ["'self'", 'unsafe-inline' 'unsafe-eval'].join(' ')
+    : ["'self'", 'unsafe-inline' 'unsafe-eval', "'unsafe-eval'"].join(' '); // dev-only HMR convenience
 
   const csp = [
     "default-src 'self'",
     `script-src ${scriptSrc}`,
     // No inline style attributes; keep style-src strict
-    "style-src 'self'",
+    "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
-    "img-src 'self' data: blob:",
+    "img-src 'self' data: blob: https:",
     `connect-src ${connectSrc}`,
     // No embedded frames needed for this site; links to maps are regular anchors
-    "frame-src 'none'",
+    "frame-src 'self' https://maps.google.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
