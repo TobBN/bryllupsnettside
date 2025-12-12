@@ -1,19 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, appendFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { existsSync } from 'fs';
 
 const CONTENT_FILE_PATH = join(process.cwd(), 'data', 'content.json');
+const LOG_PATH = join(process.cwd(), '.cursor', 'debug.log');
 
 // Helper to verify admin session
 function isAuthenticated(request: NextRequest): boolean {
   const session = request.cookies.get('admin_session');
+  // #region agent log
+  try { appendFileSync(LOG_PATH, JSON.stringify({location:'api/content/route.ts:12',message:'isAuthenticated check',data:{hasSession:!!session,sessionValue:session?.value,isAuthenticated:session?.value === 'authenticated'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n'); } catch {}
+  // #endregion
   return session?.value === 'authenticated';
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // #region agent log
+  try { appendFileSync(LOG_PATH, JSON.stringify({location:'api/content/route.ts:19',message:'GET /api/content called',data:{hasAuthCheck:false},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n'); } catch {}
+  // #endregion
   try {
     const content = readFileSync(CONTENT_FILE_PATH, 'utf-8');
+    // #region agent log
+    try { appendFileSync(LOG_PATH, JSON.stringify({location:'api/content/route.ts:23',message:'GET returning content without auth check',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n'); } catch {}
+    // #endregion
     return NextResponse.json(JSON.parse(content));
   } catch (error) {
     console.error('Error reading content:', error);
