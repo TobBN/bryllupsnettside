@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { join, dirname } from 'path';
-import { existsSync } from 'fs';
 import { verifyCookie, validateContentStructure, logSecurityEvent, getClientIdentifier } from '@/lib/security';
-
-const CONTENT_FILE_PATH = join(process.cwd(), 'data', 'content.json');
+import { supabaseServer } from '@/lib/supabase';
 
 // Helper to verify admin session with signed cookie
 function isAuthenticated(request: NextRequest): boolean {
@@ -23,8 +19,29 @@ export async function GET(request: NextRequest) {
   // GET endpoint is public (used by website components)
   // No authentication required for reading content
   try {
-    const content = readFileSync(CONTENT_FILE_PATH, 'utf-8');
-    return NextResponse.json(JSON.parse(content));
+    const supabase = supabaseServer();
+    const { data, error } = await supabase
+      .from('website_content')
+      .select('content')
+      .eq('id', 'main')
+      .single();
+
+    if (error) {
+      console.error('Error reading content from Supabase:', error);
+      return NextResponse.json(
+        { error: 'Kunne ikke lese innhold' },
+        { status: 500 }
+      );
+    }
+
+    if (!data || !data.content) {
+      return NextResponse.json(
+        { error: 'Innhold ikke funnet' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(data.content);
   } catch (error) {
     console.error('Error reading content:', error);
     return NextResponse.json(
@@ -84,28 +101,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Ensure directory exists
-    const contentDir = dirname(CONTENT_FILE_PATH);
+    // Save to Supabase
     // #region agent log
-    logSecurityEvent('content_post_dir_check', { clientId, contentDir, dirExists: existsSync(contentDir) }, 'info');
+    logSecurityEvent('content_post_save_start', { clientId }, 'info');
     // #endregion
     
-    if (!existsSync(contentDir)) {
-      mkdirSync(contentDir, { recursive: true });
-      // #region agent log
-      logSecurityEvent('content_post_dir_created', { clientId, contentDir }, 'info');
-      // #endregion
-    }
+    const supabase = supabaseServer();
+    const { error: updateError } = await supabase
+      .from('website_content')
+      .upsert({
+        id: 'main',
+        content: body,
+        updated_at: new Date().toISOString(),
+      }, {
+        onConflict: 'id'
+      });
 
-    // Write to file
-    // #region agent log
-    logSecurityEvent('content_post_write_start', { clientId, filePath: CONTENT_FILE_PATH }, 'info');
-    // #endregion
+    if (updateError) {
+      // #region agent log
+      logSecurityEvent('content_post_supabase_error', { clientId, error: updateError.message, code: updateError.code }, 'error');
+      // #endregion
+      console.error('Error saving content to Supabase:', updateError);
+      return NextResponse.json(
+        { error: 'Kunne ikke lagre innhold til database' },
+        { status: 500 }
+      );
+    }
     
-    writeFileSync(CONTENT_FILE_PATH, JSON.stringify(body, null, 2), 'utf-8');
-    
     // #region agent log
-    logSecurityEvent('content_post_write_success', { clientId }, 'info');
+    logSecurityEvent('content_post_save_success', { clientId }, 'info');
     // #endregion
     
     logSecurityEvent('content_updated', { clientId }, 'info');
