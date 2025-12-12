@@ -58,7 +58,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
         aria-label="Forside"
       >
         {/* Dim overlay for text readability */}
-        <div className="absolute inset-0 bg-black/30 -z-10" />
+        <div className="absolute inset-0 bg-black/40 -z-10" />
         
         {/* Content card - proportional scaling */}
         <div
@@ -66,7 +66,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
           max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl
           rounded-2xl bg-white/25 backdrop-blur-sm
           p-6 sm:p-8 md:p-10 lg:p-12
-          shadow-2xl transition-all duration-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+          shadow-2xl transition-all duration-700 motion-reduce:transition-none ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"} motion-reduce:translate-y-0`}
         >
           {/* Decorative line - scales with container */}
           <div className="w-16 sm:w-20 md:w-24 lg:w-32 h-0.5 sm:h-1 
@@ -109,21 +109,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
                role="presentation" 
                aria-hidden="true"></div>
         </div>
-
-        {/* Scroll indicator - consistent size */}
-        <div className="absolute bottom-6 sm:bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
-          <div className="w-5 sm:w-6 h-8 sm:h-10 border-2 border-white/50 rounded-full flex justify-center">
-            <div className="w-1 h-2 sm:h-3 bg-white/70 rounded-full mt-1 sm:mt-2 animate-pulse"></div>
-          </div>
-        </div>
-
-        {/* Floating decorative elements - scale with screen */}
-        <div className="absolute top-16 sm:top-20 left-6 sm:left-10 
-                        w-3 sm:w-4 h-3 sm:h-4 bg-[#E8B4B8]/30 rounded-full animate-float z-20"></div>
-        <div className="absolute top-24 sm:top-32 right-12 sm:right-20 
-                        w-2 sm:w-3 h-2 sm:h-3 bg-[#F4A261]/30 rounded-full animate-float-delayed z-20"></div>
-        <div className="absolute bottom-24 sm:bottom-32 left-12 sm:left-20 
-                        w-2 h-2 bg-[#4A2B5A]/30 rounded-full animate-float z-20"></div>
       </section>
     </>
   );

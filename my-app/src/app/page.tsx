@@ -97,7 +97,7 @@ export default function Home() {
   // Handle scroll-to-top button visibility
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 500);
+      setShowScrollTop(window.scrollY > 900);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -122,11 +122,8 @@ export default function Home() {
       {/* Main content */}
       <main className={`${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 ease-in-out`}>
         <HeroSection timeLeft={timeLeft} />
-        <div className="h-8 bg-gradient-to-b from-transparent via-[#F4D1D4]/10 to-transparent" />
         <StorySection />
-        <div className="h-8 bg-gradient-to-b from-transparent via-[#FEFAE0]/12 to-transparent" />
         <WeddingDetailsSection />
-        <div className="h-8 bg-gradient-to-b from-transparent via-[#E8B4B8]/10 to-transparent" />
         <RSVPSection />
       </main>
 
@@ -137,12 +134,12 @@ export default function Home() {
       {/* Scroll to top button */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className={`fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white rounded-full shadow-2xl hover-lift transition-all duration-300 group z-40 ${
+        className={`fixed bottom-6 right-6 w-10 h-10 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white rounded-full shadow-xl transition-all duration-300 group z-40 motion-reduce:transition-none ${
           showScrollTop ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         aria-label={t('scrollToTop')}
       >
-        <svg className="w-6 h-6 mx-auto transform group-hover:-translate-y-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 mx-auto transform group-hover:-translate-y-0.5 transition-transform duration-300 motion-reduce:transition-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
         </svg>
       </button>

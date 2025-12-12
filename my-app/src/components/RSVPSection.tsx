@@ -76,26 +76,22 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
   };
 
   return (
-    <section id="rsvp" className="py-24 md:py-32 bg-gradient-to-br from-[#E8B4B8]/15 via-[#F4D1D4]/25 to-[#FEFAE0]/35 relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 bg-pattern-romantic opacity-15"></div>
+    <section id="rsvp" className="py-16 md:py-20 bg-gradient-to-br from-[#E8B4B8]/10 via-[#F4D1D4]/15 to-[#FEFAE0]/25 relative">
       
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-20">
-          <DecorativeLine className="mb-8" />
+        <div className="text-center mb-12">
           <h2 
             id="rsvp-heading"
-            className="text-4xl md:text-6xl lg:text-7xl leading-tight text-[#2D1B3D] mb-8"
+            className="text-3xl md:text-5xl lg:text-6xl leading-tight text-[#2D1B3D] mb-6"
           >
             RSVP
           </h2>
-          <DecorativeLine className="mb-16" />
           
           {/* Enhanced subtitle */}
-          <p className="font-body text-lg md:text-xl text-[#4A2B5A]/80 max-w-3xl mx-auto leading-relaxed">
+          <p className="font-body text-base md:text-lg text-[#4A2B5A]/80 max-w-2xl mx-auto leading-relaxed">
             Vennligst svar om du kommer innen 1. mai 2026.
             </p>
-            <p className="font-body text-lg md:text-xl text-[#4A2B5A]/80 max-w-3xl mx-auto leading-relaxed">
+            <p className="font-body text-base md:text-lg text-[#4A2B5A]/80 max-w-2xl mx-auto leading-relaxed">
               Vi gleder oss til å feire sammen med dere!
           </p>
         </div>
@@ -108,34 +104,29 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                 <div className="flex flex-col sm:flex-row gap-6 justify-center">
                   <button
                     onClick={() => handleAttendanceChoice(true)}
-                    className="group relative bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white font-body font-medium px-12 py-6 rounded-3xl shadow-2xl hover-lift transition-all duration-500 transform hover:scale-105 overflow-hidden"
+                    className="group relative bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white font-body font-medium px-10 py-5 rounded-3xl shadow-xl transition-all duration-300 transform hover:scale-[1.02] overflow-hidden motion-reduce:transition-none motion-reduce:transform-none"
                     aria-label="Jeg kommer til bryllupet"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-[#F4A261] to-[#E8B4B8] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <span className="relative z-10 text-xl md:text-2xl">💕 Jeg kommer</span>
+                    <span className="relative z-10 text-lg md:text-xl">Jeg kommer</span>
                     <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
                   </button>
                   
                   <button
                     onClick={() => handleAttendanceChoice(false)}
-                    className="group relative bg-gradient-to-r from-[#6B7280] to-[#9CA3AF] text-white font-body font-medium px-12 py-6 rounded-3xl shadow-2xl hover-lift transition-all duration-500 transform hover:scale-105 overflow-hidden"
+                    className="group relative bg-gradient-to-r from-[#6B7280] to-[#9CA3AF] text-white font-body font-medium px-10 py-5 rounded-3xl shadow-xl transition-all duration-300 transform hover:scale-[1.02] overflow-hidden motion-reduce:transition-none motion-reduce:transform-none"
                     aria-label="Jeg kan dessverre ikke komme"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-[#9CA3AF] to-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <span className="relative z-10 text-xl md:text-2xl">😔 Jeg kan dessverre ikke</span>
+                    <span className="relative z-10 text-lg md:text-xl">Jeg kan dessverre ikke</span>
                     <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
                   </button>
                 </div>
                 
                 {/* Additional info */}
-                <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-[#E8B4B8]/30 shadow-velvet max-w-2xl mx-auto">
-                  <p className="font-body text-[#4A2B5A] leading-relaxed">
-                    <strong>Svarfrist:</strong> 1. mai 2026
-                  </p>
-                  <p className="font-body text-[#4A2B5A] leading-relaxed mt-2">
-                    <strong>Spørsmål?</strong> Ta kontakt med oss direkte 💛
-                  </p>
-                </div>
+                <p className="font-body text-[#4A2B5A]/80 leading-relaxed">
+                  <strong>Svarfrist:</strong> 1. mai 2026. Spørsmål? Ta kontakt med oss direkte.
+                </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-8">
