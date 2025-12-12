@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "2.56.1",
+    "@types/xlsx": "^0.0.35",
     "next": "15.5.8",
     "next-intl": "^4.5.8",
     "react": "19.1.2",
-    "react-dom": "19.1.2"
+    "react-dom": "19.1.2",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

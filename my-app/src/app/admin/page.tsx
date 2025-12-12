@@ -206,6 +206,47 @@ export default function AdminPage() {
     }
   };
 
+  const handleExportRSVP = async () => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await fetch('/api/admin/rsvp/export');
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.error || 'Kunne ikke eksportere RSVP-data');
+        setLoading(false);
+        return;
+      }
+
+      // Get filename from Content-Disposition header or use default
+      const contentDisposition = response.headers.get('Content-Disposition');
+      const filename = contentDisposition
+        ? contentDisposition.split('filename=')[1]?.replace(/"/g, '') || 'rsvp-svar.xlsx'
+        : 'rsvp-svar.xlsx';
+
+      // Create blob and download
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      setSuccess('RSVP-data eksportert!');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch {
+      setError('Feil ved eksport');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const updateContent = (path: string[], value: unknown) => {
     if (!content) return;
     
@@ -823,6 +864,33 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
+          </section>
+
+          {/* RSVP Export Section */}
+          <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
+            <h2 className="text-2xl font-bold text-[#2D1B3D] mb-4">RSVP Eksport</h2>
+            <p className="text-sm text-[#4A2B5A] mb-4">
+              Last ned alle RSVP-svar som Excel-fil (.xlsx)
+            </p>
+            <button
+              onClick={handleExportRSVP}
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-[#4A2B5A] to-[#2D1B3D] text-white py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-semibold flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Eksporterer...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Last ned RSVP-svar (Excel)</span>
+                </>
+              )}
+            </button>
           </section>
 
           {/* Save Button */}
