@@ -34,7 +34,7 @@ export const Footer: React.FC<FooterProps> = () => {
   }, []);
 
   return (
-    <footer className="bg-[#2D1B3D] text-white">
+    <footer className="bg-[#2D1B3D] text-white relative">
       <div className="container mx-auto px-4 py-8">
         <div className="text-center space-y-4">
           {/* Main footer content */}
