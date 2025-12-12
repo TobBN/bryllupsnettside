@@ -70,7 +70,7 @@ export function checkRateLimit(identifier: string, maxAttempts: number = 5, wind
 }
 
 // Get client identifier for rate limiting
-export function getClientIdentifier(request: Request): string {
+export function getClientIdentifier(request: Request | { headers: { get: (key: string) => string | null } }): string {
   // Use IP address from headers (Vercel sets x-forwarded-for)
   const forwardedFor = request.headers.get('x-forwarded-for');
   const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : 'unknown';
