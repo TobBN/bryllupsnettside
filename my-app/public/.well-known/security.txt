@@ -1,5 +1,6 @@
 Contact: mailto:security@alexandraogtobias.no
-Expires: 2026-12-31T23:59:59.000Z
+Encryption: https://www.alexandraogtobias.no/.well-known/pgp-key.txt
+Expires: 2026-06-10T23:59:59.000Z
 Preferred-Languages: no, en
 Canonical: https://www.alexandraogtobias.no/.well-known/security.txt
 

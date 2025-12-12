@@ -1,42 +1,75 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
+function generateNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  // Hex is fine as a nonce token
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+}
 
-  // Security headers
+function getSupabaseOrigin(): string | null {
+  const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!raw) return null;
+  try {
+    return new URL(raw).origin;
+  } catch {
+    return null;
+  }
+}
+
+export function middleware(request: NextRequest) {
+  const nonce = generateNonce();
+  const supabaseOrigin = getSupabaseOrigin();
+  const isProd = process.env.NODE_ENV === 'production';
+
+  // Propagate nonce to Next.js
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-nonce', nonce);
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+
+  // Security headers (keep the ones that are already OK)
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
-  // Content Security Policy
-  // Allow self, Supabase, Google Fonts, and necessary resources
+  response.headers.set('Referrer-Policy', 'same-origin');
+
+  // Content Security Policy (Internet.nl-friendly)
+  // - No unsafe-inline/unsafe-eval in production
+  // - No broad scheme allowlist like img-src https:
+  const connectSrc = ["'self'", supabaseOrigin].filter(Boolean).join(' ');
+  const scriptSrc = isProd
+    ? ["'self'", `'nonce-${nonce}'`].join(' ')
+    : ["'self'", `'nonce-${nonce}'`, "'unsafe-eval'"].join(' '); // dev-only HMR convenience
+
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-eval needed for Next.js dev, unsafe-inline for Tailwind
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Tailwind + Google Fonts
-    "font-src 'self' data: https://fonts.gstatic.com", // Google Fonts
-    "img-src 'self' data: https: blob:", // Images from any HTTPS source
-    "connect-src 'self' https://*.supabase.co https://*.supabase.in", // Supabase API
-    "frame-src 'self' https://maps.google.com", // Google Maps iframes
+    `script-src ${scriptSrc}`,
+    // No inline style attributes; keep style-src strict
+    "style-src 'self'",
+    "font-src 'self' data:",
+    "img-src 'self' data: blob:",
+    `connect-src ${connectSrc}`,
+    // No embedded frames needed for this site; links to maps are regular anchors
+    "frame-src 'none'",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
-    "upgrade-insecure-requests",
+    'upgrade-insecure-requests',
   ].join('; ');
 
   response.headers.set('Content-Security-Policy', csp);
 
   // Permissions Policy (formerly Feature-Policy)
-  const permissionsPolicy = [
-    'camera=()',
-    'microphone=()',
-    'geolocation=()',
-    'interest-cohort=()',
-  ].join(', ');
-
-  response.headers.set('Permissions-Policy', permissionsPolicy);
+  response.headers.set(
+    'Permissions-Policy',
+    ['camera=()', 'microphone=()', 'geolocation=()', 'interest-cohort=()'].join(', ')
+  );
 
   return response;
 }

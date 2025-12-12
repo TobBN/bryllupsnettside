@@ -74,10 +74,10 @@ export const StorySection: React.FC<StorySectionProps> = () => {
   }, []);
 
   const storyImages = [
-    { src: "/images/story-1.jpg", alt: "Alexandra og Tobias", position: "center 30%" },
-    { src: "/images/story-2.jpg", alt: "Alexandra og Tobias", position: "center 35%" },
-    { src: "/images/story-3.jpg", alt: "Alexandra og Tobias", position: "center 30%" },
-    { src: "/images/story-4.jpg", alt: "Alexandra og Tobias", position: "center 40%" }
+    { src: "/images/story-1.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_30%]" },
+    { src: "/images/story-2.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_35%]" },
+    { src: "/images/story-3.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_30%]" },
+    { src: "/images/story-4.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_40%]" }
   ];
 
   const timeline = content?.timeline || [];
@@ -92,7 +92,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <DecorativeLine className="mb-8" />
-        <h2 id="story-heading" className="text-4xl md:text-6xl lg:text-7xl leading-tight text-[#2D1B3D] mb-6 text-center" style={{ fontFamily: 'Parisienne, cursive' }}>
+        <h2 id="story-heading" className="text-4xl md:text-6xl lg:text-7xl leading-tight text-[#2D1B3D] mb-6 text-center">
           {content?.title || 'Vår historie'}
         </h2>
         <p className="font-body text-lg md:text-xl text-[#4A2B5A]/90 max-w-3xl mx-auto text-center mb-14 leading-[1.9]">
@@ -116,8 +116,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
             {storyImages.map((img, i) => (
               <div 
                 key={i}
-                className="relative rounded-2xl overflow-hidden shadow-velvet hover-lift cursor-pointer group"
-                style={{ aspectRatio: '4 / 3' }}
+                className="relative rounded-2xl overflow-hidden shadow-velvet hover-lift cursor-pointer group aspect-[4/3]"
                 onClick={() => handleImageClick(img.src, img.alt)}
                 role="button"
                 tabIndex={0}
@@ -128,8 +127,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
                   src={img.src}
                   alt={img.alt}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  style={{ objectPosition: img.position }}
+                  className={`object-cover transition-transform duration-500 group-hover:scale-105 ${img.objectClass}`}
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-[#2D1B3D]/12 via-transparent to-[#E8B4B8]/15"></div>

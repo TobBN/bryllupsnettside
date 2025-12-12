@@ -50,14 +50,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
     <>
       {/* Global fixed background for iOS-safe scroll-over effect */}
       <div
-        className="fixed inset-0 z-0"
-        style={{
-          backgroundImage: "url('/couple-bg.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center 30%",
-          backgroundRepeat: "no-repeat",
-          backgroundAttachment: "scroll", // Avoid iOS issues
-        }}
+        className="fixed inset-0 z-0 bg-[url('/couple-bg.jpg')] bg-cover bg-no-repeat bg-[position:center_30%]"
       />
       
       <section
@@ -85,7 +78,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
           {/* Main heading - proportional text scaling */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 
                          font-semibold text-white drop-shadow-lg text-center mb-3 sm:mb-4"
-              style={{ fontFamily: 'Parisienne, cursive' }}>
+          >
             <span className="inline-block">{content?.names.bride || 'Alexandra'}</span>
             <span className="inline-block mx-2 sm:mx-3 md:mx-4 text-[#E8B4B8]">&</span>
             <span className="inline-block">{content?.names.groom || 'Tobias'}</span>
