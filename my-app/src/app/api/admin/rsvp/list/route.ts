@@ -51,6 +51,7 @@ export async function GET(request: NextRequest) {
       name: rsvp.name || '',
       phone: rsvp.phone || '-',
       allergies: rsvp.allergies || '-',
+      guestCount: rsvp.guest_count || 1,
       createdAt: rsvp.created_at,
       dateFormatted: rsvp.created_at 
         ? new Date(rsvp.created_at).toLocaleDateString('no-NO', { 

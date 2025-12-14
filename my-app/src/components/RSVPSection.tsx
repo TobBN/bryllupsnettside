@@ -14,6 +14,8 @@ interface RSVPContent {
     nameLabel: string;
     phoneLabel: string;
     allergiesLabel: string;
+    guestCountLabel: string;
+    guestCountPlaceholder: string;
     namePlaceholder: string;
     phonePlaceholder: string;
     allergiesPlaceholder: string;
@@ -32,7 +34,8 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    allergies: ''
+    allergies: '',
+    guest_count: 1
   });
   const [isAttending, setIsAttending] = useState<boolean | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -77,7 +80,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === 'guest_count' ? parseInt(value, 10) || 1 : value
     }));
   };
 
@@ -106,7 +109,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
         }
 
         setIsSubmitted(true);
-        setFormData({ name: '', phone: '', allergies: '' });
+        setFormData({ name: '', phone: '', allergies: '', guest_count: 1 });
         // Keep isAttending to show correct heading after submission
         setShowForm(false);
         setSubmitError(null);
@@ -128,7 +131,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
     setIsSubmitted(false);
     setIsAttending(null);
     setShowForm(false);
-    setFormData({ name: '', phone: '', allergies: '' });
+    setFormData({ name: '', phone: '', allergies: '', guest_count: 1 });
     setSubmitError(null);
   };
 
@@ -221,6 +224,24 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                         inputMode="tel"
                         className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg"
                         placeholder={content?.form.phonePlaceholder || 'Ditt telefonnummer'}
+                        aria-required="true"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="guest_count" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
+                        {content?.form.guestCountLabel || 'Antall personer *'}
+                      </label>
+                      <input
+                        type="number"
+                        id="guest_count"
+                        name="guest_count"
+                        value={formData.guest_count}
+                        onChange={handleInputChange}
+                        required
+                        min="1"
+                        className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg"
+                        placeholder={content?.form.guestCountPlaceholder || 'Antall personer'}
                         aria-required="true"
                       />
                     </div>

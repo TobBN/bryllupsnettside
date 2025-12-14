@@ -122,9 +122,9 @@ export default function Home() {
       {/* Main content */}
       <main className={`${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 ease-in-out`}>
         <HeroSection timeLeft={timeLeft} />
-        <StorySection />
         <WeddingDetailsSection />
         <RSVPSection />
+        <StorySection />
       </main>
 
       <Footer />

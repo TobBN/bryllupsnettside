@@ -33,6 +33,10 @@ interface WeddingDetailsContent {
     description: string;
     allergyNote: string;
   };
+  info: {
+    title: string;
+    description: string;
+  };
 }
 
 interface DetailBoxProps {
@@ -128,7 +132,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
           </div>
         </div>
 
-        <div ref={cardsRef} className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        <div ref={cardsRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {/* Sted */}
           <DetailBox
             title={content?.venue.title || 'Sted'}
@@ -244,6 +248,24 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                   {content?.food.allergyNote || '* Allergier meldes fra om i RSVP'}
                 </p>
               </div>
+            </div>
+          </DetailBox>
+
+          {/* Info */}
+          <DetailBox
+            title={content?.info.title || 'Info'}
+            icon={
+              <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            }
+            isExpanded={expandedBox === (content?.info.title || 'Info')}
+            onToggle={() => toggleBox(content?.info.title || 'Info')}
+          >
+            <div className="space-y-4">
+              <p className="font-body text-white/95 leading-relaxed drop-shadow-sm whitespace-pre-line">
+                {content?.info.description || 'Praktisk informasjon for gjester...'}
+              </p>
             </div>
           </DetailBox>
         </div>

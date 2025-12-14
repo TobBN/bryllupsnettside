@@ -49,6 +49,10 @@ interface ContentData {
       description: string;
       allergyNote: string;
     };
+    info: {
+      title: string;
+      description: string;
+    };
   };
   footer: {
     heading: string;
@@ -79,6 +83,8 @@ interface ContentData {
       nameLabel: string;
       phoneLabel: string;
       allergiesLabel: string;
+      guestCountLabel: string;
+      guestCountPlaceholder: string;
       namePlaceholder: string;
       phonePlaceholder: string;
       allergiesPlaceholder: string;
@@ -101,6 +107,7 @@ interface RSVPItem {
   name: string;
   phone: string;
   allergies: string;
+  guestCount: number;
   createdAt: string;
   dateFormatted: string;
   timeFormatted: string;
@@ -882,6 +889,36 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
+
+            {/* Info */}
+            <div className="mt-6 pt-6 border-t border-[#E8B4B8]">
+              <h3 className="text-xl font-semibold text-[#2D1B3D] mb-4">Info</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Tittel
+                  </label>
+                  <input
+                    type="text"
+                    value={content.weddingDetails.info.title}
+                    onChange={(e) => updateContent(['weddingDetails', 'info', 'title'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Beskrivelse
+                  </label>
+                  <textarea
+                    value={content.weddingDetails.info.description}
+                    onChange={(e) => updateContent(['weddingDetails', 'info', 'description'], e.target.value)}
+                    rows={6}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    placeholder="Eksempel: Barn kan delta på vielsen, fram til bordsetting..."
+                  />
+                </div>
+              </div>
+            </div>
           </section>
 
           {/* Footer */}
@@ -1114,6 +1151,30 @@ export default function AdminPage() {
                       />
                     </div>
                   </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                        Antall personer label
+                      </label>
+                      <input
+                        type="text"
+                        value={content.rsvp.form.guestCountLabel}
+                        onChange={(e) => updateContent(['rsvp', 'form', 'guestCountLabel'], e.target.value)}
+                        className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                        Antall personer placeholder
+                      </label>
+                      <input
+                        type="text"
+                        value={content.rsvp.form.guestCountPlaceholder}
+                        onChange={(e) => updateContent(['rsvp', 'form', 'guestCountPlaceholder'], e.target.value)}
+                        className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      />
+                    </div>
+                  </div>
                   <div>
                     <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                       Allergier label
@@ -1290,6 +1351,7 @@ export default function AdminPage() {
                         <tr className="bg-[#F4D1D4] text-[#2D1B3D]">
                           <th className="px-4 py-3 text-left font-semibold border border-[#E8B4B8]">Kommer?</th>
                           <th className="px-4 py-3 text-left font-semibold border border-[#E8B4B8]">Navn</th>
+                          <th className="px-4 py-3 text-left font-semibold border border-[#E8B4B8]">Antall personer</th>
                           <th className="px-4 py-3 text-left font-semibold border border-[#E8B4B8]">Telefon</th>
                           <th className="px-4 py-3 text-left font-semibold border border-[#E8B4B8]">Allergier</th>
                           <th className="px-4 py-3 text-left font-semibold border border-[#E8B4B8]">Dato og tid</th>
@@ -1315,6 +1377,7 @@ export default function AdminPage() {
                               </span>
                             </td>
                             <td className="px-4 py-3 border border-[#E8B4B8] text-[#2D1B3D]">{rsvp.name}</td>
+                            <td className="px-4 py-3 border border-[#E8B4B8] text-[#4A2B5A] text-center">{rsvp.guestCount || 1}</td>
                             <td className="px-4 py-3 border border-[#E8B4B8] text-[#4A2B5A]">{rsvp.phone}</td>
                             <td className="px-4 py-3 border border-[#E8B4B8] text-[#4A2B5A]">{rsvp.allergies}</td>
                             <td className="px-4 py-3 border border-[#E8B4B8] text-[#4A2B5A]">

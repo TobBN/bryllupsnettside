@@ -61,6 +61,8 @@ export async function GET() {
           phonePlaceholder: 'Ditt telefonnummer',
           allergiesPlaceholder: 'Har du noen mat-allergier vi bør vite om? (valgfritt)',
           allergiesHelpText: 'Dette hjelper oss å tilpasse menyen for alle gjester',
+          guestCountLabel: 'Antall personer *',
+          guestCountPlaceholder: 'Antall personer',
           submitButton: 'Send svar',
           backButton: 'Tilbake',
           newResponseButton: 'Send nytt svar'
@@ -78,6 +80,17 @@ export async function GET() {
       if (!footer.contactText) footer.contactText = 'Ta kontakt med oss direkte for spørsmål';
       if (!footer.showContactText) footer.showContactText = 'Vis kontaktinfo';
       if (!footer.hideContactText) footer.hideContactText = 'Skjul kontaktinfo';
+    }
+
+    // Add default weddingDetails.info if missing
+    if (content.weddingDetails && typeof content.weddingDetails === 'object') {
+      const weddingDetails = content.weddingDetails as Record<string, unknown>;
+      if (!weddingDetails.info) {
+        weddingDetails.info = {
+          title: 'Info',
+          description: 'Praktisk informasjon for gjester...'
+        };
+      }
     }
 
     return NextResponse.json(content);

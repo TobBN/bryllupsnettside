@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
     const excelData = (rsvps || []).map((rsvp) => ({
       'Kommer?': rsvp.response === 'yes' ? 'Ja' : rsvp.response === 'no' ? 'Nei' : 'Kanskje',
       Navn: rsvp.name || '',
+      'Antall personer': rsvp.guest_count || 1,
       Telefon: rsvp.phone || '-',
       Allergier: rsvp.allergies || '-',
       Dato: rsvp.created_at ? new Date(rsvp.created_at).toLocaleDateString('no-NO') : '-',
@@ -62,6 +63,7 @@ export async function GET(request: NextRequest) {
     worksheet['!cols'] = [
       { wch: 12 }, // Kommer?
       { wch: 25 }, // Navn
+      { wch: 15 }, // Antall personer
       { wch: 15 }, // Telefon
       { wch: 30 }, // Allergier
       { wch: 12 }, // Dato

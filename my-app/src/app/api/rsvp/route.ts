@@ -21,6 +21,7 @@ export const POST = async (req: NextRequest) => {
     const email = body?.email ? String(body.email).trim() : null;
     const allergies = body?.allergies ? String(body.allergies).trim() : null;
     const message = body?.message ? String(body.message).trim() : null;
+    const guestCount = body?.guest_count ? parseInt(String(body.guest_count), 10) : 1;
     
     // Validate required fields
     if (!name) {
@@ -29,6 +30,11 @@ export const POST = async (req: NextRequest) => {
 
     if (name.length < 2) {
       return NextResponse.json({ ok: false, error: 'Navn må være minst 2 tegn' }, { status: 400 });
+    }
+
+    // Validate guest_count
+    if (isNaN(guestCount) || guestCount < 1) {
+      return NextResponse.json({ ok: false, error: 'Antall personer må være minst 1' }, { status: 400 });
     }
 
     // Map attendance to response format
@@ -46,6 +52,7 @@ export const POST = async (req: NextRequest) => {
       response,
       allergies: allergies || null,
       message: message || null,
+      guest_count: guestCount,
     });
 
     if (error) {
