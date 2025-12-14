@@ -187,29 +187,12 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
             onToggle={() => toggleBox(content?.dressCode.title || 'Antrekk')}
           >
             <div className="space-y-4">
-              <h4 className="text-xl leading-snug text-white drop-shadow-md">{content?.dressCode.general || 'Mørk dress / sommerformell'}</h4>
-              
-              <div className="space-y-3">
-                <div>
-                  <h5 className="font-body font-medium text-white/90 mb-2 drop-shadow-sm">{content?.dressCode.men.title || 'Herrer:'}</h5>
-                  <p className="font-body text-white/90 leading-relaxed drop-shadow-sm">
-                    {content?.dressCode.men.description || 'Mørk dress, slips eller sløyfe, skjorte som tåler juli-varme. Lys sommerdress er lov hvis sola koker.'}
-                  </p>
-                </div>
-                
-                <div>
-                  <h5 className="font-body font-medium text-white/90 mb-2 drop-shadow-sm">{content?.dressCode.women.title || 'Damer:'}</h5>
-                  <p className="font-body text-white/90 leading-relaxed drop-shadow-sm">
-                    {content?.dressCode.women.description || 'Cocktailkjole, lang kjole eller en elegant sommerkjole – gjerne lett og sommerlig, men fortsatt pyntet.'}
-                  </p>
-                </div>
-                
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-lg border border-white/20">
-                  <p className="font-body text-white/95 leading-relaxed drop-shadow-sm">
-                    <strong>Poenget:</strong> {content?.dressCode.note || 'Pent, sommerlig og høytidelig. Kle deg så du ser bra ut på bilder, men fortsatt kan spise, drikke og danse hele kvelden.'}
-                  </p>
-                </div>
-              </div>
+              <p className="font-body text-white/95 leading-relaxed drop-shadow-sm">
+                <strong>Kleskode:</strong> {content?.dressCode.dressCode || 'Mørk dress (med tilpasninger ved varmt vær)'}
+              </p>
+              <p className="font-body text-white/95 leading-relaxed drop-shadow-sm">
+                <strong>Poenget:</strong> {content?.dressCode.point || 'Pyntet og elegant – gjerne i lette materialer og lysere toner om det blir varmt. Kle deg så du trives hele kvelden, ser bra ut på bilder og kan danse hele natten.'}
+              </p>
             </div>
           </DetailBox>
 

@@ -32,16 +32,8 @@ interface ContentData {
     };
     dressCode: {
       title: string;
-      general: string;
-      men: {
-        title: string;
-        description: string;
-      };
-      women: {
-        title: string;
-        description: string;
-      };
-      note: string;
+      dressCode: string;
+      point: string;
     };
     gifts: {
       title: string;
@@ -741,68 +733,26 @@ export default function AdminPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Generelt
-                  </label>
-                  <input
-                    type="text"
-                    value={content.weddingDetails.dressCode.general}
-                    onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'general'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Herrer - Tittel
-                  </label>
-                  <input
-                    type="text"
-                    value={content.weddingDetails.dressCode.men.title}
-                    onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'men', 'title'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] mb-2"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Herrer - Beskrivelse
+                    Kleskode
                   </label>
                   <textarea
-                    value={content.weddingDetails.dressCode.men.description}
-                    onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'men', 'description'], e.target.value)}
+                    value={content.weddingDetails.dressCode.dressCode}
+                    onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'dressCode'], e.target.value)}
                     rows={2}
                     className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    placeholder="Mørk dress (med tilpasninger ved varmt vær)"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Damer - Tittel
-                  </label>
-                  <input
-                    type="text"
-                    value={content.weddingDetails.dressCode.women.title}
-                    onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'women', 'title'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] mb-2"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Damer - Beskrivelse
+                    Poenget
                   </label>
                   <textarea
-                    value={content.weddingDetails.dressCode.women.description}
-                    onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'women', 'description'], e.target.value)}
-                    rows={2}
+                    value={content.weddingDetails.dressCode.point}
+                    onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'point'], e.target.value)}
+                    rows={4}
                     className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Notat
-                  </label>
-                  <textarea
-                    value={content.weddingDetails.dressCode.note}
-                    onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'note'], e.target.value)}
-                    rows={2}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    placeholder="Pyntet og elegant – gjerne i lette materialer og lysere toner om det blir varmt. Kle deg så du trives hele kvelden, ser bra ut på bilder og kan danse hele natten."
                   />
                 </div>
               </div>
