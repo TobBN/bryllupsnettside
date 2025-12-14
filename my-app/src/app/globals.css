@@ -663,11 +663,28 @@ footer, .copyright {
   }
 }
 
-/* Parallax background optimization */
-.parallax-bg {
-  transition: transform 0.1s ease-out;
+/* Fixed background optimization for mobile */
+.hero-bg-fixed {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  will-change: auto;
+  /* Prevent janky scrolling on mobile */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Optimize fixed positioning on iOS */
+@supports (-webkit-touch-callout: none) {
+  .hero-bg-fixed {
+    position: fixed;
+    /* Use transform to force hardware acceleration */
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+  }
 }
 
 /* Enhanced gradient transitions between sections */

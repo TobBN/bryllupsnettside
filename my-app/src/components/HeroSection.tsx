@@ -17,7 +17,6 @@ interface HeroContent {
 export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
   const [mounted, setMounted] = useState(false);
   const [content, setContent] = useState<HeroContent | null>(null);
-  const [parallaxOffset, setParallaxOffset] = useState(0);
   const t = useTranslations('hero');
 
   useEffect(() => {
@@ -27,26 +26,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
       .then(res => res.json())
       .then(data => setContent(data.hero))
       .catch(err => console.error('Error loading hero content:', err));
-  }, []);
-
-  // Parallax scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrolled = window.pageYOffset;
-      const heroHeight = window.innerHeight;
-      
-      // Only apply parallax if we're still in the hero section
-      if (scrolled < heroHeight) {
-        setParallaxOffset(scrolled * 0.5);
-      }
-    };
-
-    // Check if user prefers reduced motion
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!prefersReducedMotion) {
-      window.addEventListener('scroll', handleScroll, { passive: true });
-      return () => window.removeEventListener('scroll', handleScroll);
-    }
   }, []);
 
   // Determine greeting text based on days until wedding
@@ -69,21 +48,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
 
   return (
     <>
-      {/* Global fixed background with parallax effect */}
+      {/* Global fixed background - visible throughout the page */}
       <div
-        className="fixed inset-0 z-0 bg-[url('/couple-bg.jpg')] bg-cover bg-no-repeat bg-[position:center_30%] parallax-bg"
-        style={{
-          transform: `translateY(${parallaxOffset}px)`,
-          willChange: 'transform',
-        }}
+        className="fixed inset-0 z-0 bg-[url('/couple-bg.jpg')] bg-cover bg-no-repeat bg-[position:center_30%] hero-bg-fixed"
       />
       
       <section
         className="relative flex min-h-screen items-end justify-center pb-16 z-10"
         aria-label="Forside"
       >
-        {/* Dim overlay for text readability */}
-        <div className="absolute inset-0 bg-black/40 -z-10" />
+        {/* Dim overlay for text readability - reduced opacity for better visibility */}
+        <div className="absolute inset-0 bg-black/25 -z-10" />
         
         {/* Content card - proportional scaling with enhanced glassmorphism */}
         <div
