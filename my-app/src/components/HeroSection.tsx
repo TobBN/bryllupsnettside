@@ -17,6 +17,7 @@ interface HeroContent {
 export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
   const [mounted, setMounted] = useState(false);
   const [content, setContent] = useState<HeroContent | null>(null);
+  const [parallaxOffset, setParallaxOffset] = useState(0);
   const t = useTranslations('hero');
 
   useEffect(() => {
@@ -26,6 +27,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
       .then(res => res.json())
       .then(data => setContent(data.hero))
       .catch(err => console.error('Error loading hero content:', err));
+  }, []);
+
+  // Parallax scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.pageYOffset;
+      const heroHeight = window.innerHeight;
+      
+      // Only apply parallax if we're still in the hero section
+      if (scrolled < heroHeight) {
+        setParallaxOffset(scrolled * 0.5);
+      }
+    };
+
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReducedMotion) {
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
   }, []);
 
   // Determine greeting text based on days until wedding
@@ -48,9 +69,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
 
   return (
     <>
-      {/* Global fixed background for iOS-safe scroll-over effect */}
+      {/* Global fixed background with parallax effect */}
       <div
-        className="fixed inset-0 z-0 bg-[url('/couple-bg.jpg')] bg-cover bg-no-repeat bg-[position:center_30%]"
+        className="fixed inset-0 z-0 bg-[url('/couple-bg.jpg')] bg-cover bg-no-repeat bg-[position:center_30%] parallax-bg"
+        style={{
+          transform: `translateY(${parallaxOffset}px)`,
+          willChange: 'transform',
+        }}
       />
       
       <section
@@ -60,13 +85,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
         {/* Dim overlay for text readability */}
         <div className="absolute inset-0 bg-black/40 -z-10" />
         
-        {/* Content card - proportional scaling */}
+        {/* Content card - proportional scaling with enhanced glassmorphism */}
         <div
           className={`relative z-20 mx-4 w-full
           max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl
-          rounded-2xl bg-white/20 backdrop-blur-sm
+          rounded-2xl glass-card
           p-6 sm:p-8 md:p-10 lg:p-12
-          shadow-2xl transition-all duration-700 motion-reduce:transition-none motion-reduce:transform-none ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"} motion-reduce:translate-y-0`}
+          transition-all duration-700 motion-reduce:transition-none motion-reduce:transform-none ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"} motion-reduce:translate-y-0`}
         >
           {/* Decorative line - scales with container */}
           <div className="w-16 sm:w-20 md:w-24 lg:w-32 h-0.5 sm:h-1 

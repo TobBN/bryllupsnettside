@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { WeddingDetailsSectionProps } from '@/types';
 import { DecorativeLine } from './DecorativeLine';
+import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 interface WeddingDetailsContent {
   title: string;
@@ -54,8 +55,8 @@ interface DetailBoxProps {
 const DetailBox: React.FC<DetailBoxProps> = ({ title, icon, children, isExpanded, onToggle }) => {
   return (
     <div 
-      className={`bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-[#E8B4B8]/30 shadow-velvet hover-lift cursor-pointer transition-all duration-300 ${
-        isExpanded ? 'ring-2 ring-[#E8B4B8] shadow-2xl' : ''
+      className={`glass-card rounded-2xl p-6 cursor-pointer transition-all duration-300 hover-lift ${
+        isExpanded ? 'ring-2 ring-[#E8B4B8]/50 shadow-2xl' : ''
       }`}
       onClick={onToggle}
       role="button"
@@ -100,6 +101,9 @@ const DetailBox: React.FC<DetailBoxProps> = ({ title, icon, children, isExpanded
 export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () => {
   const [expandedBox, setExpandedBox] = useState<string | null>(null);
   const [content, setContent] = useState<WeddingDetailsContent | null>(null);
+  
+  const headingRef = useScrollReveal({ animationType: 'fade-up', threshold: 0.3 });
+  const cardsRef = useScrollReveal({ animationType: 'scale', threshold: 0.1 });
 
   useEffect(() => {
     fetch('/api/content')
@@ -117,15 +121,17 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
     <section id="wedding-details" className="py-20 md:py-32 bg-gradient-to-br from-[#FEFAE0]/50 via-[#F4D1D4]/30 to-[#E8B4B8]/20">
       <div className="container mx-auto px-4">
         <DecorativeLine className="mb-8" />
-        <h2 
-          id="details-heading"
-          className="text-4xl md:text-6xl leading-tight text-[#2D1B3D] mb-8 text-center"
-        >
-          {content?.title || 'Selve dagen'}
-        </h2>
+        <div ref={headingRef}>
+          <h2 
+            id="details-heading"
+            className="text-4xl md:text-6xl leading-tight text-[#2D1B3D] mb-8 text-center"
+          >
+            {content?.title || 'Selve dagen'}
+          </h2>
+        </div>
         <DecorativeLine className="mb-16" />
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        <div ref={cardsRef} className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           {/* Sted */}
           <DetailBox
             title={content?.venue.title || 'Sted'}

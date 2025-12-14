@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { StorySectionProps } from '@/types';
 import { DecorativeLine } from './DecorativeLine';
+import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 interface TimelineItem {
   date: string;
@@ -66,6 +67,10 @@ export const StorySection: React.FC<StorySectionProps> = () => {
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null);
   const [content, setContent] = useState<StoryContent | null>(null);
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
+  
+  const headingRef = useScrollReveal({ animationType: 'fade-up', threshold: 0.3 });
+  const timelineRef = useScrollReveal({ animationType: 'fade-left', threshold: 0.2 });
+  const imagesRef = useScrollReveal({ animationType: 'fade-right', threshold: 0.2 });
 
   useEffect(() => {
     fetch('/api/content')
@@ -105,16 +110,18 @@ export const StorySection: React.FC<StorySectionProps> = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <DecorativeLine className="mb-8" />
-        <h2 id="story-heading" className="text-4xl md:text-6xl lg:text-7xl leading-tight text-[#2D1B3D] mb-6 text-center drop-shadow-sm">
-          {content?.title || 'Vår historie'}
-        </h2>
-        <p className="font-body text-lg md:text-xl text-[#4A2B5A] max-w-3xl mx-auto text-center mb-14 leading-[1.9] drop-shadow-sm">
-          {content?.subtitle || 'Et lite tilbakeblikk på vår reise sammen'}
-        </p>
+        <div ref={headingRef}>
+          <h2 id="story-heading" className="text-4xl md:text-6xl lg:text-7xl leading-tight text-[#2D1B3D] mb-6 text-center drop-shadow-sm">
+            {content?.title || 'Vår historie'}
+          </h2>
+          <p className="font-body text-lg md:text-xl text-[#4A2B5A] max-w-3xl mx-auto text-center mb-14 leading-[1.9] drop-shadow-sm">
+            {content?.subtitle || 'Et lite tilbakeblikk på vår reise sammen'}
+          </p>
+        </div>
         <DecorativeLine className="mb-12" />
 
         <div className="grid md:grid-cols-2 gap-16 items-start">
-          <ol className="relative border-l-2 border-[#E8B4B8]/50 pl-6">
+          <ol ref={timelineRef} className="relative border-l-2 border-[#E8B4B8]/50 pl-6">
             {timeline.map((item, idx) => {
               const isExpanded = expandedItems.has(idx);
               return (
@@ -155,11 +162,11 @@ export const StorySection: React.FC<StorySectionProps> = () => {
             })}
           </ol>
 
-          <div role="img" aria-label="Bilder fra vår historie" className="grid grid-cols-2 gap-6">
+          <div ref={imagesRef} role="img" aria-label="Bilder fra vår historie" className="grid grid-cols-2 gap-6">
             {storyImages.map((img, i) => (
               <div 
                 key={i}
-                className="relative rounded-2xl overflow-hidden shadow-velvet hover-lift cursor-pointer group aspect-[4/3]"
+                className="relative rounded-2xl overflow-hidden shadow-velvet card-hover cursor-pointer group aspect-[4/3] img-hover-zoom"
                 onClick={() => handleImageClick(img.src, img.alt)}
                 role="button"
                 tabIndex={0}
@@ -170,7 +177,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
                   src={img.src}
                   alt={img.alt}
                   fill
-                  className={`object-cover transition-transform duration-500 group-hover:scale-105 ${img.objectClass}`}
+                  className={`object-cover ${img.objectClass}`}
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-[#2D1B3D]/12 via-transparent to-[#E8B4B8]/15"></div>

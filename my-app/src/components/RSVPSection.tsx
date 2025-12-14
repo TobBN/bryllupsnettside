@@ -128,18 +128,18 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                 <div className="flex flex-col sm:flex-row gap-6 justify-center">
                   <button
                     onClick={() => handleAttendanceChoice(true)}
-                    className="bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-lg transition-colors"
+                    className="btn-interactive bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-lg relative overflow-hidden"
                     aria-label="Jeg kommer til bryllupet"
                   >
-                    <span className="text-lg md:text-xl">Jeg kommer</span>
+                    <span className="relative z-10 text-lg md:text-xl">Jeg kommer</span>
                   </button>
                   
                   <button
                     onClick={() => handleAttendanceChoice(false)}
-                    className="bg-gradient-to-r from-[#6B7280] to-[#9CA3AF] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-lg transition-colors"
+                    className="btn-interactive bg-gradient-to-r from-[#6B7280] to-[#9CA3AF] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-lg relative overflow-hidden"
                     aria-label="Jeg kan dessverre ikke komme"
                   >
-                    <span className="text-lg md:text-xl">Jeg kan dessverre ikke</span>
+                    <span className="relative z-10 text-lg md:text-xl">Jeg kan dessverre ikke</span>
                   </button>
                 </div>
                 
@@ -150,7 +150,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="bg-white/80 backdrop-blur-md rounded-3xl p-8 md:p-10 border border-[#E8B4B8]/30 shadow-2xl">
+                <div className="glass-card rounded-3xl p-8 md:p-10">
                   <div className="space-y-6">
                     <div>
                       <label htmlFor="name" className="block font-body font-medium text-[#4A2B5A] mb-3 text-lg">
@@ -221,16 +221,18 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-1 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-velvet hover-lift transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+                      className="btn-interactive flex-1 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-velvet disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none text-lg relative overflow-hidden"
                     >
-                      {isSubmitting ? (
-                        <div className="flex items-center justify-center">
-                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
-                          Sender...
-                        </div>
-                      ) : (
-                        'Send svar'
-                      )}
+                      <span className="relative z-10">
+                        {isSubmitting ? (
+                          <div className="flex items-center justify-center">
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                            Sender...
+                          </div>
+                        ) : (
+                          'Send svar'
+                        )}
+                      </span>
                     </button>
                     
                     <button
@@ -239,9 +241,9 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                         setShowForm(false);
                         setSubmitError(null);
                       }}
-                      className="flex-1 bg-[#6B7280] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-velvet hover-lift transition-all duration-300 text-lg"
+                      className="btn-interactive flex-1 bg-[#6B7280] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-velvet text-lg relative overflow-hidden"
                     >
-                      Tilbake
+                      <span className="relative z-10">Tilbake</span>
                     </button>
                   </div>
                 </div>
@@ -250,7 +252,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
           </div>
         ) : (
           <div className="max-w-3xl mx-auto text-center">
-            <div className="bg-white/80 backdrop-blur-md rounded-3xl p-10 border border-[#E8B4B8]/30 shadow-2xl">
+            <div className="glass-card rounded-3xl p-10">
               <div className="text-8xl mb-8">{isAttending ? '🎉' : '💝'}</div>
               <h3 className="text-3xl md:text-4xl text-[#2D1B3D] mb-6">
                 {isAttending ? '🎉 Vi gleder oss til å se deg!' : '💝 Vi forstår, takk for svar'}

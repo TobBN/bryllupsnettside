@@ -51,7 +51,7 @@ export const Footer: React.FC<FooterProps> = () => {
           <nav>
             <a
               href="/gallery"
-              className="font-body text-white/80 hover:text-white transition-colors"
+              className="link-hover font-body text-white/80 hover:text-white transition-colors"
             >
               Galleri
             </a>
