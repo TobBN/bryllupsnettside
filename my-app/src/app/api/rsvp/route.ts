@@ -17,7 +17,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const body = await req.json();
     // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'rsvp/route.ts:18',message:'Request body received',data:{guestsCount:body?.guests?.length||0,hasPhone:!!body?.phone,isAttending:body?.isAttending},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    console.log('[DEBUG] Request body received:', JSON.stringify({guestsCount:body?.guests?.length||0,hasPhone:!!body?.phone,isAttending:body?.isAttending,guests:body?.guests?.map((g:any)=>({name:g.name,hasAllergies:!!g.allergies}))}));
     // #endregion
     const phone = body?.phone ? String(body.phone).trim() : '';
     const email = body?.email ? String(body.email).trim() : null;
@@ -62,7 +62,7 @@ export const POST = async (req: NextRequest) => {
     
     // Insert RSVP record first
     // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'rsvp/route.ts:61',message:'Before RSVP insert',data:{guestNames:guestNames,response,phone,guestsLength:guests.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    console.log('[DEBUG] Before RSVP insert:', JSON.stringify({guestNames,response,phone,guestsLength:guests.length}));
     // #endregion
     const { data: rsvpData, error: rsvpError } = await supabase.from('rsvps').insert({
       name: guestNames[0], // Keep first name in rsvps.name for backward compatibility
@@ -75,7 +75,7 @@ export const POST = async (req: NextRequest) => {
 
     if (rsvpError) {
       // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'rsvp/route.ts:70',message:'RSVP insert error',data:{error:rsvpError.message,code:rsvpError.code,details:rsvpError.details,hint:rsvpError.hint},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      console.error('[DEBUG] RSVP insert error:', JSON.stringify({error:rsvpError.message,code:rsvpError.code,details:rsvpError.details,hint:rsvpError.hint,fullError:rsvpError}));
       // #endregion
       console.error('Supabase RSVP insert error:', rsvpError);
       logSecurityEvent('rsvp_save_error', { clientId, error: rsvpError.message, code: rsvpError.code }, 'error');
@@ -87,7 +87,7 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ ok: false, error: 'Kunne ikke lagre RSVP. Prøv igjen senere.' }, { status: 500 });
     }
     // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'rsvp/route.ts:79',message:'RSVP insert success',data:{rsvpId:rsvpData?.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    console.log('[DEBUG] RSVP insert success:', JSON.stringify({rsvpId:rsvpData?.id}));
     // #endregion
 
     // Insert guest records
@@ -98,14 +98,14 @@ export const POST = async (req: NextRequest) => {
       guest_order: index + 1,
     }));
     // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'rsvp/route.ts:87',message:'Before guests insert',data:{guestRecordsCount:guestRecords.length,guestRecords:guestRecords.map(g=>({name:g.name,allergies:g.allergies,order:g.guest_order})),rsvpId:rsvpData.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    console.log('[DEBUG] Before guests insert:', JSON.stringify({guestRecordsCount:guestRecords.length,guestRecords:guestRecords.map(g=>({name:g.name,allergies:g.allergies,order:g.guest_order})),rsvpId:rsvpData.id}));
     // #endregion
 
     const { error: guestsError } = await supabase.from('rsvp_guests').insert(guestRecords);
 
     if (guestsError) {
       // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'rsvp/route.ts:91',message:'Guests insert error',data:{error:guestsError.message,code:guestsError.code,details:guestsError.details,hint:guestsError.hint},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      console.error('[DEBUG] Guests insert error:', JSON.stringify({error:guestsError.message,code:guestsError.code,details:guestsError.details,hint:guestsError.hint,fullError:guestsError}));
       // #endregion
       console.error('Supabase guests insert error:', guestsError);
       // Try to clean up: delete the RSVP record if guest insertion fails
@@ -114,14 +114,14 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ ok: false, error: 'Kunne ikke lagre gjester. Prøv igjen senere.' }, { status: 500 });
     }
     // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'rsvp/route.ts:97',message:'Guests insert success',data:{guestsCount:guestRecords.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    console.log('[DEBUG] Guests insert success:', JSON.stringify({guestsCount:guestRecords.length}));
     // #endregion
 
     logSecurityEvent('rsvp_saved', { clientId, names: guestNames, response }, 'info');
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error) {
     // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'rsvp/route.ts:101',message:'Catch block error',data:{error:String(error),errorType:error instanceof Error?error.constructor.name:'unknown',stack:error instanceof Error?error.stack:undefined},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+    console.error('[DEBUG] Catch block error:', JSON.stringify({error:String(error),errorType:error instanceof Error?error.constructor.name:'unknown',stack:error instanceof Error?error.stack:undefined,message:error instanceof Error?error.message:undefined}));
     // #endregion
     console.error('Error saving RSVP:', error);
     logSecurityEvent('rsvp_error', { clientId, error: String(error) }, 'error');
