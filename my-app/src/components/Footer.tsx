@@ -10,7 +10,6 @@ interface FooterContent {
   contactText: string;
   showContactText: string;
   hideContactText: string;
-  galleryLink: string;
   contact: {
     title: string;
     bride: {
@@ -51,15 +50,6 @@ export const Footer: React.FC<FooterProps> = () => {
               {content?.tagline || t('tagline')}
             </p>
           </div>
-
-          <nav>
-            <a
-              href="/gallery"
-              className="link-hover font-body text-white/80 hover:text-white transition-colors"
-            >
-              {content?.galleryLink || 'Galleri'}
-            </a>
-          </nav>
 
           {/* Contact info - clickable */}
           <div className="space-y-2">

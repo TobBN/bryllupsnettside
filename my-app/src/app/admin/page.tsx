@@ -56,7 +56,6 @@ interface ContentData {
     contactText: string;
     showContactText: string;
     hideContactText: string;
-    galleryLink: string;
     contact: {
       title: string;
       bride: {
@@ -945,17 +944,6 @@ export default function AdminPage() {
                     className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
                   />
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                  Galleri-link tekst
-                </label>
-                <input
-                  type="text"
-                  value={content.footer.galleryLink}
-                  onChange={(e) => updateContent(['footer', 'galleryLink'], e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

@@ -78,7 +78,6 @@ export async function GET() {
       if (!footer.contactText) footer.contactText = 'Ta kontakt med oss direkte for spørsmål';
       if (!footer.showContactText) footer.showContactText = 'Vis kontaktinfo';
       if (!footer.hideContactText) footer.hideContactText = 'Skjul kontaktinfo';
-      if (!footer.galleryLink) footer.galleryLink = 'Galleri';
     }
 
     return NextResponse.json(content);
