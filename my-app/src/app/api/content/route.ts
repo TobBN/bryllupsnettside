@@ -15,7 +15,7 @@ function isAuthenticated(request: NextRequest): boolean {
   return verifiedValue === 'authenticated';
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   // GET endpoint is public (used by website components)
   // No authentication required for reading content
   try {

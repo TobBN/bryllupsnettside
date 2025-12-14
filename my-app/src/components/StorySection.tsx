@@ -68,9 +68,9 @@ export const StorySection: React.FC<StorySectionProps> = () => {
   const [content, setContent] = useState<StoryContent | null>(null);
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
   
-  const headingRef = useScrollReveal({ animationType: 'fade-up', threshold: 0.3 });
-  const timelineRef = useScrollReveal({ animationType: 'fade-left', threshold: 0.2 });
-  const imagesRef = useScrollReveal({ animationType: 'fade-right', threshold: 0.2 });
+  const headingRef = useScrollReveal<HTMLDivElement>({ animationType: 'fade-up', threshold: 0.3 });
+  const timelineRef = useScrollReveal<HTMLOListElement>({ animationType: 'fade-left', threshold: 0.2 });
+  const imagesRef = useScrollReveal<HTMLDivElement>({ animationType: 'fade-right', threshold: 0.2 });
 
   useEffect(() => {
     fetch('/api/content')

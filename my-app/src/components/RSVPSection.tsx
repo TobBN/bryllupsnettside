@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { RSVPSectionProps } from '@/types';
-import { DecorativeLine } from './DecorativeLine';
 
 export const RSVPSection: React.FC<RSVPSectionProps> = () => {
   const [formData, setFormData] = useState({
