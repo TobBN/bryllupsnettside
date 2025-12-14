@@ -146,13 +146,6 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                     <span className="relative z-10 text-lg md:text-xl">Jeg kan dessverre ikke</span>
                   </button>
                 </div>
-                
-                {/* Additional info */}
-                <div className="glass-card rounded-2xl p-6 max-w-2xl mx-auto">
-                  <p className="font-body text-white/95 leading-relaxed drop-shadow-sm">
-                    <strong>Svarfrist:</strong> 1. mai 2026. Spørsmål? Ta kontakt med oss direkte.
-                  </p>
-                </div>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-8">
