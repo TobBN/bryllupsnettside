@@ -3,6 +3,35 @@ import { supabaseServer } from '@/lib/supabase';
 import { verifyCookie, logSecurityEvent, getClientIdentifier } from '@/lib/security';
 import * as XLSX from 'xlsx';
 
+interface RsvpGuest {
+  name: string;
+  allergies: string | null;
+  guest_order: number;
+}
+
+interface RsvpWithGuests {
+  id: string;
+  name: string;
+  phone: string | null;
+  email: string | null;
+  response: 'yes' | 'no' | 'maybe';
+  allergies: string | null;
+  message: string | null;
+  guest_count: number | null;
+  created_at: string;
+  updated_at: string;
+  rsvp_guests: RsvpGuest[] | null;
+}
+
+interface ExcelRow {
+  'Kommer?': string;
+  Navn: string;
+  Telefon: string;
+  Allergier: string;
+  Dato: string;
+  Tid: string;
+}
+
 // Helper to verify admin session
 function isAuthenticated(request: NextRequest): boolean {
   const session = request.cookies.get('admin_session');
@@ -52,9 +81,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform data for Excel - create one row per guest
-    const excelData: any[] = [];
-    (rsvps || []).forEach((rsvp: any) => {
-      const guests = (rsvp.rsvp_guests || []).sort((a: any, b: any) => 
+    const excelData: ExcelRow[] = [];
+    (rsvps || []).forEach((rsvp: RsvpWithGuests) => {
+      const guests = (rsvp.rsvp_guests || []).sort((a: RsvpGuest, b: RsvpGuest) => 
         (a.guest_order || 0) - (b.guest_order || 0)
       );
       
@@ -65,7 +94,7 @@ export async function GET(request: NextRequest) {
 
       if (guests.length > 0) {
         // Use guest data
-        guests.forEach((guest: any) => {
+        guests.forEach((guest: RsvpGuest) => {
           excelData.push({
             'Kommer?': responseText,
             Navn: guest.name || '',

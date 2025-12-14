@@ -2,6 +2,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase';
 import { verifyCookie, logSecurityEvent, getClientIdentifier } from '@/lib/security';
 
+interface RsvpGuest {
+  name: string;
+  allergies: string | null;
+  guest_order: number;
+}
+
+interface RsvpWithGuests {
+  id: string;
+  name: string;
+  phone: string | null;
+  email: string | null;
+  response: 'yes' | 'no' | 'maybe';
+  allergies: string | null;
+  message: string | null;
+  guest_count: number | null;
+  created_at: string;
+  updated_at: string;
+  rsvp_guests: RsvpGuest[] | null;
+}
+
 // Helper to verify admin session
 function isAuthenticated(request: NextRequest): boolean {
   const session = request.cookies.get('admin_session');
@@ -51,16 +71,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform data for display - format response values and dates
-    const formattedRsvps = (rsvps || []).map((rsvp: any) => {
+    const formattedRsvps = (rsvps || []).map((rsvp: RsvpWithGuests) => {
       // Extract guests data
-      const guests = (rsvp.rsvp_guests || []).sort((a: any, b: any) => 
+      const guests = (rsvp.rsvp_guests || []).sort((a: RsvpGuest, b: RsvpGuest) => 
         (a.guest_order || 0) - (b.guest_order || 0)
       );
       const names = guests.length > 0 
-        ? guests.map((g: any) => g.name).filter(Boolean)
+        ? guests.map((g: RsvpGuest) => g.name).filter(Boolean)
         : [rsvp.name || ''].filter(Boolean); // Fallback to rsvp.name for backward compatibility
       const allergies = guests.length > 0
-        ? guests.map((g: any) => g.allergies || '').filter(Boolean)
+        ? guests.map((g: RsvpGuest) => g.allergies || '').filter(Boolean)
         : [rsvp.allergies || ''].filter(Boolean); // Fallback to rsvp.allergies for backward compatibility
 
       return {
