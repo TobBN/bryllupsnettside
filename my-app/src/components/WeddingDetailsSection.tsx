@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { WeddingDetailsSectionProps } from '@/types';
-import { DecorativeLine } from './DecorativeLine';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 interface WeddingDetailsContent {
@@ -17,16 +16,8 @@ interface WeddingDetailsContent {
   };
   dressCode: {
     title: string;
-    general: string;
-    men: {
-      title: string;
-      description: string;
-    };
-    women: {
-      title: string;
-      description: string;
-    };
-    note: string;
+    dressCode: string;
+    point: string;
   };
   gifts: {
     title: string;

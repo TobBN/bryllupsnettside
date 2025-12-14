@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { StorySectionProps } from '@/types';
-import { DecorativeLine } from './DecorativeLine';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 interface TimelineItem {
