@@ -16,25 +16,36 @@ export const POST = async (req: NextRequest) => {
 
   try {
     const body = await req.json();
-    const name = (body?.name ?? '').toString().trim();
     const phone = body?.phone ? String(body.phone).trim() : '';
     const email = body?.email ? String(body.email).trim() : null;
-    const allergies = body?.allergies ? String(body.allergies).trim() : null;
     const message = body?.message ? String(body.message).trim() : null;
-    const guestCount = body?.guest_count ? parseInt(String(body.guest_count), 10) : 1;
+    const guests = body?.guests || [];
     
-    // Validate required fields
-    if (!name) {
-      return NextResponse.json({ ok: false, error: 'Navn er påkrevd' }, { status: 400 });
+    // Validate guests array
+    if (!Array.isArray(guests) || guests.length < 1 || guests.length > 5) {
+      return NextResponse.json({ ok: false, error: 'Må ha mellom 1 og 5 personer' }, { status: 400 });
     }
 
-    if (name.length < 2) {
-      return NextResponse.json({ ok: false, error: 'Navn må være minst 2 tegn' }, { status: 400 });
-    }
+    // Validate all guest names
+    const guestNames: string[] = [];
+    for (let i = 0; i < guests.length; i++) {
+      const guest = guests[i];
+      const name = (guest?.name ?? '').toString().trim();
+      
+      if (!name) {
+        return NextResponse.json({ ok: false, error: `Navn for person ${i + 1} er påkrevd` }, { status: 400 });
+      }
 
-    // Validate guest_count
-    if (isNaN(guestCount) || guestCount < 1) {
-      return NextResponse.json({ ok: false, error: 'Antall personer må være minst 1' }, { status: 400 });
+      if (name.length < 2) {
+        return NextResponse.json({ ok: false, error: `Navn for person ${i + 1} må være minst 2 tegn` }, { status: 400 });
+      }
+
+      // Check for duplicate names
+      if (guestNames.includes(name)) {
+        return NextResponse.json({ ok: false, error: 'Alle navn må være unike' }, { status: 400 });
+      }
+
+      guestNames.push(name);
     }
 
     // Map attendance to response format
@@ -45,28 +56,47 @@ export const POST = async (req: NextRequest) => {
       : 'maybe';
 
     const supabase = supabaseServer();
-    const { error } = await supabase.from('rsvps').insert({
-      name,
+    
+    // Insert RSVP record first
+    const { data: rsvpData, error: rsvpError } = await supabase.from('rsvps').insert({
+      name: guestNames[0], // Keep first name in rsvps.name for backward compatibility
       phone: phone || null,
       email: email || null,
       response,
-      allergies: allergies || null,
       message: message || null,
-      guest_count: guestCount,
-    });
+      guest_count: guests.length, // Keep for backward compatibility
+    }).select().single();
 
-    if (error) {
-      console.error('Supabase insert error:', error);
-      logSecurityEvent('rsvp_save_error', { clientId, error: error.message, code: error.code }, 'error');
+    if (rsvpError) {
+      console.error('Supabase RSVP insert error:', rsvpError);
+      logSecurityEvent('rsvp_save_error', { clientId, error: rsvpError.message, code: rsvpError.code }, 'error');
       
       // Provide more specific error messages
-      if (error.code === '23505') { // Unique constraint violation
+      if (rsvpError.code === '23505') { // Unique constraint violation
         return NextResponse.json({ ok: false, error: 'Det eksisterer allerede en RSVP med dette navnet. Kontakt oss hvis du ønsker å endre svaret ditt.' }, { status: 409 });
       }
       return NextResponse.json({ ok: false, error: 'Kunne ikke lagre RSVP. Prøv igjen senere.' }, { status: 500 });
     }
 
-    logSecurityEvent('rsvp_saved', { clientId, name, response }, 'info');
+    // Insert guest records
+    const guestRecords = guests.map((guest: { name: string; allergies?: string }, index: number) => ({
+      rsvp_id: rsvpData.id,
+      name: (guest.name ?? '').toString().trim(),
+      allergies: guest.allergies ? String(guest.allergies).trim() : null,
+      guest_order: index + 1,
+    }));
+
+    const { error: guestsError } = await supabase.from('rsvp_guests').insert(guestRecords);
+
+    if (guestsError) {
+      console.error('Supabase guests insert error:', guestsError);
+      // Try to clean up: delete the RSVP record if guest insertion fails
+      await supabase.from('rsvps').delete().eq('id', rsvpData.id);
+      logSecurityEvent('rsvp_guests_save_error', { clientId, error: guestsError.message, code: guestsError.code }, 'error');
+      return NextResponse.json({ ok: false, error: 'Kunne ikke lagre gjester. Prøv igjen senere.' }, { status: 500 });
+    }
+
+    logSecurityEvent('rsvp_saved', { clientId, names: guestNames, response }, 'info');
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error) {
     console.error('Error saving RSVP:', error);

@@ -27,11 +27,18 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Fetch all RSVPs from Supabase
+    // Fetch all RSVPs from Supabase with guests
     const supabase = supabaseServer();
     const { data: rsvps, error } = await supabase
       .from('rsvps')
-      .select('*')
+      .select(`
+        *,
+        rsvp_guests (
+          name,
+          allergies,
+          guest_order
+        )
+      `)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -44,29 +51,42 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform data for display - format response values and dates
-    const formattedRsvps = (rsvps || []).map((rsvp) => ({
-      id: rsvp.id,
-      response: rsvp.response === 'yes' ? 'Ja' : rsvp.response === 'no' ? 'Nei' : 'Kanskje',
-      responseRaw: rsvp.response, // Keep raw value for color coding
-      name: rsvp.name || '',
-      phone: rsvp.phone || '-',
-      allergies: rsvp.allergies || '-',
-      guestCount: rsvp.guest_count || 1,
-      createdAt: rsvp.created_at,
-      dateFormatted: rsvp.created_at 
-        ? new Date(rsvp.created_at).toLocaleDateString('no-NO', { 
-            day: '2-digit', 
-            month: '2-digit', 
-            year: 'numeric' 
-          })
-        : '-',
-      timeFormatted: rsvp.created_at 
-        ? new Date(rsvp.created_at).toLocaleTimeString('no-NO', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-          })
-        : '-',
-    }));
+    const formattedRsvps = (rsvps || []).map((rsvp: any) => {
+      // Extract guests data
+      const guests = (rsvp.rsvp_guests || []).sort((a: any, b: any) => 
+        (a.guest_order || 0) - (b.guest_order || 0)
+      );
+      const names = guests.length > 0 
+        ? guests.map((g: any) => g.name).filter(Boolean)
+        : [rsvp.name || ''].filter(Boolean); // Fallback to rsvp.name for backward compatibility
+      const allergies = guests.length > 0
+        ? guests.map((g: any) => g.allergies || '').filter(Boolean)
+        : [rsvp.allergies || ''].filter(Boolean); // Fallback to rsvp.allergies for backward compatibility
+
+      return {
+        id: rsvp.id,
+        response: rsvp.response === 'yes' ? 'Ja' : rsvp.response === 'no' ? 'Nei' : 'Kanskje',
+        responseRaw: rsvp.response, // Keep raw value for color coding
+        names: names,
+        phone: rsvp.phone || '-',
+        allergies: allergies,
+        guestCount: names.length || rsvp.guest_count || 1,
+        createdAt: rsvp.created_at,
+        dateFormatted: rsvp.created_at 
+          ? new Date(rsvp.created_at).toLocaleDateString('no-NO', { 
+              day: '2-digit', 
+              month: '2-digit', 
+              year: 'numeric' 
+            })
+          : '-',
+        timeFormatted: rsvp.created_at 
+          ? new Date(rsvp.created_at).toLocaleTimeString('no-NO', { 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            })
+          : '-',
+      };
+    });
 
     logSecurityEvent('rsvp_list_accessed', { clientId, count: formattedRsvps.length }, 'info');
 

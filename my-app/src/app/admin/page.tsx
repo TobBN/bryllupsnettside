@@ -84,7 +84,6 @@ interface ContentData {
       phoneLabel: string;
       allergiesLabel: string;
       guestCountLabel: string;
-      guestCountPlaceholder: string;
       namePlaceholder: string;
       phonePlaceholder: string;
       allergiesPlaceholder: string;
@@ -104,9 +103,9 @@ interface RSVPItem {
   id: string;
   response: string;
   responseRaw: 'yes' | 'no' | 'maybe';
-  name: string;
+  names: string[];
   phone: string;
-  allergies: string;
+  allergies: string[];
   guestCount: number;
   createdAt: string;
   dateFormatted: string;
@@ -1163,17 +1162,6 @@ export default function AdminPage() {
                         className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                        Antall personer placeholder
-                      </label>
-                      <input
-                        type="text"
-                        value={content.rsvp.form.guestCountPlaceholder}
-                        onChange={(e) => updateContent(['rsvp', 'form', 'guestCountPlaceholder'], e.target.value)}
-                        className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                      />
-                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
@@ -1376,10 +1364,17 @@ export default function AdminPage() {
                                 {rsvp.response}
                               </span>
                             </td>
-                            <td className="px-4 py-3 border border-[#E8B4B8] text-[#2D1B3D]">{rsvp.name}</td>
+                            <td className="px-4 py-3 border border-[#E8B4B8] text-[#2D1B3D]">
+                              {rsvp.names && rsvp.names.length > 0 ? rsvp.names.join(', ') : '-'}
+                            </td>
                             <td className="px-4 py-3 border border-[#E8B4B8] text-[#4A2B5A] text-center">{rsvp.guestCount || 1}</td>
                             <td className="px-4 py-3 border border-[#E8B4B8] text-[#4A2B5A]">{rsvp.phone}</td>
-                            <td className="px-4 py-3 border border-[#E8B4B8] text-[#4A2B5A]">{rsvp.allergies}</td>
+                            <td className="px-4 py-3 border border-[#E8B4B8] text-[#4A2B5A]">
+                              {rsvp.allergies && rsvp.allergies.length > 0 
+                                ? rsvp.allergies.filter((a: string) => a && a !== '-').join('; ') || '-'
+                                : '-'
+                              }
+                            </td>
                             <td className="px-4 py-3 border border-[#E8B4B8] text-[#4A2B5A]">
                               {rsvp.dateFormatted} {rsvp.timeFormatted}
                             </td>

@@ -31,12 +31,11 @@ interface RSVPContent {
 }
 
 export const RSVPSection: React.FC<RSVPSectionProps> = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    allergies: '',
-    guest_count: 1
-  });
+  const [guests, setGuests] = useState<Array<{name: string, allergies: string}>>([
+    { name: '', allergies: '' }
+  ]);
+  const [guestCount, setGuestCount] = useState<number>(1);
+  const [phone, setPhone] = useState<string>('');
   const [isAttending, setIsAttending] = useState<boolean | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -76,12 +75,42 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
     };
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'guest_count' ? parseInt(value, 10) || 1 : value
-    }));
+  // Handle guest count change
+  const handleGuestCountChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newCount = parseInt(e.target.value, 10);
+    setGuestCount(newCount);
+    
+    // Update guests array to match new count
+    const newGuests = [...guests];
+    if (newCount > guests.length) {
+      // Add empty guests
+      for (let i = guests.length; i < newCount; i++) {
+        newGuests.push({ name: '', allergies: '' });
+      }
+    } else if (newCount < guests.length) {
+      // Remove excess guests
+      newGuests.splice(newCount);
+    }
+    setGuests(newGuests);
+  };
+
+  // Handle guest name change
+  const handleGuestNameChange = (index: number, value: string) => {
+    const newGuests = [...guests];
+    newGuests[index] = { ...newGuests[index], name: value };
+    setGuests(newGuests);
+  };
+
+  // Handle guest allergies change
+  const handleGuestAllergiesChange = (index: number, value: string) => {
+    const newGuests = [...guests];
+    newGuests[index] = { ...newGuests[index], allergies: value };
+    setGuests(newGuests);
+  };
+
+  // Handle phone change
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhone(e.target.value);
   };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -89,8 +118,20 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
       setIsSubmitting(true);
       setSubmitError(null);
 
+      // Validate all guest names are filled
+      const invalidGuests = guests.filter(g => !g.name.trim() || g.name.trim().length < 2);
+      if (invalidGuests.length > 0) {
+        setSubmitError('Alle navn må være fylt ut og minst 2 tegn.');
+        setIsSubmitting(false);
+        return;
+      }
+
       const rsvpData = {
-        ...formData,
+        guests: guests.map(g => ({
+          name: g.name.trim(),
+          allergies: g.allergies.trim() || undefined
+        })),
+        phone: phone.trim(),
         isAttending,
         timestamp: new Date().toISOString()
       };
@@ -109,7 +150,9 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
         }
 
         setIsSubmitted(true);
-        setFormData({ name: '', phone: '', allergies: '', guest_count: 1 });
+        setGuests([{ name: '', allergies: '' }]);
+        setGuestCount(1);
+        setPhone('');
         // Keep isAttending to show correct heading after submission
         setShowForm(false);
         setSubmitError(null);
@@ -131,7 +174,9 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
     setIsSubmitted(false);
     setIsAttending(null);
     setShowForm(false);
-    setFormData({ name: '', phone: '', allergies: '', guest_count: 1 });
+    setGuests([{ name: '', allergies: '' }]);
+    setGuestCount(1);
+    setPhone('');
     setSubmitError(null);
   };
 
@@ -191,24 +236,71 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
               <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="glass-card rounded-3xl p-8 md:p-10">
                   <div className="space-y-6">
+                    {/* Antall personer */}
                     <div>
-                      <label htmlFor="name" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
-                        {content?.form.nameLabel || 'Navn *'}
+                      <label htmlFor="guest_count" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
+                        {content?.form.guestCountLabel || 'Antall personer *'}
                       </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
+                      <select
+                        id="guest_count"
+                        value={guestCount}
+                        onChange={handleGuestCountChange}
                         required
-                        autoComplete="name"
                         className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg"
-                        placeholder={content?.form.namePlaceholder || 'Ditt navn'}
                         aria-required="true"
-                      />
+                      >
+                        {[1, 2, 3, 4, 5].map(num => (
+                          <option key={num} value={num}>{num} {num === 1 ? 'person' : 'personer'}</option>
+                        ))}
+                      </select>
                     </div>
+
+                    {/* Dynamiske navn-bokser */}
+                    {guests.map((guest, index) => (
+                      <div key={index} className="space-y-4 pb-6 border-b border-white/20 last:border-b-0">
+                        <h3 className="font-body font-medium text-white/95 text-lg drop-shadow-sm">
+                          Person {index + 1}
+                        </h3>
+                        <div>
+                          <label htmlFor={`guest-name-${index}`} className="block font-body font-medium text-white/95 mb-3 text-base drop-shadow-sm">
+                            {content?.form.nameLabel || 'Navn *'}
+                          </label>
+                          <input
+                            type="text"
+                            id={`guest-name-${index}`}
+                            value={guest.name}
+                            onChange={(e) => handleGuestNameChange(index, e.target.value)}
+                            required
+                            autoComplete="name"
+                            className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg"
+                            placeholder={content?.form.namePlaceholder || `Navn på person ${index + 1}`}
+                            aria-required="true"
+                          />
+                        </div>
+                        {isAttending && (
+                          <div>
+                            <label htmlFor={`guest-allergies-${index}`} className="block font-body font-medium text-white/95 mb-3 text-base drop-shadow-sm">
+                              {content?.form.allergiesLabel || 'Allergier'}
+                            </label>
+                            <textarea
+                              id={`guest-allergies-${index}`}
+                              value={guest.allergies}
+                              onChange={(e) => handleGuestAllergiesChange(index, e.target.value)}
+                              rows={2}
+                              className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg resize-none"
+                              placeholder={content?.form.allergiesPlaceholder || 'Har du noen mat-allergier vi bør vite om? (valgfritt)'}
+                            />
+                            {index === 0 && content?.form.allergiesHelpText && (
+                              <p className="mt-2 text-sm text-white/80 italic drop-shadow-sm">
+                                {content.form.allergiesHelpText}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
                     
+                    {/* Telefonnummer (delt mellom alle) */}
                     <div>
                       <label htmlFor="phone" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
                         {content?.form.phoneLabel || 'Telefonnummer *'}
@@ -217,8 +309,8 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                         type="tel"
                         id="phone"
                         name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
+                        value={phone}
+                        onChange={handlePhoneChange}
                         required
                         autoComplete="tel"
                         inputMode="tel"
@@ -228,44 +320,6 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                       />
                     </div>
                     
-                    <div>
-                      <label htmlFor="guest_count" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
-                        {content?.form.guestCountLabel || 'Antall personer *'}
-                      </label>
-                      <input
-                        type="number"
-                        id="guest_count"
-                        name="guest_count"
-                        value={formData.guest_count}
-                        onChange={handleInputChange}
-                        required
-                        min="1"
-                        className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg"
-                        placeholder={content?.form.guestCountPlaceholder || 'Antall personer'}
-                        aria-required="true"
-                      />
-                    </div>
-                    
-                    {isAttending && (
-                      <div>
-                        <label htmlFor="allergies" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
-                          {content?.form.allergiesLabel || 'Mat-allergier'}
-                        </label>
-                        <textarea
-                          id="allergies"
-                          name="allergies"
-                          value={formData.allergies}
-                          onChange={handleInputChange}
-                          rows={4}
-                          className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg resize-none"
-                          placeholder={content?.form.allergiesPlaceholder || 'Har du noen mat-allergier vi bør vite om? (valgfritt)'}
-                          aria-describedby="allergies-help"
-                        />
-                        <p id="allergies-help" className="font-small text-white/80 mt-2 drop-shadow-sm">
-                          {content?.form.allergiesHelpText || 'Dette hjelper oss å tilpasse menyen for alle gjester'}
-                        </p>
-                      </div>
-                    )}
                   </div>
                   
                   {submitError && (

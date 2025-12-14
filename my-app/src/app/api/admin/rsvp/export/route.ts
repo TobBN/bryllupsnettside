@@ -28,11 +28,18 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Fetch all RSVPs from Supabase
+    // Fetch all RSVPs from Supabase with guests
     const supabase = supabaseServer();
     const { data: rsvps, error } = await supabase
       .from('rsvps')
-      .select('*')
+      .select(`
+        *,
+        rsvp_guests (
+          name,
+          allergies,
+          guest_order
+        )
+      `)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -44,16 +51,42 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Transform data for Excel - only include fields that are actually used in the form
-    const excelData = (rsvps || []).map((rsvp) => ({
-      'Kommer?': rsvp.response === 'yes' ? 'Ja' : rsvp.response === 'no' ? 'Nei' : 'Kanskje',
-      Navn: rsvp.name || '',
-      'Antall personer': rsvp.guest_count || 1,
-      Telefon: rsvp.phone || '-',
-      Allergier: rsvp.allergies || '-',
-      Dato: rsvp.created_at ? new Date(rsvp.created_at).toLocaleDateString('no-NO') : '-',
-      Tid: rsvp.created_at ? new Date(rsvp.created_at).toLocaleTimeString('no-NO') : '-',
-    }));
+    // Transform data for Excel - create one row per guest
+    const excelData: any[] = [];
+    (rsvps || []).forEach((rsvp: any) => {
+      const guests = (rsvp.rsvp_guests || []).sort((a: any, b: any) => 
+        (a.guest_order || 0) - (b.guest_order || 0)
+      );
+      
+      const responseText = rsvp.response === 'yes' ? 'Ja' : rsvp.response === 'no' ? 'Nei' : 'Kanskje';
+      const phone = rsvp.phone || '-';
+      const date = rsvp.created_at ? new Date(rsvp.created_at).toLocaleDateString('no-NO') : '-';
+      const time = rsvp.created_at ? new Date(rsvp.created_at).toLocaleTimeString('no-NO') : '-';
+
+      if (guests.length > 0) {
+        // Use guest data
+        guests.forEach((guest: any) => {
+          excelData.push({
+            'Kommer?': responseText,
+            Navn: guest.name || '',
+            Telefon: phone,
+            Allergier: guest.allergies || '-',
+            Dato: date,
+            Tid: time,
+          });
+        });
+      } else {
+        // Fallback for old data without guests
+        excelData.push({
+          'Kommer?': responseText,
+          Navn: rsvp.name || '',
+          Telefon: phone,
+          Allergier: rsvp.allergies || '-',
+          Dato: date,
+          Tid: time,
+        });
+      }
+    });
 
     // Create workbook and worksheet
     const workbook = XLSX.utils.book_new();
@@ -63,7 +96,6 @@ export async function GET(request: NextRequest) {
     worksheet['!cols'] = [
       { wch: 12 }, // Kommer?
       { wch: 25 }, // Navn
-      { wch: 15 }, // Antall personer
       { wch: 15 }, // Telefon
       { wch: 30 }, // Allergier
       { wch: 12 }, // Dato

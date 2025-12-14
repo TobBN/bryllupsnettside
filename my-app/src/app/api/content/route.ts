@@ -62,7 +62,6 @@ export async function GET() {
           allergiesPlaceholder: 'Har du noen mat-allergier vi bør vite om? (valgfritt)',
           allergiesHelpText: 'Dette hjelper oss å tilpasse menyen for alle gjester',
           guestCountLabel: 'Antall personer *',
-          guestCountPlaceholder: 'Antall personer',
           submitButton: 'Send svar',
           backButton: 'Tilbake',
           newResponseButton: 'Send nytt svar'
