@@ -658,8 +658,9 @@ footer, .copyright {
     transition: none;
   }
   
-  .parallax-bg {
-    transform: none !important;
+  .hero-bg-fixed {
+    transform: translateZ(0) !important;
+    -webkit-transform: translateZ(0) !important;
   }
 }
 
