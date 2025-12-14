@@ -17,7 +17,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const body = await req.json();
     // #region agent log
-    console.log('[DEBUG] Request body received:', JSON.stringify({guestsCount:body?.guests?.length||0,hasPhone:!!body?.phone,isAttending:body?.isAttending,guests:body?.guests?.map((g:any)=>({name:g.name,hasAllergies:!!g.allergies}))}));
+    console.log('[DEBUG] Request body received:', JSON.stringify({guestsCount:body?.guests?.length||0,hasPhone:!!body?.phone,isAttending:body?.isAttending,guests:body?.guests?.map((g:{name?:string;allergies?:string})=>({name:g.name,hasAllergies:!!g.allergies}))}));
     // #endregion
     const phone = body?.phone ? String(body.phone).trim() : '';
     const email = body?.email ? String(body.email).trim() : null;
@@ -70,7 +70,7 @@ export const POST = async (req: NextRequest) => {
       email: email || null,
       response,
       message: message || null,
-      guest_count: guests.length, // Keep for backward compatibility
+      // Note: guest_count column removed - using rsvp_guests table instead
     }).select().single();
 
     if (rsvpError) {
