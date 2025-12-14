@@ -252,16 +252,12 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
         ) : (
           <div className="max-w-3xl mx-auto text-center">
             <div className="glass-card rounded-3xl p-10">
-              <div className="text-8xl mb-8">{isAttending ? '🎉' : '💝'}</div>
-              <h3 className="text-3xl md:text-4xl text-white mb-6 drop-shadow-lg">
-                {isAttending ? '🎉 Vi gleder oss til å se deg!' : '💝 Vi forstår, takk for svar'}
-              </h3>
-              <p className="font-body text-xl text-white/95 leading-relaxed mb-8 drop-shadow-md">
+              <h3 className="text-3xl md:text-4xl text-white mb-8 drop-shadow-lg">
                 {isAttending 
-                  ? 'Vi gleder oss til å feire sammen med deg! Du vil motta en bekreftelse på SMS snart.'
-                  : 'Vi forstår og takker for svar. Vi håper å se deg snart!'
+                  ? '🎉 Vi gleder oss til å feire sammen med deg!'
+                  : '💝 Vi forstår og takker for svar. Vi håper å se deg snart!'
                 }
-              </p>
+              </h3>
               <button
                 onClick={resetForm}
                 className="bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-velvet hover-lift transition-all duration-300 text-lg"
