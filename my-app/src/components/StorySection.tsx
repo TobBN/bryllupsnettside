@@ -104,24 +104,27 @@ export const StorySection: React.FC<StorySectionProps> = () => {
   };
 
   return (
-    <section id="our-story" className="py-24 md:py-32 bg-gradient-to-b from-[#F4D1D4]/20 via-[#FEFAE0]/50 to-[#E8B4B8]/20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-pattern-romantic opacity-15"></div>
-      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#2D1B3D]/5 to-transparent pointer-events-none"></div>
+    <section id="our-story" className="py-24 md:py-32 relative overflow-hidden">
+      {/* Mørk overlay for kontrast (som hero-seksjonen) */}
+      <div className="absolute inset-0 bg-black/20 -z-10" />
       
       <div className="container mx-auto px-4 relative z-10">
-        <DecorativeLine className="mb-8" />
-        <div ref={headingRef}>
-          <h2 id="story-heading" className="text-4xl md:text-6xl lg:text-7xl leading-tight text-[#2D1B3D] mb-6 text-center drop-shadow-sm">
-            {content?.title || 'Vår historie'}
-          </h2>
-          <p className="font-body text-lg md:text-xl text-[#4A2B5A] max-w-3xl mx-auto text-center mb-14 leading-[1.9] drop-shadow-sm">
-            {content?.subtitle || 'Et lite tilbakeblikk på vår reise sammen'}
-          </p>
+        {/* Overskrift og undertittel i glassmorphism-kort */}
+        <div ref={headingRef} className="mb-12">
+          <div className="glass-card rounded-2xl p-8 md:p-10 max-w-4xl mx-auto">
+            <h2 id="story-heading" className="text-4xl md:text-6xl lg:text-7xl leading-tight text-white mb-6 text-center drop-shadow-lg">
+              {content?.title || 'Vår historie'}
+            </h2>
+            <p className="font-body text-lg md:text-xl text-white/95 max-w-3xl mx-auto text-center leading-[1.9] drop-shadow-md">
+              {content?.subtitle || 'Et lite tilbakeblikk på vår reise sammen'}
+            </p>
+          </div>
         </div>
-        <DecorativeLine className="mb-12" />
 
         <div className="grid md:grid-cols-2 gap-16 items-start">
-          <ol ref={timelineRef} className="relative border-l-2 border-[#E8B4B8]/50 pl-6">
+          {/* Tidslinje i glassmorphism-kort */}
+          <div className="glass-card rounded-2xl p-6 md:p-8">
+            <ol ref={timelineRef} className="relative border-l-2 border-[#E8B4B8]/50 pl-6">
             {timeline.map((item, idx) => {
               const isExpanded = expandedItems.has(idx);
               return (
@@ -135,11 +138,11 @@ export const StorySection: React.FC<StorySectionProps> = () => {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <p className="font-small text-[#4A2B5A] mb-1 font-medium">{item.date}</p>
-                        <h3 className="text-2xl md:text-3xl leading-snug text-[#2D1B3D] drop-shadow-sm">{item.title}</h3>
+                        <p className="font-small text-white/80 mb-1 font-medium">{item.date}</p>
+                        <h3 className="text-2xl md:text-3xl leading-snug text-white drop-shadow-md">{item.title}</h3>
                       </div>
                       <svg
-                        className={`w-6 h-6 text-[#2D1B3D] transition-transform duration-300 flex-shrink-0 ml-4 ${isExpanded ? 'rotate-180' : ''}`}
+                        className={`w-6 h-6 text-white transition-transform duration-300 flex-shrink-0 ml-4 ${isExpanded ? 'rotate-180' : ''}`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -155,13 +158,15 @@ export const StorySection: React.FC<StorySectionProps> = () => {
                       isExpanded ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'
                     }`}
                   >
-                    <p className="font-body text-[#2D1B3D]/90 leading-[1.9] drop-shadow-sm pl-2">{item.text}</p>
+                    <p className="font-body text-white/90 leading-[1.9] drop-shadow-sm pl-2">{item.text}</p>
                   </div>
                 </li>
               );
             })}
-          </ol>
+            </ol>
+          </div>
 
+          {/* Bilder - beholder eksisterende design */}
           <div ref={imagesRef} role="img" aria-label="Bilder fra vår historie" className="grid grid-cols-2 gap-6">
             {storyImages.map((img, i) => (
               <div 

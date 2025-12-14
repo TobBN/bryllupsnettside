@@ -100,24 +100,29 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
   };
 
   return (
-    <section id="rsvp" className="py-16 md:py-20 bg-[#FEFAE0] relative">
+    <section id="rsvp" className="py-16 md:py-20 relative">
+      {/* Mørk overlay for kontrast */}
+      <div className="absolute inset-0 bg-black/20 -z-10" />
       
       <div className="container mx-auto px-4 relative z-10">
+        {/* Overskrift og undertittel i glassmorphism-kort */}
         <div className="text-center mb-10">
-          <h2 
-            id="rsvp-heading"
-            className="text-3xl md:text-5xl lg:text-6xl leading-tight text-[#2D1B3D] mb-6"
-          >
-            RSVP
-          </h2>
-          
-          {/* Enhanced subtitle */}
-          <p className="font-body text-base md:text-lg text-[#4A2B5A]/80 max-w-2xl mx-auto leading-relaxed">
-            Vennligst svar om du kommer innen 1. mai 2026.
-          </p>
-          <p className="font-body text-base md:text-lg text-[#4A2B5A]/80 max-w-2xl mx-auto leading-relaxed">
-            Vi gleder oss til å feire sammen med dere!
-          </p>
+          <div className="glass-card rounded-2xl p-8 md:p-10 max-w-4xl mx-auto mb-8">
+            <h2 
+              id="rsvp-heading"
+              className="text-3xl md:text-5xl lg:text-6xl leading-tight text-white mb-6 drop-shadow-lg"
+            >
+              RSVP
+            </h2>
+            
+            {/* Enhanced subtitle */}
+            <p className="font-body text-base md:text-lg text-white/95 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+              Vennligst svar om du kommer innen 1. mai 2026.
+            </p>
+            <p className="font-body text-base md:text-lg text-white/95 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+              Vi gleder oss til å feire sammen med dere!
+            </p>
+          </div>
         </div>
 
         {!isSubmitted ? (
@@ -143,16 +148,18 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                 </div>
                 
                 {/* Additional info */}
-                <p className="font-body text-[#4A2B5A]/80 leading-relaxed">
-                  <strong>Svarfrist:</strong> 1. mai 2026. Spørsmål? Ta kontakt med oss direkte.
-                </p>
+                <div className="glass-card rounded-2xl p-6 max-w-2xl mx-auto">
+                  <p className="font-body text-white/95 leading-relaxed drop-shadow-sm">
+                    <strong>Svarfrist:</strong> 1. mai 2026. Spørsmål? Ta kontakt med oss direkte.
+                  </p>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="glass-card rounded-3xl p-8 md:p-10">
                   <div className="space-y-6">
                     <div>
-                      <label htmlFor="name" className="block font-body font-medium text-[#4A2B5A] mb-3 text-lg">
+                      <label htmlFor="name" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
                         Navn *
                       </label>
                       <input
@@ -163,14 +170,14 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                         onChange={handleInputChange}
                         required
                         autoComplete="name"
-                        className="w-full px-6 py-4 border-2 border-[#E8B4B8]/30 rounded-2xl font-body text-[#2D1B3D] focus:outline-none focus:ring-4 focus:ring-[#E8B4B8]/20 focus:border-[#E8B4B8] transition-all duration-300 text-lg"
+                        className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg"
                         placeholder="Ditt navn"
                         aria-required="true"
                       />
                     </div>
                     
                     <div>
-                      <label htmlFor="phone" className="block font-body font-medium text-[#4A2B5A] mb-3 text-lg">
+                      <label htmlFor="phone" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
                         Telefonnummer *
                       </label>
                       <input
@@ -182,7 +189,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                         required
                         autoComplete="tel"
                         inputMode="tel"
-                        className="w-full px-6 py-4 border-2 border-[#E8B4B8]/30 rounded-2xl font-body text-[#2D1B3D] focus:outline-none focus:ring-4 focus:ring-[#E8B4B8]/20 focus:border-[#E8B4B8] transition-all duration-300 text-lg"
+                        className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg"
                         placeholder="Ditt telefonnummer"
                         aria-required="true"
                       />
@@ -190,7 +197,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                     
                     {isAttending && (
                       <div>
-                        <label htmlFor="allergies" className="block font-body font-medium text-[#4A2B5A] mb-3 text-lg">
+                        <label htmlFor="allergies" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
                           Mat-allergier
                         </label>
                         <textarea
@@ -199,11 +206,11 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                           value={formData.allergies}
                           onChange={handleInputChange}
                           rows={4}
-                          className="w-full px-6 py-4 border-2 border-[#E8B4B8]/30 rounded-2xl font-body text-[#2D1B3D] focus:outline-none focus:ring-4 focus:ring-[#E8B4B8]/20 focus:border-[#E8B4B8] transition-all duration-300 text-lg resize-none"
+                          className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg resize-none"
                           placeholder="Har du noen mat-allergier vi bør vite om? (valgfritt)"
                           aria-describedby="allergies-help"
                         />
-                        <p id="allergies-help" className="font-small text-[#6B7280] mt-2">
+                        <p id="allergies-help" className="font-small text-white/80 mt-2 drop-shadow-sm">
                           Dette hjelper oss å tilpasse menyen for alle gjester
                         </p>
                       </div>
@@ -253,10 +260,10 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
           <div className="max-w-3xl mx-auto text-center">
             <div className="glass-card rounded-3xl p-10">
               <div className="text-8xl mb-8">{isAttending ? '🎉' : '💝'}</div>
-              <h3 className="text-3xl md:text-4xl text-[#2D1B3D] mb-6">
+              <h3 className="text-3xl md:text-4xl text-white mb-6 drop-shadow-lg">
                 {isAttending ? '🎉 Vi gleder oss til å se deg!' : '💝 Vi forstår, takk for svar'}
               </h3>
-              <p className="font-body text-xl text-[#4A2B5A] leading-relaxed mb-8">
+              <p className="font-body text-xl text-white/95 leading-relaxed mb-8 drop-shadow-md">
                 {isAttending 
                   ? 'Vi gleder oss til å feire sammen med deg! Du vil motta en bekreftelse på SMS snart.'
                   : 'Vi forstår og takker for svar. Vi håper å se deg snart!'
