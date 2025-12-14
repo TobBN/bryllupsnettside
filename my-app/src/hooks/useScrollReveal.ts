@@ -11,7 +11,7 @@ interface UseScrollRevealOptions {
 
 export const useScrollReveal = <T extends HTMLElement = HTMLDivElement>(
   options: UseScrollRevealOptions = {}
-): RefObject<T> => {
+): RefObject<T | null> => {
   const {
     threshold = 0.1,
     rootMargin = '0px',
@@ -19,7 +19,7 @@ export const useScrollReveal = <T extends HTMLElement = HTMLDivElement>(
     animationType = 'fade-up'
   } = options;
 
-  const elementRef = useRef<T>(null);
+  const elementRef = useRef<T | null>(null);
 
   useEffect(() => {
     const element = elementRef.current;
