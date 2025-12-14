@@ -102,7 +102,7 @@ export function validateContentStructure(content: unknown): boolean {
     return false;
   }
   
-  const requiredFields = ['hero', 'story', 'weddingDetails', 'footer'];
+  const requiredFields = ['hero', 'story', 'weddingDetails', 'footer', 'rsvp'];
   const obj = content as Record<string, unknown>;
   
   for (const field of requiredFields) {

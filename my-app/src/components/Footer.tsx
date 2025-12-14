@@ -7,6 +7,10 @@ import { useTranslations } from 'next-intl';
 interface FooterContent {
   heading: string;
   tagline: string;
+  contactText: string;
+  showContactText: string;
+  hideContactText: string;
+  galleryLink: string;
   contact: {
     title: string;
     bride: {
@@ -53,22 +57,22 @@ export const Footer: React.FC<FooterProps> = () => {
               href="/gallery"
               className="link-hover font-body text-white/80 hover:text-white transition-colors"
             >
-              Galleri
+              {content?.galleryLink || 'Galleri'}
             </a>
           </nav>
 
           {/* Contact info - clickable */}
           <div className="space-y-2">
             <p className="font-body text-sm text-white/80">
-              Ta kontakt med oss direkte for spørsmål
+              {content?.contactText || 'Ta kontakt med oss direkte for spørsmål'}
             </p>
             <button
               onClick={() => setShowContact(!showContact)}
               className="font-body text-sm text-white/70 hover:text-white transition-colors underline cursor-pointer"
               aria-expanded={showContact}
-              aria-label={showContact ? 'Skjul kontaktinformasjon' : 'Vis kontaktinformasjon'}
+              aria-label={showContact ? (content?.hideContactText || 'Skjul kontaktinformasjon') : (content?.showContactText || 'Vis kontaktinformasjon')}
             >
-              {showContact ? 'Skjul kontaktinfo' : 'Vis kontaktinfo'}
+              {showContact ? (content?.hideContactText || 'Skjul kontaktinfo') : (content?.showContactText || 'Vis kontaktinfo')}
             </button>
             {showContact && (
               <p className="font-body text-sm text-white/70 mt-2">

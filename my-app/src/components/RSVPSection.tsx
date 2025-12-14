@@ -3,6 +3,31 @@
 import { useState, useEffect } from 'react';
 import { RSVPSectionProps } from '@/types';
 
+interface RSVPContent {
+  title: string;
+  subtitle: string[];
+  buttons: {
+    attending: string;
+    notAttending: string;
+  };
+  form: {
+    nameLabel: string;
+    phoneLabel: string;
+    allergiesLabel: string;
+    namePlaceholder: string;
+    phonePlaceholder: string;
+    allergiesPlaceholder: string;
+    allergiesHelpText: string;
+    submitButton: string;
+    backButton: string;
+    newResponseButton: string;
+  };
+  messages: {
+    attending: string;
+    notAttending: string;
+  };
+}
+
 export const RSVPSection: React.FC<RSVPSectionProps> = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -14,6 +39,14 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [content, setContent] = useState<RSVPContent | null>(null);
+
+  useEffect(() => {
+    fetch('/api/content')
+      .then(res => res.json())
+      .then(data => setContent(data.rsvp))
+      .catch(err => console.error('Error loading RSVP content:', err));
+  }, []);
 
   // Handle hash navigation for QR code direct access
   useEffect(() => {
@@ -112,16 +145,20 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
               id="rsvp-heading"
               className="text-3xl md:text-5xl lg:text-6xl leading-tight text-white mb-6 drop-shadow-lg"
             >
-              RSVP
+              {content?.title || 'RSVP'}
             </h2>
             
             {/* Enhanced subtitle */}
-            <p className="font-body text-base md:text-lg text-white/95 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-              Vennligst svar om du kommer innen 1. mai 2026.
-            </p>
-            <p className="font-body text-base md:text-lg text-white/95 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-              Vi gleder oss til å feire sammen med dere!
-            </p>
+            {content?.subtitle && content.subtitle.length > 0 && (
+              <p className="font-body text-base md:text-lg text-white/95 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+                {content.subtitle[0]}
+              </p>
+            )}
+            {content?.subtitle && content.subtitle.length > 1 && (
+              <p className="font-body text-base md:text-lg text-white/95 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+                {content.subtitle[1]}
+              </p>
+            )}
           </div>
         </div>
 
@@ -133,17 +170,17 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                   <button
                     onClick={() => handleAttendanceChoice(true)}
                     className="btn-interactive bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-lg relative overflow-hidden"
-                    aria-label="Jeg kommer til bryllupet"
+                    aria-label={content?.buttons.attending || 'Jeg kommer til bryllupet'}
                   >
-                    <span className="relative z-10 text-lg md:text-xl">Jeg kommer</span>
+                    <span className="relative z-10 text-lg md:text-xl">{content?.buttons.attending || 'Jeg kommer'}</span>
                   </button>
                   
                   <button
                     onClick={() => handleAttendanceChoice(false)}
                     className="btn-interactive bg-gradient-to-r from-[#6B7280] to-[#9CA3AF] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-lg relative overflow-hidden"
-                    aria-label="Jeg kan dessverre ikke komme"
+                    aria-label={content?.buttons.notAttending || 'Jeg kan dessverre ikke komme'}
                   >
-                    <span className="relative z-10 text-lg md:text-xl">Jeg kan dessverre ikke</span>
+                    <span className="relative z-10 text-lg md:text-xl">{content?.buttons.notAttending || 'Jeg kan dessverre ikke'}</span>
                   </button>
                 </div>
               </div>
@@ -153,7 +190,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                   <div className="space-y-6">
                     <div>
                       <label htmlFor="name" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
-                        Navn *
+                        {content?.form.nameLabel || 'Navn *'}
                       </label>
                       <input
                         type="text"
@@ -164,14 +201,14 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                         required
                         autoComplete="name"
                         className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg"
-                        placeholder="Ditt navn"
+                        placeholder={content?.form.namePlaceholder || 'Ditt navn'}
                         aria-required="true"
                       />
                     </div>
                     
                     <div>
                       <label htmlFor="phone" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
-                        Telefonnummer *
+                        {content?.form.phoneLabel || 'Telefonnummer *'}
                       </label>
                       <input
                         type="tel"
@@ -183,7 +220,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                         autoComplete="tel"
                         inputMode="tel"
                         className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg"
-                        placeholder="Ditt telefonnummer"
+                        placeholder={content?.form.phonePlaceholder || 'Ditt telefonnummer'}
                         aria-required="true"
                       />
                     </div>
@@ -191,7 +228,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                     {isAttending && (
                       <div>
                         <label htmlFor="allergies" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
-                          Mat-allergier
+                          {content?.form.allergiesLabel || 'Mat-allergier'}
                         </label>
                         <textarea
                           id="allergies"
@@ -200,11 +237,11 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                           onChange={handleInputChange}
                           rows={4}
                           className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg resize-none"
-                          placeholder="Har du noen mat-allergier vi bør vite om? (valgfritt)"
+                          placeholder={content?.form.allergiesPlaceholder || 'Har du noen mat-allergier vi bør vite om? (valgfritt)'}
                           aria-describedby="allergies-help"
                         />
                         <p id="allergies-help" className="font-small text-white/80 mt-2 drop-shadow-sm">
-                          Dette hjelper oss å tilpasse menyen for alle gjester
+                          {content?.form.allergiesHelpText || 'Dette hjelper oss å tilpasse menyen for alle gjester'}
                         </p>
                       </div>
                     )}
@@ -229,7 +266,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                             Sender...
                           </div>
                         ) : (
-                          'Send svar'
+                          content?.form.submitButton || 'Send svar'
                         )}
                       </span>
                     </button>
@@ -242,7 +279,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                       }}
                       className="btn-interactive flex-1 bg-[#6B7280] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-velvet text-lg relative overflow-hidden"
                     >
-                      <span className="relative z-10">Tilbake</span>
+                      <span className="relative z-10">{content?.form.backButton || 'Tilbake'}</span>
                     </button>
                   </div>
                 </div>
@@ -254,15 +291,15 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
             <div className="glass-card rounded-3xl p-10">
               <h3 className="text-3xl md:text-4xl text-white mb-8 drop-shadow-lg">
                 {isAttending 
-                  ? '🎉 Vi gleder oss til å feire sammen med deg!'
-                  : '💝 Vi forstår og takker for svar. Vi håper å se deg snart!'
+                  ? (content?.messages.attending || '🎉 Vi gleder oss til å feire sammen med deg!')
+                  : (content?.messages.notAttending || '💝 Vi forstår og takker for svar. Vi håper å se deg snart!')
                 }
               </h3>
               <button
                 onClick={resetForm}
                 className="bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white font-body font-medium px-8 py-4 rounded-2xl shadow-velvet hover-lift transition-all duration-300 text-lg"
               >
-                Send nytt svar
+                {content?.form.newResponseButton || 'Send nytt svar'}
               </button>
             </div>
           </div>

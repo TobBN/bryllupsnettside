@@ -61,6 +61,10 @@ interface ContentData {
   footer: {
     heading: string;
     tagline: string;
+    contactText: string;
+    showContactText: string;
+    hideContactText: string;
+    galleryLink: string;
     contact: {
       title: string;
       bride: {
@@ -71,6 +75,30 @@ interface ContentData {
         name: string;
         phone: string;
       };
+    };
+  };
+  rsvp: {
+    title: string;
+    subtitle: string[];
+    buttons: {
+      attending: string;
+      notAttending: string;
+    };
+    form: {
+      nameLabel: string;
+      phoneLabel: string;
+      allergiesLabel: string;
+      namePlaceholder: string;
+      phonePlaceholder: string;
+      allergiesPlaceholder: string;
+      allergiesHelpText: string;
+      submitButton: string;
+      backButton: string;
+      newResponseButton: string;
+    };
+    messages: {
+      attending: string;
+      notAttending: string;
     };
   };
 }
@@ -627,6 +655,17 @@ export default function AdminPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Tittel
+                  </label>
+                  <input
+                    type="text"
+                    value={content.weddingDetails.venue.title}
+                    onChange={(e) => updateContent(['weddingDetails', 'venue', 'title'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                     Beskrivelse
                   </label>
                   <textarea
@@ -691,6 +730,17 @@ export default function AdminPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Tittel
+                  </label>
+                  <input
+                    type="text"
+                    value={content.weddingDetails.dressCode.title}
+                    onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'title'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                     Generelt
                   </label>
                   <input
@@ -702,7 +752,18 @@ export default function AdminPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Herrer
+                    Herrer - Tittel
+                  </label>
+                  <input
+                    type="text"
+                    value={content.weddingDetails.dressCode.men.title}
+                    onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'men', 'title'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] mb-2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Herrer - Beskrivelse
                   </label>
                   <textarea
                     value={content.weddingDetails.dressCode.men.description}
@@ -713,7 +774,18 @@ export default function AdminPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Damer
+                    Damer - Tittel
+                  </label>
+                  <input
+                    type="text"
+                    value={content.weddingDetails.dressCode.women.title}
+                    onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'women', 'title'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] mb-2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Damer - Beskrivelse
                   </label>
                   <textarea
                     value={content.weddingDetails.dressCode.women.description}
@@ -740,6 +812,17 @@ export default function AdminPage() {
             <div className="mb-6 pb-6 border-b border-[#E8B4B8]">
               <h3 className="text-xl font-semibold text-[#2D1B3D] mb-4">Gaveønsker</h3>
               <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Tittel
+                  </label>
+                  <input
+                    type="text"
+                    value={content.weddingDetails.gifts.title}
+                    onChange={(e) => updateContent(['weddingDetails', 'gifts', 'title'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                     Beskrivelse
@@ -817,6 +900,17 @@ export default function AdminPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Tittel
+                  </label>
+                  <input
+                    type="text"
+                    value={content.weddingDetails.food.title}
+                    onChange={(e) => updateContent(['weddingDetails', 'food', 'title'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                     Beskrivelse
                   </label>
                   <textarea
@@ -867,6 +961,52 @@ export default function AdminPage() {
                   className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                  Kontakt-tekst
+                </label>
+                <input
+                  type="text"
+                  value={content.footer.contactText}
+                  onChange={(e) => updateContent(['footer', 'contactText'], e.target.value)}
+                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Vis kontaktinfo-tekst
+                  </label>
+                  <input
+                    type="text"
+                    value={content.footer.showContactText}
+                    onChange={(e) => updateContent(['footer', 'showContactText'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Skjul kontaktinfo-tekst
+                  </label>
+                  <input
+                    type="text"
+                    value={content.footer.hideContactText}
+                    onChange={(e) => updateContent(['footer', 'hideContactText'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                  Galleri-link tekst
+                </label>
+                <input
+                  type="text"
+                  value={content.footer.galleryLink}
+                  onChange={(e) => updateContent(['footer', 'galleryLink'], e.target.value)}
+                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                />
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
@@ -911,6 +1051,229 @@ export default function AdminPage() {
                     onChange={(e) => updateContent(['footer', 'contact', 'groom', 'phone'], e.target.value)}
                     className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
                   />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* RSVP Section */}
+          <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
+            <h2 className="text-2xl font-bold text-[#2D1B3D] mb-4">RSVP-seksjon</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                  Overskrift
+                </label>
+                <input
+                  type="text"
+                  value={content.rsvp.title}
+                  onChange={(e) => updateContent(['rsvp', 'title'], e.target.value)}
+                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                  Undertittel (linje 1)
+                </label>
+                <input
+                  type="text"
+                  value={content.rsvp.subtitle[0] || ''}
+                  onChange={(e) => {
+                    const newSubtitle = [...(content.rsvp.subtitle || [])];
+                    newSubtitle[0] = e.target.value;
+                    updateContent(['rsvp', 'subtitle'], newSubtitle);
+                  }}
+                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                  Undertittel (linje 2)
+                </label>
+                <input
+                  type="text"
+                  value={content.rsvp.subtitle[1] || ''}
+                  onChange={(e) => {
+                    const newSubtitle = [...(content.rsvp.subtitle || [])];
+                    newSubtitle[1] = e.target.value;
+                    updateContent(['rsvp', 'subtitle'], newSubtitle);
+                  }}
+                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Knapp: Jeg kommer
+                  </label>
+                  <input
+                    type="text"
+                    value={content.rsvp.buttons.attending}
+                    onChange={(e) => updateContent(['rsvp', 'buttons', 'attending'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Knapp: Jeg kan dessverre ikke
+                  </label>
+                  <input
+                    type="text"
+                    value={content.rsvp.buttons.notAttending}
+                    onChange={(e) => updateContent(['rsvp', 'buttons', 'notAttending'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+              </div>
+              <div className="border-t border-[#E8B4B8] pt-4 mt-4">
+                <h3 className="text-lg font-semibold text-[#2D1B3D] mb-4">Skjema-felter</h3>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                        Navn label
+                      </label>
+                      <input
+                        type="text"
+                        value={content.rsvp.form.nameLabel}
+                        onChange={(e) => updateContent(['rsvp', 'form', 'nameLabel'], e.target.value)}
+                        className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                        Navn placeholder
+                      </label>
+                      <input
+                        type="text"
+                        value={content.rsvp.form.namePlaceholder}
+                        onChange={(e) => updateContent(['rsvp', 'form', 'namePlaceholder'], e.target.value)}
+                        className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                        Telefon label
+                      </label>
+                      <input
+                        type="text"
+                        value={content.rsvp.form.phoneLabel}
+                        onChange={(e) => updateContent(['rsvp', 'form', 'phoneLabel'], e.target.value)}
+                        className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                        Telefon placeholder
+                      </label>
+                      <input
+                        type="text"
+                        value={content.rsvp.form.phonePlaceholder}
+                        onChange={(e) => updateContent(['rsvp', 'form', 'phonePlaceholder'], e.target.value)}
+                        className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                      Allergier label
+                    </label>
+                    <input
+                      type="text"
+                      value={content.rsvp.form.allergiesLabel}
+                      onChange={(e) => updateContent(['rsvp', 'form', 'allergiesLabel'], e.target.value)}
+                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                      Allergier placeholder
+                    </label>
+                    <input
+                      type="text"
+                      value={content.rsvp.form.allergiesPlaceholder}
+                      onChange={(e) => updateContent(['rsvp', 'form', 'allergiesPlaceholder'], e.target.value)}
+                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                      Allergier hjelpetekst
+                    </label>
+                    <input
+                      type="text"
+                      value={content.rsvp.form.allergiesHelpText}
+                      onChange={(e) => updateContent(['rsvp', 'form', 'allergiesHelpText'], e.target.value)}
+                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="border-t border-[#E8B4B8] pt-4 mt-4">
+                <h3 className="text-lg font-semibold text-[#2D1B3D] mb-4">Knapper</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                      Send svar
+                    </label>
+                    <input
+                      type="text"
+                      value={content.rsvp.form.submitButton}
+                      onChange={(e) => updateContent(['rsvp', 'form', 'submitButton'], e.target.value)}
+                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                      Tilbake
+                    </label>
+                    <input
+                      type="text"
+                      value={content.rsvp.form.backButton}
+                      onChange={(e) => updateContent(['rsvp', 'form', 'backButton'], e.target.value)}
+                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                      Send nytt svar
+                    </label>
+                    <input
+                      type="text"
+                      value={content.rsvp.form.newResponseButton}
+                      onChange={(e) => updateContent(['rsvp', 'form', 'newResponseButton'], e.target.value)}
+                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="border-t border-[#E8B4B8] pt-4 mt-4">
+                <h3 className="text-lg font-semibold text-[#2D1B3D] mb-4">Post-submission meldinger</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                      Melding når man kommer
+                    </label>
+                    <input
+                      type="text"
+                      value={content.rsvp.messages.attending}
+                      onChange={(e) => updateContent(['rsvp', 'messages', 'attending'], e.target.value)}
+                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                      Melding når man ikke kommer
+                    </label>
+                    <input
+                      type="text"
+                      value={content.rsvp.messages.notAttending}
+                      onChange={(e) => updateContent(['rsvp', 'messages', 'notAttending'], e.target.value)}
+                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

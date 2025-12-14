@@ -41,7 +41,47 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json(data.content);
+    // Ensure all required fields exist with defaults if missing
+    const content = data.content as Record<string, unknown>;
+    
+    // Add default RSVP content if missing
+    if (!content.rsvp) {
+      content.rsvp = {
+        title: 'RSVP',
+        subtitle: ['Vennligst svar om du kommer innen 1. mai 2026.', 'Vi gleder oss til å feire sammen med dere!'],
+        buttons: {
+          attending: 'Jeg kommer',
+          notAttending: 'Jeg kan dessverre ikke'
+        },
+        form: {
+          nameLabel: 'Navn *',
+          phoneLabel: 'Telefonnummer *',
+          allergiesLabel: 'Mat-allergier',
+          namePlaceholder: 'Ditt navn',
+          phonePlaceholder: 'Ditt telefonnummer',
+          allergiesPlaceholder: 'Har du noen mat-allergier vi bør vite om? (valgfritt)',
+          allergiesHelpText: 'Dette hjelper oss å tilpasse menyen for alle gjester',
+          submitButton: 'Send svar',
+          backButton: 'Tilbake',
+          newResponseButton: 'Send nytt svar'
+        },
+        messages: {
+          attending: '🎉 Vi gleder oss til å feire sammen med deg!',
+          notAttending: '💝 Vi forstår og takker for svar. Vi håper å se deg snart!'
+        }
+      };
+    }
+
+    // Add default footer fields if missing
+    if (content.footer && typeof content.footer === 'object') {
+      const footer = content.footer as Record<string, unknown>;
+      if (!footer.contactText) footer.contactText = 'Ta kontakt med oss direkte for spørsmål';
+      if (!footer.showContactText) footer.showContactText = 'Vis kontaktinfo';
+      if (!footer.hideContactText) footer.hideContactText = 'Skjul kontaktinfo';
+      if (!footer.galleryLink) footer.galleryLink = 'Galleri';
+    }
+
+    return NextResponse.json(content);
   } catch (error) {
     console.error('Error reading content:', error);
     return NextResponse.json(
