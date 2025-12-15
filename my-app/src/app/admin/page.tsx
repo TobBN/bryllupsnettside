@@ -1729,9 +1729,10 @@ export default function AdminPage() {
                 <button
                   onClick={loadSeatingTables}
                   disabled={seatingLoading}
-                  className="px-4 py-2 bg-[#E8B4B8] text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="px-3 py-1.5 text-sm bg-gray-200 text-[#4A2B5A] rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
+                  title="Oppdater bord-listen"
                 >
-                  {seatingLoading ? 'Laster...' : 'Last inn bord'}
+                  {seatingLoading ? 'Laster...' : 'Oppdater liste'}
                 </button>
               </div>
 
