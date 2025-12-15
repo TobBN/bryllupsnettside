@@ -82,6 +82,19 @@ export async function GET(request: NextRequest) {
     if (tablesError) {
       console.error('Error fetching seating tables:', tablesError);
       logSecurityEvent('seating_fetch_error', { clientId, error: tablesError.message }, 'error');
+      
+      // Check if table doesn't exist (PGRST205 = table not found)
+      if (tablesError.code === 'PGRST205') {
+        return NextResponse.json(
+          { 
+            error: 'Bord-tabellen eksisterer ikke. Vennligst kjør SQL-migrasjonen supabase_add_seating_tables.sql i Supabase først.',
+            code: 'TABLE_NOT_FOUND',
+            hint: 'Kjør migrasjonsfilen i Supabase SQL Editor'
+          },
+          { status: 500 }
+        );
+      }
+      
       return NextResponse.json(
         { error: 'Kunne ikke hente bord-data' },
         { status: 500 }
