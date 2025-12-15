@@ -162,6 +162,13 @@ export default function AdminPage() {
     loadContent();
   }, []);
 
+  // Automatisk last bord når autentisert
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadSeatingTables();
+    }
+  }, [isAuthenticated]);
+
   const checkAuth = async () => {
     // Check authentication status via dedicated auth check endpoint
     // #region agent log
