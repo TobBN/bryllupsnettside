@@ -1735,20 +1735,34 @@ export default function AdminPage() {
                         {rsvps.map((rsvp, index) => (
                           <tr 
                             key={rsvp.id} 
-                            className={index % 2 === 0 ? 'bg-white' : 'bg-[#FEFAE0]/50'}
+                            className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#FEFAE0]/50'} ${!rsvp.is_read ? 'bg-blue-50' : ''}`}
                           >
                             <td className="px-4 py-3 border border-[#E8B4B8]">
-                              <span 
-                                className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                                  rsvp.responseRaw === 'yes' 
-                                    ? 'bg-green-100 text-green-800' 
-                                    : rsvp.responseRaw === 'no'
-                                    ? 'bg-red-100 text-red-800'
-                                    : 'bg-yellow-100 text-yellow-800'
-                                }`}
-                              >
-                                {rsvp.response}
-                              </span>
+                              <div className="flex items-center gap-2">
+                                {!rsvp.is_read && (
+                                  <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" title="Ulest"></span>
+                                )}
+                                <span 
+                                  className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                                    rsvp.responseRaw === 'yes' 
+                                      ? 'bg-green-100 text-green-800' 
+                                      : rsvp.responseRaw === 'no'
+                                      ? 'bg-red-100 text-red-800'
+                                      : 'bg-yellow-100 text-yellow-800'
+                                  }`}
+                                >
+                                  {rsvp.response}
+                                </span>
+                                {!rsvp.is_read && (
+                                  <button
+                                    onClick={() => handleMarkAsRead(rsvp.id)}
+                                    className="ml-2 px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
+                                    title="Merk som lest"
+                                  >
+                                    ✓
+                                  </button>
+                                )}
+                              </div>
                             </td>
                             <td className="px-4 py-3 border border-[#E8B4B8] text-[#2D1B3D]">
                               {rsvp.names && rsvp.names.length > 0 ? rsvp.names.join(', ') : '-'}
