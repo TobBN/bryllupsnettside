@@ -115,6 +115,19 @@ export const POST = async (req: NextRequest) => {
       // Try to clean up: delete the RSVP record if guest insertion fails
       await supabase.from('rsvps').delete().eq('id', rsvpData.id);
       logSecurityEvent('rsvp_guests_save_error', { clientId, error: guestsError.message, code: guestsError.code }, 'error');
+      
+      // Check if table doesn't exist
+      if (guestsError.code === 'PGRST204' || guestsError.message?.includes('relation') || guestsError.message?.includes('does not exist')) {
+        const errorMessage = 'rsvp_guests tabellen eksisterer ikke. Kjør SQL-migrasjonen i Supabase først.';
+        console.error('[DEBUG] Table missing error:', errorMessage);
+        return NextResponse.json({ 
+          ok: false, 
+          error: process.env.NODE_ENV === 'development' 
+            ? errorMessage 
+            : 'Database-tabellen mangler. Kontakt administrator.' 
+        }, { status: 500 });
+      }
+      
       // Return detailed error in development, generic in production
       const errorMessage = process.env.NODE_ENV === 'development'
         ? `Gjester feil: ${guestsError.message} (${guestsError.code}). Hint: ${guestsError.hint || 'Ingen hint'}`
