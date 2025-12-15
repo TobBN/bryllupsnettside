@@ -184,6 +184,7 @@ export default function AdminPage() {
     if (isAuthenticated) {
       loadSeatingTables();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   const checkAuth = async () => {
@@ -1905,7 +1906,7 @@ export default function AdminPage() {
                     ))}
                     {(!content.schedule?.items || content.schedule.items.length === 0) && (
                       <p className="text-[#4A2B5A] text-center py-4 text-sm">
-                        Ingen programpunkter. Klikk "Legg til programpunkt" for å begynne.
+                        Ingen programpunkter. Klikk &quot;Legg til programpunkt&quot; for å begynne.
                       </p>
                     )}
                   </div>
@@ -2265,7 +2266,7 @@ export default function AdminPage() {
                     ))}
                     {(!content.faq?.items || content.faq.items.length === 0) && (
                       <p className="text-[#4A2B5A] text-center py-4 text-sm">
-                        Ingen spørsmål. Klikk "Legg til spørsmål" for å begynne.
+                        Ingen spørsmål. Klikk &quot;Legg til spørsmål&quot; for å begynne.
                       </p>
                     )}
                   </div>
