@@ -133,6 +133,7 @@ interface RSVPItem {
   createdAt: string;
   dateFormatted: string;
   timeFormatted: string;
+  is_read?: boolean;
 }
 
 interface SeatingGuest {
