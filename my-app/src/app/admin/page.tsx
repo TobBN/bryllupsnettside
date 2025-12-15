@@ -385,16 +385,36 @@ export default function AdminPage() {
     setSeatingLoading(true);
     setError('');
     
+    // #region agent log
+    console.log('[DEBUG] loadSeatingTables called', { isAuthenticated, timestamp: new Date().toISOString() });
+    // #endregion
+    
     try {
+      // #region agent log
+      console.log('[DEBUG] Fetching seating tables from /api/admin/seating');
+      // #endregion
+      
       const response = await fetch('/api/admin/seating');
+      
+      // #region agent log
+      console.log('[DEBUG] Response received', { status: response.status, ok: response.ok, statusText: response.statusText });
+      // #endregion
+      
       if (!response.ok) {
         const data = await response.json();
+        // #region agent log
+        console.log('[DEBUG] Response not OK', { status: response.status, error: data.error });
+        // #endregion
         setError(data.error || 'Kunne ikke hente bord-data');
         setSeatingLoading(false);
         return;
       }
       
       const result = await response.json();
+      // #region agent log
+      console.log('[DEBUG] Response parsed', { success: result.success, hasData: !!result.data, dataLength: result.data?.length });
+      // #endregion
+      
       if (result.success && result.data) {
         setSeatingTables(result.data);
         // Initialize table guests state
@@ -404,7 +424,10 @@ export default function AdminPage() {
         });
         setTableGuests(guestsMap);
       }
-    } catch {
+    } catch (error) {
+      // #region agent log
+      console.error('[DEBUG] Exception caught in loadSeatingTables', error);
+      // #endregion
       setError('Feil ved henting av bord-data');
     } finally {
       setSeatingLoading(false);
