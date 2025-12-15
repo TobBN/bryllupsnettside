@@ -19,6 +19,7 @@ interface RsvpWithGuests {
   guest_count: number | null;
   created_at: string;
   updated_at: string;
+  is_read: boolean | null;
   rsvp_guests: RsvpGuest[] | null;
 }
 
