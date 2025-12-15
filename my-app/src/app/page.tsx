@@ -8,9 +8,7 @@ import {
   HeroSection, 
   StorySection, 
   WeddingDetailsSection,
-  ScheduleSection,
   RSVPSection,
-  SeatingChartSection,
   Footer 
 } from "@/components";
 
@@ -125,10 +123,8 @@ export default function Home() {
       <main className={`${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 ease-in-out`}>
         <HeroSection timeLeft={timeLeft} />
         <WeddingDetailsSection />
-        <ScheduleSection />
         <RSVPSection />
         <StorySection />
-        <SeatingChartSection />
       </main>
 
       <Footer />

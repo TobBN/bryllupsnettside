@@ -92,32 +92,34 @@ export async function GET() {
       }
     }
 
-    // Add default seatingChart content if missing
-    if (!content.seatingChart) {
-      content.seatingChart = {
-        title: 'Bord-kart',
-        subtitle: 'Finn ditt bord',
-        searchPlaceholder: 'Skriv inn navnet ditt...',
-        searchLabel: 'Søk etter navn',
-        noResultsText: 'Ingen resultater funnet'
-      };
-    }
-
-    // Add default schedule content if missing
-    if (!content.schedule) {
-      content.schedule = {
-        title: 'Program',
-        subtitle: 'Tidsplan for dagen',
-        items: []
-      };
-    }
-
-    // Add default faq content if missing
-    if (!content.faq) {
-      content.faq = {
-        title: 'Ofte stilte spørsmål',
-        items: []
-      };
+    // Add default schedule, seatingChart, and faq content under weddingDetails if missing
+    if (content.weddingDetails && typeof content.weddingDetails === 'object') {
+      const weddingDetails = content.weddingDetails as Record<string, unknown>;
+      
+      if (!weddingDetails.schedule) {
+        weddingDetails.schedule = {
+          title: 'Program',
+          subtitle: 'Tidsplan for dagen',
+          items: []
+        };
+      }
+      
+      if (!weddingDetails.seatingChart) {
+        weddingDetails.seatingChart = {
+          title: 'Bord-kart',
+          subtitle: 'Finn ditt bord',
+          searchPlaceholder: 'Skriv inn navnet ditt...',
+          searchLabel: 'Søk etter navn',
+          noResultsText: 'Ingen resultater funnet'
+        };
+      }
+      
+      if (!weddingDetails.faq) {
+        weddingDetails.faq = {
+          title: 'Ofte stilte spørsmål',
+          items: []
+        };
+      }
     }
 
     return NextResponse.json(content);
