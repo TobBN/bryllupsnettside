@@ -493,7 +493,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                 )}
                 
                 {/* Search field */}
-                <div>
+                <div onClick={(e) => e.stopPropagation()}>
                   <label htmlFor="guest-search" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
                     {content.seatingChart?.searchLabel || 'Søk etter navn'}
                   </label>
@@ -503,6 +503,8 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                       id="guest-search"
                       value={searchQuery}
                       onChange={(e) => handleSearch(e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      onFocus={(e) => e.stopPropagation()}
                       placeholder={content.seatingChart?.searchPlaceholder || 'Skriv inn navnet ditt...'}
                       className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg"
                     />
@@ -543,7 +545,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                     Ingen bord er satt opp ennå.
                   </p>
                 ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" onClick={(e) => e.stopPropagation()}>
                     {tables.map((table) => {
                       const isSelected = selectedTable === table.table_number;
                       const isHighlighted = searchResult?.table_number === table.table_number;
@@ -551,7 +553,10 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                       return (
                         <div key={table.table_number} className="relative">
                           <button
-                            onClick={() => handleTableClick(table.table_number)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleTableClick(table.table_number);
+                            }}
                             className={`w-full aspect-square rounded-full glass-card flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white/20 ${
                               isHighlighted ? 'ring-4 ring-[#F4A261] shadow-2xl' : ''
                             } ${isSelected ? 'ring-2 ring-[#E8B4B8]' : ''}`}
@@ -607,12 +612,15 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
               isExpanded={expandedBox === (content.faq?.title || 'FAQ')}
               onToggle={() => toggleBox(content.faq?.title || 'FAQ')}
             >
-              <div className="space-y-3">
+              <div className="space-y-3" onClick={(e) => e.stopPropagation()}>
                 {content.faq?.items && content.faq.items.length > 0 ? (
                   content.faq.items.map((item, index) => (
                     <div key={index} className="bg-white/10 rounded-lg overflow-hidden">
                       <button
-                        onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedFaq(expandedFaq === index ? null : index);
+                        }}
                         className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white/20"
                         aria-expanded={expandedFaq === index}
                         aria-controls={`faq-answer-${index}`}
