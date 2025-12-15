@@ -7,7 +7,8 @@ import { useTranslations } from 'next-intl';
 import { 
   HeroSection, 
   StorySection, 
-  WeddingDetailsSection, 
+  WeddingDetailsSection,
+  ScheduleSection,
   RSVPSection,
   SeatingChartSection,
   Footer 
@@ -124,6 +125,7 @@ export default function Home() {
       <main className={`${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 ease-in-out`}>
         <HeroSection timeLeft={timeLeft} />
         <WeddingDetailsSection />
+        <ScheduleSection />
         <RSVPSection />
         <StorySection />
         <SeatingChartSection />

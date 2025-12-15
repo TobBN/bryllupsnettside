@@ -70,6 +70,7 @@ export const POST = async (req: NextRequest) => {
       email: email || null,
       response,
       message: message || null,
+      is_read: false, // Mark as unread for admin notification
       // Note: guest_count column removed - using rsvp_guests table instead
     }).select().single();
 

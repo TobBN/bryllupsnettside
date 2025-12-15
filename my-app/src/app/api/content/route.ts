@@ -103,6 +103,23 @@ export async function GET() {
       };
     }
 
+    // Add default schedule content if missing
+    if (!content.schedule) {
+      content.schedule = {
+        title: 'Program',
+        subtitle: 'Tidsplan for dagen',
+        items: []
+      };
+    }
+
+    // Add default faq content if missing
+    if (!content.faq) {
+      content.faq = {
+        title: 'Ofte stilte spørsmål',
+        items: []
+      };
+    }
+
     return NextResponse.json(content);
   } catch (error) {
     console.error('Error reading content:', error);

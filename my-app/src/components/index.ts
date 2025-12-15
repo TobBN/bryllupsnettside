@@ -4,6 +4,7 @@ export { CountdownTimer } from './CountdownTimer';
 export { HeroSection } from './HeroSection';
 export { StorySection } from './StorySection';
 export { WeddingDetailsSection } from './WeddingDetailsSection';
+export { ScheduleSection } from './ScheduleSection';
 export { RSVPSection } from './RSVPSection';
 export { SeatingChartSection } from './SeatingChartSection';
 export { Footer } from './Footer';

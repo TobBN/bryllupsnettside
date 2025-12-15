@@ -104,6 +104,22 @@ interface ContentData {
     searchLabel: string;
     noResultsText: string;
   };
+  schedule: {
+    title: string;
+    subtitle: string;
+    items: Array<{
+      time: string;
+      title: string;
+      description?: string;
+    }>;
+  };
+  faq: {
+    title: string;
+    items: Array<{
+      question: string;
+      answer: string;
+    }>;
+  };
 }
 
 interface RSVPItem {
@@ -144,6 +160,7 @@ export default function AdminPage() {
   const [rsvps, setRsvps] = useState<RSVPItem[]>([]);
   const [rsvpsLoading, setRsvpsLoading] = useState(false);
   const [showRsvpList, setShowRsvpList] = useState(false);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   
   // Seating chart state
   const [seatingTables, setSeatingTables] = useState<SeatingTable[]>([]);
@@ -303,6 +320,9 @@ export default function AdminPage() {
       const result = await response.json();
       if (result.success && result.data) {
         setRsvps(result.data);
+        // Count unread RSVPs
+        const unread = result.data.filter((rsvp: RSVPItem) => !rsvp.is_read).length;
+        setUnreadCount(unread);
       } else {
         setError('Kunne ikke hente RSVP-data');
       }
@@ -319,6 +339,65 @@ export default function AdminPage() {
       loadRsvps();
     }
     setShowRsvpList(!showRsvpList);
+  };
+
+  const handleMarkAsRead = async (rsvpId: string) => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      const response = await fetch('/api/admin/rsvp/mark-read', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rsvp_id: rsvpId }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        // Update local state
+        setRsvps(rsvps.map(rsvp => 
+          rsvp.id === rsvpId ? { ...rsvp, is_read: true } : rsvp
+        ));
+        // Update unread count
+        setUnreadCount(Math.max(0, unreadCount - 1));
+      } else {
+        setError(data.error || 'Kunne ikke markere som lest');
+      }
+    } catch {
+      setError('Feil ved markering av RSVP som lest');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMarkAllRead = async () => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      const response = await fetch('/api/admin/rsvp/mark-read', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mark_all: true }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        // Update local state
+        setRsvps(rsvps.map(rsvp => ({ ...rsvp, is_read: true })));
+        setUnreadCount(0);
+        setSuccess('Alle RSVP-svar er markert som lest');
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError(data.error || 'Kunne ikke markere alle som lest');
+      }
+    } catch {
+      setError('Feil ved markering av alle RSVP-svar som lest');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleExportRSVP = async () => {
@@ -1676,6 +1755,129 @@ export default function AdminPage() {
                     </p>
                   </div>
                 )}
+              </div>
+            )}
+          </section>
+
+          {/* Schedule Section */}
+          <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl mb-6">
+            <h2 className="text-2xl font-bold text-[#4A2B5A] mb-6">Program</h2>
+            
+            {/* Content editing */}
+            {content && (
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Tittel
+                  </label>
+                  <input
+                    type="text"
+                    value={content.schedule?.title || ''}
+                    onChange={(e) => updateContent(['schedule', 'title'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Undertittel
+                  </label>
+                  <input
+                    type="text"
+                    value={content.schedule?.subtitle || ''}
+                    onChange={(e) => updateContent(['schedule', 'subtitle'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                
+                {/* Schedule items */}
+                <div className="border-t border-[#E8B4B8] pt-4 mt-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-[#4A2B5A]">Programpunkter</h3>
+                    <button
+                      onClick={() => {
+                        const currentItems = content.schedule?.items || [];
+                        updateContent(['schedule', 'items'], [...currentItems, { time: '', title: '', description: '' }]);
+                      }}
+                      className="px-4 py-2 bg-[#E8B4B8] text-white rounded-lg hover:opacity-90 transition-opacity"
+                    >
+                      Legg til programpunkt
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {(content.schedule?.items || []).map((item: { time: string; title: string; description?: string }, index: number) => (
+                      <div key={index} className="border border-[#E8B4B8] rounded-lg p-4">
+                        <div className="grid grid-cols-12 gap-4 mb-3">
+                          <div className="col-span-12 md:col-span-3">
+                            <label className="block text-sm font-medium text-[#4A2B5A] mb-1">
+                              Tidspunkt
+                            </label>
+                            <input
+                              type="text"
+                              value={item.time}
+                              onChange={(e) => {
+                                const updated = [...(content.schedule?.items || [])];
+                                updated[index] = { ...updated[index], time: e.target.value };
+                                updateContent(['schedule', 'items'], updated);
+                              }}
+                              placeholder="14:00"
+                              className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                            />
+                          </div>
+                          <div className="col-span-12 md:col-span-8">
+                            <label className="block text-sm font-medium text-[#4A2B5A] mb-1">
+                              Tittel
+                            </label>
+                            <input
+                              type="text"
+                              value={item.title}
+                              onChange={(e) => {
+                                const updated = [...(content.schedule?.items || [])];
+                                updated[index] = { ...updated[index], title: e.target.value };
+                                updateContent(['schedule', 'items'], updated);
+                              }}
+                              placeholder="Vielse"
+                              className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                            />
+                          </div>
+                          <div className="col-span-12 md:col-span-1 flex items-end">
+                            <button
+                              onClick={() => {
+                                const updated = [...(content.schedule?.items || [])];
+                                updated.splice(index, 1);
+                                updateContent(['schedule', 'items'], updated);
+                              }}
+                              className="w-full px-3 py-2 bg-red-500 text-white rounded-lg hover:opacity-90 transition-opacity"
+                            >
+                              Slett
+                            </button>
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-[#4A2B5A] mb-1">
+                            Beskrivelse (valgfritt)
+                          </label>
+                          <textarea
+                            value={item.description || ''}
+                            onChange={(e) => {
+                              const updated = [...(content.schedule?.items || [])];
+                              updated[index] = { ...updated[index], description: e.target.value };
+                              updateContent(['schedule', 'items'], updated);
+                            }}
+                            placeholder="Beskrivelse av aktiviteten..."
+                            rows={2}
+                            className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                    {(!content.schedule?.items || content.schedule.items.length === 0) && (
+                      <p className="text-[#4A2B5A] text-center py-4 text-sm">
+                        Ingen programpunkter. Klikk "Legg til programpunkt" for å begynne.
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </section>

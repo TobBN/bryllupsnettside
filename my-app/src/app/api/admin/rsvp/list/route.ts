@@ -92,6 +92,7 @@ export async function GET(request: NextRequest) {
         allergies: allergies,
         guestCount: names.length || rsvp.guest_count || 1,
         createdAt: rsvp.created_at,
+        is_read: rsvp.is_read || false,
         dateFormatted: rsvp.created_at 
           ? new Date(rsvp.created_at).toLocaleDateString('no-NO', { 
               day: '2-digit', 
