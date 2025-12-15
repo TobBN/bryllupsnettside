@@ -61,7 +61,11 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching table guests:', tableGuestsError);
     }
 
-    const table = firstMatch.seating_tables as { table_number: number; capacity: number } | null;
+    // Handle Supabase nested relation - can be array or single object
+    const seatingTablesData = firstMatch.seating_tables;
+    const table = Array.isArray(seatingTablesData) 
+      ? (seatingTablesData[0] as { table_number: number; capacity: number } | undefined)
+      : (seatingTablesData as { table_number: number; capacity: number } | null | undefined);
 
     return NextResponse.json({
       success: true,
