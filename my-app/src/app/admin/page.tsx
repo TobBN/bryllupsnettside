@@ -1288,6 +1288,7 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
+          </section>
 
           {/* Footer */}
           <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
@@ -1790,6 +1791,11 @@ export default function AdminPage() {
                 )}
               </div>
             )}
+          </section>
+
+          {/* Praktisk informasjon: Program, Bord-kart og FAQ */}
+          <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl mb-6">
+            <h2 className="text-2xl font-bold text-[#2D1B3D] mb-4">Program, bord-kart og FAQ</h2>
 
             {/* Schedule */}
             <div className="mt-6 pt-6 border-t border-[#E8B4B8]">
