@@ -119,6 +119,21 @@ interface RSVPItem {
   timeFormatted: string;
 }
 
+interface SeatingGuest {
+  id: string;
+  name: string;
+  seat_number: number;
+}
+
+interface SeatingTable {
+  id: string;
+  table_number: number;
+  capacity: number;
+  created_at: string;
+  updated_at: string;
+  guests: SeatingGuest[];
+}
+
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
@@ -131,7 +146,7 @@ export default function AdminPage() {
   const [showRsvpList, setShowRsvpList] = useState(false);
   
   // Seating chart state
-  const [seatingTables, setSeatingTables] = useState<any[]>([]);
+  const [seatingTables, setSeatingTables] = useState<SeatingTable[]>([]);
   const [seatingLoading, setSeatingLoading] = useState(false);
   const [selectedTableForGuests, setSelectedTableForGuests] = useState<string | null>(null);
   const [tableGuests, setTableGuests] = useState<{ [key: string]: { name: string; seat_number: number; id?: string }[] }>({});
@@ -377,7 +392,7 @@ export default function AdminPage() {
         setSeatingTables(result.data);
         // Initialize table guests state
         const guestsMap: { [key: string]: { name: string; seat_number: number; id?: string }[] } = {};
-        result.data.forEach((table: any) => {
+        result.data.forEach((table: SeatingTable) => {
           guestsMap[table.id] = table.guests || [];
         });
         setTableGuests(guestsMap);
@@ -514,7 +529,7 @@ export default function AdminPage() {
       
       // Delete removed guests
       for (const existing of existingGuests) {
-        if (!guests.find((g: any) => g.id === existing.id)) {
+        if (!guests.find((g: { name: string; seat_number: number; id?: string }) => g.id === existing.id)) {
           await fetch(`/api/admin/seating/guests?id=${existing.id}`, { method: 'DELETE' });
         }
       }
@@ -567,7 +582,7 @@ export default function AdminPage() {
       // Initialize guests if not already loaded
       if (!tableGuests[tableId]) {
         const table = seatingTables.find(t => t.id === tableId);
-        const guests = (table?.guests || []).map((g: any) => ({
+        const guests = (table?.guests || []).map((g: SeatingGuest) => ({
           id: g.id,
           name: g.name,
           seat_number: g.seat_number,
@@ -576,7 +591,7 @@ export default function AdminPage() {
         const capacity = table?.capacity || 8;
         const seats: { name: string; seat_number: number; id?: string }[] = [];
         for (let i = 1; i <= capacity; i++) {
-          const existing = guests.find((g: any) => g.seat_number === i);
+          const existing = guests.find((g: { name: string; seat_number: number; id?: string }) => g.seat_number === i);
           seats.push(existing || { name: '', seat_number: i });
         }
         setTableGuests({ ...tableGuests, [tableId]: seats });
@@ -1856,7 +1871,7 @@ export default function AdminPage() {
                           <h5 className="font-semibold text-[#4A2B5A] mb-3">Gjester på bord {table.table_number}</h5>
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                             {Array.from({ length: table.capacity }, (_, i) => i + 1).map((seatNum) => {
-                              const guest = tableGuests[table.id]?.find((g: any) => g.seat_number === seatNum);
+                              const guest = tableGuests[table.id]?.find((g: { name: string; seat_number: number; id?: string }) => g.seat_number === seatNum);
                               return (
                                 <div key={seatNum} className="space-y-1">
                                   <label className="block text-xs font-medium text-[#4A2B5A]">
@@ -1867,7 +1882,7 @@ export default function AdminPage() {
                                     value={guest?.name || ''}
                                     onChange={(e) => {
                                       const updated = [...(tableGuests[table.id] || [])];
-                                      const index = updated.findIndex((g: any) => g.seat_number === seatNum);
+                                      const index = updated.findIndex((g: { name: string; seat_number: number; id?: string }) => g.seat_number === seatNum);
                                       if (index >= 0) {
                                         updated[index] = { ...updated[index], name: e.target.value };
                                       } else {

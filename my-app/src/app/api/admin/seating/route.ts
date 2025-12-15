@@ -66,13 +66,20 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const formattedTables: SeatingTable[] = (tables || []).map((table: any) => ({
+    const formattedTables: SeatingTable[] = (tables || []).map((table: {
+      id: string;
+      table_number: number;
+      capacity: number;
+      created_at: string;
+      updated_at: string;
+      seating_guests: SeatingGuest[];
+    }) => ({
       id: table.id,
       table_number: table.table_number,
       capacity: table.capacity,
       created_at: table.created_at,
       updated_at: table.updated_at,
-      guests: (table.seating_guests || []).sort((a: SeatingGuest, b: SeatingGuest) => 
+      guests: (table.seating_guests || []).sort((a, b) => 
         a.seat_number - b.seat_number
       ),
     }));

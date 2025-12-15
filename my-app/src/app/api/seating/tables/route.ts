@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase';
 
 interface PublicGuest {
@@ -37,7 +37,11 @@ export async function GET() {
       );
     }
 
-    const formattedTables: PublicTable[] = (tables || []).map((table: any) => ({
+    const formattedTables: PublicTable[] = (tables || []).map((table: {
+      table_number: number;
+      capacity: number;
+      seating_guests: Array<{ name: string }>;
+    }) => ({
       table_number: table.table_number,
       capacity: table.capacity,
       guests: (table.seating_guests || []).map((g: { name: string }) => ({
