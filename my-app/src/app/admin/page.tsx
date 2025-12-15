@@ -2178,6 +2178,102 @@ export default function AdminPage() {
             </div>
           </section>
 
+          {/* FAQ Section */}
+          <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl mb-6">
+            <h2 className="text-2xl font-bold text-[#4A2B5A] mb-6">FAQ</h2>
+            
+            {/* Content editing */}
+            {content && (
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Tittel
+                  </label>
+                  <input
+                    type="text"
+                    value={content.faq?.title || ''}
+                    onChange={(e) => updateContent(['faq', 'title'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                
+                {/* FAQ items */}
+                <div className="border-t border-[#E8B4B8] pt-4 mt-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-[#4A2B5A]">Spørsmål og svar</h3>
+                    <button
+                      onClick={() => {
+                        const currentItems = content.faq?.items || [];
+                        updateContent(['faq', 'items'], [...currentItems, { question: '', answer: '' }]);
+                      }}
+                      className="px-4 py-2 bg-[#E8B4B8] text-white rounded-lg hover:opacity-90 transition-opacity"
+                    >
+                      Legg til spørsmål
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {(content.faq?.items || []).map((item: { question: string; answer: string }, index: number) => (
+                      <div key={index} className="border border-[#E8B4B8] rounded-lg p-4">
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-sm font-medium text-[#4A2B5A] mb-1">
+                              Spørsmål
+                            </label>
+                            <input
+                              type="text"
+                              value={item.question}
+                              onChange={(e) => {
+                                const updated = [...(content.faq?.items || [])];
+                                updated[index] = { ...updated[index], question: e.target.value };
+                                updateContent(['faq', 'items'], updated);
+                              }}
+                              placeholder="Hva er spørsmålet?"
+                              className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-[#4A2B5A] mb-1">
+                              Svar
+                            </label>
+                            <textarea
+                              value={item.answer}
+                              onChange={(e) => {
+                                const updated = [...(content.faq?.items || [])];
+                                updated[index] = { ...updated[index], answer: e.target.value };
+                                updateContent(['faq', 'items'], updated);
+                              }}
+                              placeholder="Svaret på spørsmålet..."
+                              rows={3}
+                              className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                            />
+                          </div>
+                          <div className="flex justify-end">
+                            <button
+                              onClick={() => {
+                                const updated = [...(content.faq?.items || [])];
+                                updated.splice(index, 1);
+                                updateContent(['faq', 'items'], updated);
+                              }}
+                              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:opacity-90 transition-opacity"
+                            >
+                              Slett
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {(!content.faq?.items || content.faq.items.length === 0) && (
+                      <p className="text-[#4A2B5A] text-center py-4 text-sm">
+                        Ingen spørsmål. Klikk "Legg til spørsmål" for å begynne.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </section>
+
           {/* Save Button */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
             <button
