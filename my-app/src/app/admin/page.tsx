@@ -1288,7 +1288,6 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
-          </section>
 
           {/* Footer */}
           <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
@@ -1791,7 +1790,6 @@ export default function AdminPage() {
                 )}
               </div>
             )}
-          </section>
 
             {/* Schedule */}
             <div className="mt-6 pt-6 border-t border-[#E8B4B8]">
