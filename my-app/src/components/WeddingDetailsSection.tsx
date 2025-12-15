@@ -295,6 +295,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
             </div>
           </DetailBox>
         </div>
+        </div>
       </div>
     </section>
   );
