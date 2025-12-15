@@ -8,7 +8,8 @@ import {
   HeroSection, 
   StorySection, 
   WeddingDetailsSection, 
-  RSVPSection, 
+  RSVPSection,
+  SeatingChartSection,
   Footer 
 } from "@/components";
 
@@ -125,6 +126,7 @@ export default function Home() {
         <WeddingDetailsSection />
         <RSVPSection />
         <StorySection />
+        <SeatingChartSection />
       </main>
 
       <Footer />

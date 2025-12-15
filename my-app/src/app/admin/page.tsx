@@ -97,6 +97,13 @@ interface ContentData {
       notAttending: string;
     };
   };
+  seatingChart: {
+    title: string;
+    subtitle: string;
+    searchPlaceholder: string;
+    searchLabel: string;
+    noResultsText: string;
+  };
 }
 
 interface RSVPItem {
@@ -122,6 +129,17 @@ export default function AdminPage() {
   const [rsvps, setRsvps] = useState<RSVPItem[]>([]);
   const [rsvpsLoading, setRsvpsLoading] = useState(false);
   const [showRsvpList, setShowRsvpList] = useState(false);
+  
+  // Seating chart state
+  const [seatingTables, setSeatingTables] = useState<any[]>([]);
+  const [seatingLoading, setSeatingLoading] = useState(false);
+  const [selectedTableForGuests, setSelectedTableForGuests] = useState<string | null>(null);
+  const [tableGuests, setTableGuests] = useState<{ [key: string]: { name: string; seat_number: number; id?: string }[] }>({});
+  const [newTableNumber, setNewTableNumber] = useState('');
+  const [newTableCapacity, setNewTableCapacity] = useState('8');
+  const [editingTable, setEditingTable] = useState<string | null>(null);
+  const [editTableNumber, setEditTableNumber] = useState('');
+  const [editTableCapacity, setEditTableCapacity] = useState('');
 
   useEffect(() => {
     // Check if already authenticated
@@ -338,6 +356,232 @@ export default function AdminPage() {
     
     current[path[path.length - 1]] = value;
     setContent(newContent);
+  };
+
+  // Seating chart functions
+  const loadSeatingTables = async () => {
+    setSeatingLoading(true);
+    setError('');
+    
+    try {
+      const response = await fetch('/api/admin/seating');
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.error || 'Kunne ikke hente bord-data');
+        setSeatingLoading(false);
+        return;
+      }
+      
+      const result = await response.json();
+      if (result.success && result.data) {
+        setSeatingTables(result.data);
+        // Initialize table guests state
+        const guestsMap: { [key: string]: { name: string; seat_number: number; id?: string }[] } = {};
+        result.data.forEach((table: any) => {
+          guestsMap[table.id] = table.guests || [];
+        });
+        setTableGuests(guestsMap);
+      }
+    } catch {
+      setError('Feil ved henting av bord-data');
+    } finally {
+      setSeatingLoading(false);
+    }
+  };
+
+  const handleCreateTable = async () => {
+    const tableNumber = parseInt(newTableNumber, 10);
+    const capacity = parseInt(newTableCapacity, 10);
+    
+    if (!tableNumber || tableNumber < 1) {
+      setError('Bord-nummer må være et positivt tall');
+      return;
+    }
+    
+    if (capacity < 1 || capacity > 8) {
+      setError('Kapasitet må være mellom 1 og 8');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      const response = await fetch('/api/admin/seating', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table_number: tableNumber, capacity }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        setNewTableNumber('');
+        setNewTableCapacity('8');
+        setSuccess('Bord opprettet!');
+        setTimeout(() => setSuccess(''), 3000);
+        await loadSeatingTables();
+      } else {
+        setError(data.error || 'Kunne ikke opprette bord');
+      }
+    } catch {
+      setError('Feil ved opprettelse av bord');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateTable = async (tableId: string) => {
+    const tableNumber = parseInt(editTableNumber, 10);
+    const capacity = parseInt(editTableCapacity, 10);
+    
+    if (!tableNumber || tableNumber < 1) {
+      setError('Bord-nummer må være et positivt tall');
+      return;
+    }
+    
+    if (capacity < 1 || capacity > 8) {
+      setError('Kapasitet må være mellom 1 og 8');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      const response = await fetch('/api/admin/seating', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: tableId, table_number: tableNumber, capacity }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        setEditingTable(null);
+        setEditTableNumber('');
+        setEditTableCapacity('');
+        setSuccess('Bord oppdatert!');
+        setTimeout(() => setSuccess(''), 3000);
+        await loadSeatingTables();
+      } else {
+        setError(data.error || 'Kunne ikke oppdatere bord');
+      }
+    } catch {
+      setError('Feil ved oppdatering av bord');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteTable = async (tableId: string) => {
+    if (!confirm('Er du sikker på at du vil slette dette bordet? Alle gjester på bordet vil også bli slettet.')) {
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      const response = await fetch(`/api/admin/seating?id=${tableId}`, {
+        method: 'DELETE',
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        setSuccess('Bord slettet!');
+        setTimeout(() => setSuccess(''), 3000);
+        await loadSeatingTables();
+      } else {
+        setError(data.error || 'Kunne ikke slette bord');
+      }
+    } catch {
+      setError('Feil ved sletting av bord');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveTableGuests = async (tableId: string) => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      const guests = tableGuests[tableId] || [];
+      const currentTable = seatingTables.find(t => t.id === tableId);
+      const existingGuests = currentTable?.guests || [];
+      
+      // Delete removed guests
+      for (const existing of existingGuests) {
+        if (!guests.find((g: any) => g.id === existing.id)) {
+          await fetch(`/api/admin/seating/guests?id=${existing.id}`, { method: 'DELETE' });
+        }
+      }
+      
+      // Add/update guests
+      for (const guest of guests) {
+        if (guest.name.trim()) {
+          if (guest.id) {
+            // Update existing
+            await fetch('/api/admin/seating/guests', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id: guest.id,
+                table_id: tableId,
+                name: guest.name.trim(),
+                seat_number: guest.seat_number,
+              }),
+            });
+          } else {
+            // Create new
+            await fetch('/api/admin/seating/guests', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                table_id: tableId,
+                name: guest.name.trim(),
+                seat_number: guest.seat_number,
+              }),
+            });
+          }
+        }
+      }
+      
+      setSuccess('Gjester lagret!');
+      setTimeout(() => setSuccess(''), 3000);
+      await loadSeatingTables();
+    } catch {
+      setError('Feil ved lagring av gjester');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectTableForGuests = (tableId: string) => {
+    if (selectedTableForGuests === tableId) {
+      setSelectedTableForGuests(null);
+    } else {
+      setSelectedTableForGuests(tableId);
+      // Initialize guests if not already loaded
+      if (!tableGuests[tableId]) {
+        const table = seatingTables.find(t => t.id === tableId);
+        const guests = (table?.guests || []).map((g: any) => ({
+          id: g.id,
+          name: g.name,
+          seat_number: g.seat_number,
+        }));
+        // Fill empty seats
+        const capacity = table?.capacity || 8;
+        const seats: { name: string; seat_number: number; id?: string }[] = [];
+        for (let i = 1; i <= capacity; i++) {
+          const existing = guests.find((g: any) => g.seat_number === i);
+          seats.push(existing || { name: '', seat_number: i });
+        }
+        setTableGuests({ ...tableGuests, [tableId]: seats });
+      }
+    }
   };
 
   const addTimelineItem = () => {
@@ -1389,6 +1633,269 @@ export default function AdminPage() {
                 )}
               </div>
             )}
+          </section>
+
+          {/* Seating Chart Section */}
+          <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl mb-6">
+            <h2 className="text-2xl font-bold text-[#4A2B5A] mb-6">Bord-kart</h2>
+            
+            {/* Content editing */}
+            {content && (
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Tittel
+                  </label>
+                  <input
+                    type="text"
+                    value={content.seatingChart?.title || ''}
+                    onChange={(e) => updateContent(['seatingChart', 'title'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Undertittel
+                  </label>
+                  <input
+                    type="text"
+                    value={content.seatingChart?.subtitle || ''}
+                    onChange={(e) => updateContent(['seatingChart', 'subtitle'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Søkelabel
+                  </label>
+                  <input
+                    type="text"
+                    value={content.seatingChart?.searchLabel || ''}
+                    onChange={(e) => updateContent(['seatingChart', 'searchLabel'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Søke-placeholder
+                  </label>
+                  <input
+                    type="text"
+                    value={content.seatingChart?.searchPlaceholder || ''}
+                    onChange={(e) => updateContent(['seatingChart', 'searchPlaceholder'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Ingen resultater-tekst
+                  </label>
+                  <input
+                    type="text"
+                    value={content.seatingChart?.noResultsText || ''}
+                    onChange={(e) => updateContent(['seatingChart', 'noResultsText'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Table management */}
+            <div className="border-t border-[#E8B4B8] pt-6 mt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-semibold text-[#4A2B5A]">Bord-administrasjon</h3>
+                <button
+                  onClick={loadSeatingTables}
+                  disabled={seatingLoading}
+                  className="px-4 py-2 bg-[#E8B4B8] text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {seatingLoading ? 'Laster...' : 'Last inn bord'}
+                </button>
+              </div>
+
+              {/* Create new table */}
+              <div className="bg-[#F4D1D4]/30 rounded-lg p-4 mb-6">
+                <h4 className="font-semibold text-[#4A2B5A] mb-3">Legg til nytt bord</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[#4A2B5A] mb-1">
+                      Bord-nummer
+                    </label>
+                    <input
+                      type="number"
+                      value={newTableNumber}
+                      onChange={(e) => setNewTableNumber(e.target.value)}
+                      className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      min="1"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[#4A2B5A] mb-1">
+                      Kapasitet
+                    </label>
+                    <input
+                      type="number"
+                      value={newTableCapacity}
+                      onChange={(e) => setNewTableCapacity(e.target.value)}
+                      className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      min="1"
+                      max="8"
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <button
+                      onClick={handleCreateTable}
+                      disabled={loading}
+                      className="w-full px-4 py-2 bg-[#E8B4B8] text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                    >
+                      Opprett bord
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tables list */}
+              {seatingTables.length === 0 ? (
+                <p className="text-[#4A2B5A] text-center py-4">
+                  Ingen bord opprettet ennå. Opprett et bord for å begynne.
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {seatingTables.map((table) => (
+                    <div key={table.id} className="border border-[#E8B4B8] rounded-lg p-4">
+                      {editingTable === table.id ? (
+                        <div className="space-y-3">
+                          <div className="grid grid-cols-3 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-[#4A2B5A] mb-1">
+                                Bord-nummer
+                              </label>
+                              <input
+                                type="number"
+                                value={editTableNumber}
+                                onChange={(e) => setEditTableNumber(e.target.value)}
+                                className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                                min="1"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-[#4A2B5A] mb-1">
+                                Kapasitet
+                              </label>
+                              <input
+                                type="number"
+                                value={editTableCapacity}
+                                onChange={(e) => setEditTableCapacity(e.target.value)}
+                                className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                                min="1"
+                                max="8"
+                              />
+                            </div>
+                            <div className="flex items-end gap-2">
+                              <button
+                                onClick={() => handleUpdateTable(table.id)}
+                                disabled={loading}
+                                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                              >
+                                Lagre
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setEditingTable(null);
+                                  setEditTableNumber('');
+                                  setEditTableCapacity('');
+                                }}
+                                className="flex-1 px-4 py-2 bg-gray-400 text-white rounded-lg hover:opacity-90 transition-opacity"
+                              >
+                                Avbryt
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-semibold text-[#4A2B5A]">
+                              Bord {table.table_number} (Kapasitet: {table.capacity})
+                            </h4>
+                            <p className="text-sm text-[#4A2B5A]/70">
+                              {table.guests?.length || 0} gjester
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleSelectTableForGuests(table.id)}
+                              className="px-4 py-2 bg-[#F4A261] text-white rounded-lg hover:opacity-90 transition-opacity"
+                            >
+                              {selectedTableForGuests === table.id ? 'Skjul gjester' : 'Administrer gjester'}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingTable(table.id);
+                                setEditTableNumber(String(table.table_number));
+                                setEditTableCapacity(String(table.capacity));
+                              }}
+                              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:opacity-90 transition-opacity"
+                            >
+                              Rediger
+                            </button>
+                            <button
+                              onClick={() => handleDeleteTable(table.id)}
+                              disabled={loading}
+                              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                            >
+                              Slett
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Guest management */}
+                      {selectedTableForGuests === table.id && (
+                        <div className="mt-4 pt-4 border-t border-[#E8B4B8]">
+                          <h5 className="font-semibold text-[#4A2B5A] mb-3">Gjester på bord {table.table_number}</h5>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                            {Array.from({ length: table.capacity }, (_, i) => i + 1).map((seatNum) => {
+                              const guest = tableGuests[table.id]?.find((g: any) => g.seat_number === seatNum);
+                              return (
+                                <div key={seatNum} className="space-y-1">
+                                  <label className="block text-xs font-medium text-[#4A2B5A]">
+                                    Plass {seatNum}
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={guest?.name || ''}
+                                    onChange={(e) => {
+                                      const updated = [...(tableGuests[table.id] || [])];
+                                      const index = updated.findIndex((g: any) => g.seat_number === seatNum);
+                                      if (index >= 0) {
+                                        updated[index] = { ...updated[index], name: e.target.value };
+                                      } else {
+                                        updated.push({ name: e.target.value, seat_number: seatNum });
+                                      }
+                                      setTableGuests({ ...tableGuests, [table.id]: updated });
+                                    }}
+                                    placeholder="Navn..."
+                                    className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-sm"
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <button
+                            onClick={() => handleSaveTableGuests(table.id)}
+                            disabled={loading}
+                            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                          >
+                            {loading ? 'Lagrer...' : 'Lagre gjester'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </section>
 
           {/* Save Button */}

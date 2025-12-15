@@ -92,6 +92,17 @@ export async function GET() {
       }
     }
 
+    // Add default seatingChart content if missing
+    if (!content.seatingChart) {
+      content.seatingChart = {
+        title: 'Bord-kart',
+        subtitle: 'Finn ditt bord',
+        searchPlaceholder: 'Skriv inn navnet ditt...',
+        searchLabel: 'Søk etter navn',
+        noResultsText: 'Ingen resultater funnet'
+      };
+    }
+
     return NextResponse.json(content);
   } catch (error) {
     console.error('Error reading content:', error);
