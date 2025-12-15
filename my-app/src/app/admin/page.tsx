@@ -2174,6 +2174,7 @@ export default function AdminPage() {
                 </div>
               )}
             </div>
+            </div>
 
             {/* FAQ */}
             <div className="mt-6 pt-6 border-t border-[#E8B4B8]">
