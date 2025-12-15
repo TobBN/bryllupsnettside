@@ -57,9 +57,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
         className="relative flex min-h-screen items-end justify-center pb-16 z-10"
         aria-label="Forside"
       >
-        {/* Dim overlay for text readability - reduced opacity for better visibility */}
-        <div className="absolute inset-0 bg-black/25 -z-10" />
-        
         {/* Content card - proportional scaling with enhanced glassmorphism */}
         <div
           className={`relative z-20 mx-4 w-full
