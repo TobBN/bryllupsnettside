@@ -1636,10 +1636,28 @@ export default function AdminPage() {
 
           {/* RSVP Export Section */}
           <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
-            <h2 className="text-2xl font-bold text-[#2D1B3D] mb-4">RSVP Eksport</h2>
-            <p className="text-sm text-[#4A2B5A] mb-4">
-              Se alle RSVP-svar i listen eller last ned som Excel-fil (.xlsx)
-            </p>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-2xl font-bold text-[#2D1B3D] mb-1">RSVP Eksport</h2>
+                <p className="text-sm text-[#4A2B5A]">
+                  Se alle RSVP-svar i listen eller last ned som Excel-fil (.xlsx)
+                </p>
+              </div>
+              {unreadCount > 0 && (
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 bg-blue-500 text-white rounded-full text-sm font-semibold">
+                    {unreadCount} {unreadCount === 1 ? 'ulest' : 'uleste'}
+                  </span>
+                  <button
+                    onClick={handleMarkAllRead}
+                    disabled={loading}
+                    className="px-3 py-1 bg-gray-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 text-sm"
+                  >
+                    Merk alle som lest
+                  </button>
+                </div>
+              )}
+            </div>
             
             <div className="flex gap-3 mb-4">
               <button
