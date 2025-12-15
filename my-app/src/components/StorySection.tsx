@@ -105,9 +105,6 @@ export const StorySection: React.FC<StorySectionProps> = () => {
 
   return (
     <section id="our-story" className="py-24 md:py-32 relative overflow-hidden">
-      {/* Mørk overlay for kontrast (som hero-seksjonen) */}
-      <div className="absolute inset-0 bg-black/20 -z-10" />
-      
       <div className="container mx-auto px-4 relative z-10">
         {/* Overskrift og undertittel i glassmorphism-kort */}
         <div ref={headingRef} className="mb-12">

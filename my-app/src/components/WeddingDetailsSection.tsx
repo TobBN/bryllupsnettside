@@ -117,9 +117,6 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
 
   return (
     <section id="wedding-details" className="py-20 md:py-32 relative">
-      {/* Mørk overlay for kontrast */}
-      <div className="absolute inset-0 bg-black/20 -z-10" />
-      
       <div className="container mx-auto px-4 relative z-10">
         {/* Overskrift i glassmorphism-kort */}
         <div ref={headingRef} className="mb-12">

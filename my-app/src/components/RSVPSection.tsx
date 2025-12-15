@@ -182,9 +182,6 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
 
   return (
     <section id="rsvp" className="py-16 md:py-20 relative">
-      {/* Mørk overlay for kontrast */}
-      <div className="absolute inset-0 bg-black/20 -z-10" />
-      
       <div className="container mx-auto px-4 relative z-10">
         {/* Overskrift og undertittel i glassmorphism-kort */}
         <div className="text-center mb-10">

@@ -107,9 +107,6 @@ export const SeatingChartSection: React.FC = () => {
 
   return (
     <section id="seating-chart" className="py-24 md:py-32 relative overflow-hidden">
-      {/* Mørk overlay for kontrast */}
-      <div className="absolute inset-0 bg-black/20 -z-10" />
-      
       <div className="container mx-auto px-4 relative z-10">
         {/* Overskrift i glassmorphism-kort */}
         <div ref={headingRef} className="mb-12">
