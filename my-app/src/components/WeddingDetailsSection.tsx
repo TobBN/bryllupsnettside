@@ -419,22 +419,22 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
           {/* Program */}
           {content?.schedule && (
             <DetailBox
-              title={content.schedule.title || 'Program'}
+              title={content.schedule?.title || 'Program'}
               icon={
                 <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               }
-              isExpanded={expandedBox === (content.schedule.title || 'Program')}
-              onToggle={() => toggleBox(content.schedule.title || 'Program')}
+              isExpanded={expandedBox === (content.schedule?.title || 'Program')}
+              onToggle={() => toggleBox(content.schedule?.title || 'Program')}
             >
               <div className="space-y-4">
-                {content.schedule.subtitle && (
+                {content.schedule?.subtitle && (
                   <p className="font-body text-white/95 leading-relaxed drop-shadow-sm text-center">
                     {content.schedule.subtitle}
                   </p>
                 )}
-                {content.schedule.items && content.schedule.items.length > 0 ? (
+                {content.schedule?.items && content.schedule.items.length > 0 ? (
                   <div className="relative">
                     <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#E8B4B8] via-[#F4A261] to-[#E8B4B8]"></div>
                     <div className="space-y-6 pl-20">
@@ -476,17 +476,17 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
           {/* Bord-kart */}
           {content?.seatingChart && (
             <DetailBox
-              title={content.seatingChart.title || 'Bord-kart'}
+              title={content.seatingChart?.title || 'Bord-kart'}
               icon={
                 <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               }
-              isExpanded={expandedBox === (content.seatingChart.title || 'Bord-kart')}
-              onToggle={() => toggleBox(content.seatingChart.title || 'Bord-kart')}
+              isExpanded={expandedBox === (content.seatingChart?.title || 'Bord-kart')}
+              onToggle={() => toggleBox(content.seatingChart?.title || 'Bord-kart')}
             >
               <div className="space-y-6">
-                {content.seatingChart.subtitle && (
+                {content.seatingChart?.subtitle && (
                   <p className="font-body text-white/95 leading-relaxed drop-shadow-sm text-center">
                     {content.seatingChart.subtitle}
                   </p>
@@ -495,7 +495,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                 {/* Search field */}
                 <div>
                   <label htmlFor="guest-search" className="block font-body font-medium text-white/95 mb-3 text-lg drop-shadow-sm">
-                    {content.seatingChart.searchLabel || 'Søk etter navn'}
+                    {content.seatingChart?.searchLabel || 'Søk etter navn'}
                   </label>
                   <div className="relative">
                     <input
@@ -503,7 +503,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                       id="guest-search"
                       value={searchQuery}
                       onChange={(e) => handleSearch(e.target.value)}
-                      placeholder={content.seatingChart.searchPlaceholder || 'Skriv inn navnet ditt...'}
+                      placeholder={content.seatingChart?.searchPlaceholder || 'Skriv inn navnet ditt...'}
                       className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg"
                     />
                     {isSearching && (
@@ -527,7 +527,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                   
                   {searchQuery.length >= 2 && !isSearching && !searchResult && (
                     <p className="mt-4 font-body text-white/80 text-sm text-center">
-                      {content.seatingChart.noResultsText || 'Ingen resultater funnet'}
+                      {content.seatingChart?.noResultsText || 'Ingen resultater funnet'}
                     </p>
                   )}
                 </div>
@@ -598,17 +598,17 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
           {/* FAQ */}
           {content?.faq && (
             <DetailBox
-              title={content.faq.title || 'FAQ'}
+              title={content.faq?.title || 'FAQ'}
               icon={
                 <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               }
-              isExpanded={expandedBox === (content.faq.title || 'FAQ')}
-              onToggle={() => toggleBox(content.faq.title || 'FAQ')}
+              isExpanded={expandedBox === (content.faq?.title || 'FAQ')}
+              onToggle={() => toggleBox(content.faq?.title || 'FAQ')}
             >
               <div className="space-y-3">
-                {content.faq.items && content.faq.items.length > 0 ? (
+                {content.faq?.items && content.faq.items.length > 0 ? (
                   content.faq.items.map((item, index) => (
                     <div key={index} className="bg-white/10 rounded-lg overflow-hidden">
                       <button
