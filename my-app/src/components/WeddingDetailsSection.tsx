@@ -98,6 +98,7 @@ const DetailBox: React.FC<DetailBoxProps> = ({ title, icon, children, isExpanded
 export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () => {
   const [expandedBox, setExpandedBox] = useState<string | null>(null);
   const [content, setContent] = useState<WeddingDetailsContent | null>(null);
+  const [isSectionExpanded, setIsSectionExpanded] = useState<boolean>(false);
   
   const headingRef = useScrollReveal({ animationType: 'fade-up', threshold: 0.3 });
   const cardsRef = useScrollReveal({ animationType: 'scale', threshold: 0.1 });
@@ -122,17 +123,42 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
       <div className="container mx-auto px-4 relative z-10">
         {/* Overskrift i glassmorphism-kort */}
         <div ref={headingRef} className="mb-12">
-          <div className="glass-card rounded-2xl p-8 md:p-10 max-w-4xl mx-auto">
-            <h2 
-              id="details-heading"
-              className="text-4xl md:text-6xl leading-tight text-white mb-0 text-center drop-shadow-lg"
-            >
-              {content?.title || 'Selve dagen'}
-            </h2>
-          </div>
+          <button
+            onClick={() => setIsSectionExpanded(!isSectionExpanded)}
+            className="w-full text-left focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]/50 rounded-2xl transition-all duration-300 hover:ring-2 hover:ring-[#E8B4B8]/30"
+            aria-expanded={isSectionExpanded}
+            aria-controls="wedding-details-content"
+            aria-label={isSectionExpanded ? 'Kollaps selve dagen' : 'Ekspander selve dagen'}
+          >
+            <div className="glass-card rounded-2xl p-8 md:p-10 max-w-4xl mx-auto">
+              <div className="flex items-center justify-center">
+                <h2 
+                  id="details-heading"
+                  className="text-4xl md:text-6xl leading-tight text-white mb-0 text-center drop-shadow-lg flex-1"
+                >
+                  {content?.title || 'Selve dagen'}
+                </h2>
+                <svg
+                  className={`w-8 h-8 text-white transition-transform duration-300 flex-shrink-0 ml-4 ${isSectionExpanded ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+          </button>
         </div>
 
-        <div ref={cardsRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div
+          id="wedding-details-content"
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            isSectionExpanded ? 'max-h-[9999px] opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
+          <div ref={cardsRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {/* Sted */}
           <DetailBox
             title={content?.venue.title || 'Sted'}

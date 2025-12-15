@@ -66,6 +66,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null);
   const [content, setContent] = useState<StoryContent | null>(null);
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
+  const [isSectionExpanded, setIsSectionExpanded] = useState<boolean>(false);
   
   const headingRef = useScrollReveal<HTMLDivElement>({ animationType: 'fade-up', threshold: 0.3 });
   const timelineRef = useScrollReveal<HTMLOListElement>({ animationType: 'fade-left', threshold: 0.2 });
@@ -110,17 +111,44 @@ export const StorySection: React.FC<StorySectionProps> = () => {
       <div className="container mx-auto px-4 relative z-10">
         {/* Overskrift og undertittel i glassmorphism-kort */}
         <div ref={headingRef} className="mb-12">
-          <div className="glass-card rounded-2xl p-8 md:p-10 max-w-4xl mx-auto">
-            <h2 id="story-heading" className="text-4xl md:text-6xl lg:text-7xl leading-tight text-white mb-6 text-center drop-shadow-lg">
-              {content?.title || 'Vår historie'}
-            </h2>
-            <p className="font-body text-lg md:text-xl text-white/95 max-w-3xl mx-auto text-center leading-[1.9] drop-shadow-md">
-              {content?.subtitle || 'Et lite tilbakeblikk på vår reise sammen'}
-            </p>
-          </div>
+          <button
+            onClick={() => setIsSectionExpanded(!isSectionExpanded)}
+            className="w-full text-left focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]/50 rounded-2xl transition-all duration-300 hover:ring-2 hover:ring-[#E8B4B8]/30"
+            aria-expanded={isSectionExpanded}
+            aria-controls="story-content"
+            aria-label={isSectionExpanded ? 'Kollaps vår historie' : 'Ekspander vår historie'}
+          >
+            <div className="glass-card rounded-2xl p-8 md:p-10 max-w-4xl mx-auto">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h2 id="story-heading" className="text-4xl md:text-6xl lg:text-7xl leading-tight text-white mb-6 text-center drop-shadow-lg">
+                    {content?.title || 'Vår historie'}
+                  </h2>
+                  <p className="font-body text-lg md:text-xl text-white/95 max-w-3xl mx-auto text-center leading-[1.9] drop-shadow-md">
+                    {content?.subtitle || 'Et lite tilbakeblikk på vår reise sammen'}
+                  </p>
+                </div>
+                <svg
+                  className={`w-8 h-8 text-white transition-transform duration-300 flex-shrink-0 ml-4 ${isSectionExpanded ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+          </button>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-16 items-start">
+        <div
+          id="story-content"
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            isSectionExpanded ? 'max-h-[9999px] opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
+          <div className="grid md:grid-cols-2 gap-16 items-start">
           {/* Tidslinje i glassmorphism-kort */}
           <div className="glass-card rounded-2xl p-6 md:p-8">
             <ol ref={timelineRef} className="relative border-l-2 border-[#E8B4B8]/50 pl-6">
@@ -190,6 +218,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
               </div>
             ))}
           </div>
+        </div>
         </div>
 
         {selectedImage && (
