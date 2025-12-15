@@ -84,7 +84,11 @@ export const POST = async (req: NextRequest) => {
       if (rsvpError.code === '23505') { // Unique constraint violation
         return NextResponse.json({ ok: false, error: 'Det eksisterer allerede en RSVP med dette navnet. Kontakt oss hvis du ønsker å endre svaret ditt.' }, { status: 409 });
       }
-      return NextResponse.json({ ok: false, error: 'Kunne ikke lagre RSVP. Prøv igjen senere.' }, { status: 500 });
+      // Return detailed error in development, generic in production
+      const errorMessage = process.env.NODE_ENV === 'development' 
+        ? `RSVP feil: ${rsvpError.message} (${rsvpError.code})`
+        : 'Kunne ikke lagre RSVP. Prøv igjen senere.';
+      return NextResponse.json({ ok: false, error: errorMessage }, { status: 500 });
     }
     // #region agent log
     console.log('[DEBUG] RSVP insert success:', JSON.stringify({rsvpId:rsvpData?.id}));
@@ -111,7 +115,11 @@ export const POST = async (req: NextRequest) => {
       // Try to clean up: delete the RSVP record if guest insertion fails
       await supabase.from('rsvps').delete().eq('id', rsvpData.id);
       logSecurityEvent('rsvp_guests_save_error', { clientId, error: guestsError.message, code: guestsError.code }, 'error');
-      return NextResponse.json({ ok: false, error: 'Kunne ikke lagre gjester. Prøv igjen senere.' }, { status: 500 });
+      // Return detailed error in development, generic in production
+      const errorMessage = process.env.NODE_ENV === 'development'
+        ? `Gjester feil: ${guestsError.message} (${guestsError.code}). Hint: ${guestsError.hint || 'Ingen hint'}`
+        : 'Kunne ikke lagre gjester. Prøv igjen senere.';
+      return NextResponse.json({ ok: false, error: errorMessage }, { status: 500 });
     }
     // #region agent log
     console.log('[DEBUG] Guests insert success:', JSON.stringify({guestsCount:guestRecords.length}));
