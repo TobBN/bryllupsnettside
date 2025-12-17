@@ -203,6 +203,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
     
     if (!query || query.length < 2) {
       setSearchResult(null);
+      setSelectedTable(null);
       return;
     }
 
@@ -221,6 +222,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
     } catch (error) {
       console.error('Error searching:', error);
       setSearchResult(null);
+      setSelectedTable(null);
     } finally {
       setIsSearching(false);
     }
@@ -572,7 +574,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                           
                           {/* Guest list when table is selected */}
                           {isSelected && (
-                            <div className="absolute top-full left-0 right-0 mt-4 glass-card rounded-2xl p-4 z-10">
+                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 glass-card rounded-2xl p-4 z-10 min-w-[200px] max-w-[300px]">
                               <h3 className="font-body font-semibold text-white mb-3 text-center">
                                 Bord {table.table_number}
                               </h3>
