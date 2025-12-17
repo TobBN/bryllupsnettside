@@ -199,9 +199,15 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
   };
 
   const handleSearch = async (query: string) => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'WeddingDetailsSection.tsx:201',message:'handleSearch called',data:{query,queryLength:query?.length,currentSelectedTable:selectedTable},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
     setSearchQuery(query);
     
     if (!query || query.length < 2) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'WeddingDetailsSection.tsx:206',message:'Clearing search - query too short',data:{query,queryLength:query?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
       setSearchResult(null);
       setSelectedTable(null);
       return;
@@ -212,14 +218,25 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
       const res = await fetch(`/api/seating/search?q=${encodeURIComponent(query)}`);
       const data = await res.json();
       
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'WeddingDetailsSection.tsx:216',message:'Search result received',data:{success:data.success,found:data.found,tableNumber:data.data?.table_number},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      
       if (data.success && data.found) {
         setSearchResult(data.data);
-        setSelectedTable(data.data.table_number);
+        // Don't auto-select table on search - let user click to see guest list
+        // setSelectedTable(data.data.table_number);
       } else {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'WeddingDetailsSection.tsx:222',message:'No search result found - clearing selectedTable',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
         setSearchResult(null);
         setSelectedTable(null);
       }
     } catch (error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'WeddingDetailsSection.tsx:227',message:'Search error - clearing selectedTable',data:{error:String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
       console.error('Error searching:', error);
       setSearchResult(null);
       setSelectedTable(null);
