@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { RSVPSectionProps } from '@/types';
 
 interface RSVPContent {
@@ -76,44 +76,50 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
   }, []);
 
   // Handle guest count change
-  const handleGuestCountChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleGuestCountChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const newCount = parseInt(e.target.value, 10);
     setGuestCount(newCount);
     
     // Update guests array to match new count
-    const newGuests = [...guests];
-    if (newCount > guests.length) {
-      // Add empty guests
-      for (let i = guests.length; i < newCount; i++) {
-        newGuests.push({ name: '', allergies: '' });
+    setGuests(prevGuests => {
+      const newGuests = [...prevGuests];
+      if (newCount > prevGuests.length) {
+        // Add empty guests
+        for (let i = prevGuests.length; i < newCount; i++) {
+          newGuests.push({ name: '', allergies: '' });
+        }
+      } else if (newCount < prevGuests.length) {
+        // Remove excess guests
+        newGuests.splice(newCount);
       }
-    } else if (newCount < guests.length) {
-      // Remove excess guests
-      newGuests.splice(newCount);
-    }
-    setGuests(newGuests);
-  };
+      return newGuests;
+    });
+  }, []);
 
   // Handle guest name change
-  const handleGuestNameChange = (index: number, value: string) => {
-    const newGuests = [...guests];
-    newGuests[index] = { ...newGuests[index], name: value };
-    setGuests(newGuests);
-  };
+  const handleGuestNameChange = useCallback((index: number, value: string) => {
+    setGuests(prevGuests => {
+      const newGuests = [...prevGuests];
+      newGuests[index] = { ...newGuests[index], name: value };
+      return newGuests;
+    });
+  }, []);
 
   // Handle guest allergies change
-  const handleGuestAllergiesChange = (index: number, value: string) => {
-    const newGuests = [...guests];
-    newGuests[index] = { ...newGuests[index], allergies: value };
-    setGuests(newGuests);
-  };
+  const handleGuestAllergiesChange = useCallback((index: number, value: string) => {
+    setGuests(prevGuests => {
+      const newGuests = [...prevGuests];
+      newGuests[index] = { ...newGuests[index], allergies: value };
+      return newGuests;
+    });
+  }, []);
 
   // Handle phone change
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhoneChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setPhone(e.target.value);
-  };
+  }, []);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
       e.preventDefault();
       setIsSubmitting(true);
       setSubmitError(null);
@@ -162,15 +168,15 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
       } finally {
         setIsSubmitting(false);
       }
-    };
+    }, [guests, phone, isAttending]);
 
-  const handleAttendanceChoice = (attending: boolean) => {
+  const handleAttendanceChoice = useCallback((attending: boolean) => {
     setIsAttending(attending);
     setShowForm(true);
     setSubmitError(null);
-  };
+  }, []);
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setIsSubmitted(false);
     setIsAttending(null);
     setShowForm(false);
@@ -178,7 +184,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
     setGuestCount(1);
     setPhone('');
     setSubmitError(null);
-  };
+  }, []);
 
   return (
     <section id="rsvp" className="py-20 md:py-32 relative">

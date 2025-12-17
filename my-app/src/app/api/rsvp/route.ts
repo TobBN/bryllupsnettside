@@ -16,9 +16,6 @@ export const POST = async (req: NextRequest) => {
 
   try {
     const body = await req.json();
-    // #region agent log
-    console.log('[DEBUG] Request body received:', JSON.stringify({guestsCount:body?.guests?.length||0,hasPhone:!!body?.phone,isAttending:body?.isAttending,guests:body?.guests?.map((g:{name?:string;allergies?:string})=>({name:g.name,hasAllergies:!!g.allergies}))}));
-    // #endregion
     const phone = body?.phone ? String(body.phone).trim() : '';
     const email = body?.email ? String(body.email).trim() : null;
     const message = body?.message ? String(body.message).trim() : null;
@@ -61,9 +58,6 @@ export const POST = async (req: NextRequest) => {
     const supabase = supabaseServer();
     
     // Insert RSVP record first
-    // #region agent log
-    console.log('[DEBUG] Before RSVP insert:', JSON.stringify({guestNames,response,phone,guestsLength:guests.length}));
-    // #endregion
     const { data: rsvpData, error: rsvpError } = await supabase.from('rsvps').insert({
       name: guestNames[0], // Keep first name in rsvps.name for backward compatibility
       phone: phone || null,
@@ -75,9 +69,6 @@ export const POST = async (req: NextRequest) => {
     }).select().single();
 
     if (rsvpError) {
-      // #region agent log
-      console.error('[DEBUG] RSVP insert error:', JSON.stringify({error:rsvpError.message,code:rsvpError.code,details:rsvpError.details,hint:rsvpError.hint,fullError:rsvpError}));
-      // #endregion
       console.error('Supabase RSVP insert error:', rsvpError);
       logSecurityEvent('rsvp_save_error', { clientId, error: rsvpError.message, code: rsvpError.code }, 'error');
       
@@ -91,9 +82,6 @@ export const POST = async (req: NextRequest) => {
         : 'Kunne ikke lagre RSVP. Prøv igjen senere.';
       return NextResponse.json({ ok: false, error: errorMessage }, { status: 500 });
     }
-    // #region agent log
-    console.log('[DEBUG] RSVP insert success:', JSON.stringify({rsvpId:rsvpData?.id}));
-    // #endregion
 
     // Insert guest records
     const guestRecords = guests.map((guest: { name: string; allergies?: string }, index: number) => ({
@@ -102,16 +90,10 @@ export const POST = async (req: NextRequest) => {
       allergies: guest.allergies ? String(guest.allergies).trim() : null,
       guest_order: index + 1,
     }));
-    // #region agent log
-    console.log('[DEBUG] Before guests insert:', JSON.stringify({guestRecordsCount:guestRecords.length,guestRecords:guestRecords.map(g=>({name:g.name,allergies:g.allergies,order:g.guest_order})),rsvpId:rsvpData.id}));
-    // #endregion
 
     const { error: guestsError } = await supabase.from('rsvp_guests').insert(guestRecords);
 
     if (guestsError) {
-      // #region agent log
-      console.error('[DEBUG] Guests insert error:', JSON.stringify({error:guestsError.message,code:guestsError.code,details:guestsError.details,hint:guestsError.hint,fullError:guestsError}));
-      // #endregion
       console.error('Supabase guests insert error:', guestsError);
       // Try to clean up: delete the RSVP record if guest insertion fails
       await supabase.from('rsvps').delete().eq('id', rsvpData.id);
@@ -120,7 +102,6 @@ export const POST = async (req: NextRequest) => {
       // Check if table doesn't exist
       if (guestsError.code === 'PGRST204' || guestsError.message?.includes('relation') || guestsError.message?.includes('does not exist')) {
         const errorMessage = 'rsvp_guests tabellen eksisterer ikke. Kjør SQL-migrasjonen i Supabase først.';
-        console.error('[DEBUG] Table missing error:', errorMessage);
         return NextResponse.json({ 
           ok: false, 
           error: process.env.NODE_ENV === 'development' 
@@ -135,16 +116,10 @@ export const POST = async (req: NextRequest) => {
         : 'Kunne ikke lagre gjester. Prøv igjen senere.';
       return NextResponse.json({ ok: false, error: errorMessage }, { status: 500 });
     }
-    // #region agent log
-    console.log('[DEBUG] Guests insert success:', JSON.stringify({guestsCount:guestRecords.length}));
-    // #endregion
 
     logSecurityEvent('rsvp_saved', { clientId, names: guestNames, response }, 'info');
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error) {
-    // #region agent log
-    console.error('[DEBUG] Catch block error:', JSON.stringify({error:String(error),errorType:error instanceof Error?error.constructor.name:'unknown',stack:error instanceof Error?error.stack:undefined,message:error instanceof Error?error.message:undefined}));
-    // #endregion
     console.error('Error saving RSVP:', error);
     logSecurityEvent('rsvp_error', { clientId, error: String(error) }, 'error');
     

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { WeddingDetailsSectionProps } from '@/types';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
@@ -81,7 +81,7 @@ interface DetailBoxProps {
   onToggle: () => void;
 }
 
-const DetailBox: React.FC<DetailBoxProps> = ({ title, icon, children, isExpanded, onToggle }) => {
+const DetailBox: React.FC<DetailBoxProps> = memo(({ title, icon, children, isExpanded, onToggle }) => {
   return (
     <div 
       className={`glass-card rounded-2xl p-6 cursor-pointer transition-all duration-300 hover-lift ${
@@ -127,7 +127,7 @@ const DetailBox: React.FC<DetailBoxProps> = ({ title, icon, children, isExpanded
       </div>
     </div>
   );
-};
+});
 
 export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () => {
   const [expandedBox, setExpandedBox] = useState<string | null>(null);
@@ -184,7 +184,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
     }
   };
 
-  const handleSearch = async (query: string) => {
+  const handleSearch = useCallback(async (query: string) => {
     setSearchQuery(query);
     
     if (!query || query.length < 2) {
@@ -208,12 +208,11 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
     } finally {
       setIsSearching(false);
     }
-  };
+  }, []);
 
-  const toggleBox = (title: string) => {
-    if (expandedBox === title) setExpandedBox(null);
-    else setExpandedBox(title);
-  };
+  const toggleBox = useCallback((title: string) => {
+    setExpandedBox(prev => prev === title ? null : title);
+  }, []);
 
   return (
     <section id="wedding-details" className="py-20 md:py-32 relative">

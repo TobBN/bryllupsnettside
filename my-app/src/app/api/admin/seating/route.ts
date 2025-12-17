@@ -33,25 +33,13 @@ interface SeatingTable {
 export async function GET(request: NextRequest) {
   const clientId = getClientIdentifier(request);
   
-  // #region agent log
-  const hasCookie = !!request.cookies.get('admin_session');
-  console.log('[DEBUG] GET seating tables called', { hasCookie, timestamp: new Date().toISOString() });
-  // #endregion
-  
   if (!isAuthenticated(request)) {
-    // #region agent log
-    console.log('[DEBUG] Authentication failed', { clientId });
-    // #endregion
     logSecurityEvent('unauthorized_seating_access', { clientId }, 'warning');
     return NextResponse.json(
       { error: 'Ikke autentisert' },
       { status: 401 }
     );
   }
-
-  // #region agent log
-  console.log('[DEBUG] Authenticated, fetching from Supabase');
-  // #endregion
 
   try {
     const supabase = supabaseServer();
@@ -68,16 +56,6 @@ export async function GET(request: NextRequest) {
         )
       `)
       .order('table_number', { ascending: true });
-
-    // #region agent log
-    console.log('[DEBUG] Supabase query completed', { 
-      hasError: !!tablesError, 
-      errorCode: tablesError?.code, 
-      errorMessage: tablesError?.message, 
-      tableCount: tables?.length,
-      errorDetails: tablesError 
-    });
-    // #endregion
 
     if (tablesError) {
       console.error('Error fetching seating tables:', tablesError);
@@ -119,18 +97,11 @@ export async function GET(request: NextRequest) {
       ),
     }));
 
-    // #region agent log
-    console.log('[DEBUG] Returning success response', { formattedTablesCount: formattedTables.length });
-    // #endregion
-
     return NextResponse.json({
       success: true,
       data: formattedTables,
     });
   } catch (error) {
-    // #region agent log
-    console.error('[DEBUG] Exception caught in GET seating tables', error);
-    // #endregion
     console.error('Error fetching seating tables:', error);
     logSecurityEvent('seating_fetch_error', { clientId, error: String(error) }, 'error');
     return NextResponse.json(

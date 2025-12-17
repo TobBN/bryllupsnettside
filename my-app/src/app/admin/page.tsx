@@ -183,30 +183,15 @@ export default function AdminPage() {
 
   const checkAuth = async () => {
     // Check authentication status via dedicated auth check endpoint
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/page.tsx:92',message:'checkAuth called',data:{timestamp:Date.now()},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
     try {
       const response = await fetch('/api/admin/auth/check');
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/page.tsx:96',message:'checkAuth response',data:{status:response.status,ok:response.ok},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
       if (response.ok) {
         const data = await response.json();
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/page.tsx:100',message:'Auth check result',data:{authenticated:data.authenticated},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'A'})}).catch(()=>{});
-        // #endregion
         setIsAuthenticated(data.authenticated === true);
       } else {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/page.tsx:105',message:'Response not OK',data:{status:response.status},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'A'})}).catch(()=>{});
-        // #endregion
         setIsAuthenticated(false);
       }
     } catch {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/page.tsx:109',message:'checkAuth catch block',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
       setIsAuthenticated(false);
     }
   };
@@ -252,20 +237,11 @@ export default function AdminPage() {
   };
 
   const handleLogout = async () => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/page.tsx:144',message:'handleLogout called',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
-    // #endregion
     try {
       const response = await fetch('/api/admin/auth', { method: 'DELETE' });
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/page.tsx:147',message:'Logout DELETE response',data:{status:response.status,ok:response.ok},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
-      // #endregion
       setIsAuthenticated(false);
       setContent(null);
     } catch (error) {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1fdfc7c7-5de7-4035-8d46-6c8089723983',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/page.tsx:151',message:'Logout error',data:{error:String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
-      // #endregion
       console.error('Logout error:', error);
     }
   };
@@ -459,35 +435,17 @@ export default function AdminPage() {
     setSeatingLoading(true);
     setError('');
     
-    // #region agent log
-    console.log('[DEBUG] loadSeatingTables called', { isAuthenticated, timestamp: new Date().toISOString() });
-    // #endregion
-    
     try {
-      // #region agent log
-      console.log('[DEBUG] Fetching seating tables from /api/admin/seating');
-      // #endregion
-      
       const response = await fetch('/api/admin/seating');
-      
-      // #region agent log
-      console.log('[DEBUG] Response received', { status: response.status, ok: response.ok, statusText: response.statusText });
-      // #endregion
       
       if (!response.ok) {
         const data = await response.json();
-        // #region agent log
-        console.log('[DEBUG] Response not OK', { status: response.status, error: data.error });
-        // #endregion
         setError(data.error || 'Kunne ikke hente bord-data');
         setSeatingLoading(false);
         return;
       }
       
       const result = await response.json();
-      // #region agent log
-      console.log('[DEBUG] Response parsed', { success: result.success, hasData: !!result.data, dataLength: result.data?.length });
-      // #endregion
       
       if (result.success && result.data) {
         setSeatingTables(result.data);
@@ -499,9 +457,7 @@ export default function AdminPage() {
         setTableGuests(guestsMap);
       }
     } catch (error) {
-      // #region agent log
-      console.error('[DEBUG] Exception caught in loadSeatingTables', error);
-      // #endregion
+      console.error('Error loading seating tables:', error);
       setError('Feil ved henting av bord-data');
     } finally {
       setSeatingLoading(false);
@@ -923,88 +879,6 @@ export default function AdminPage() {
             </div>
           </section>
 
-          {/* Story Section */}
-          <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
-            <h2 className="text-2xl font-bold text-[#2D1B3D] mb-4">Vår historie</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                  Tittel
-                </label>
-                <input
-                  type="text"
-                  value={content.story.title}
-                  onChange={(e) => updateContent(['story', 'title'], e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                  Undertittel
-                </label>
-                <input
-                  type="text"
-                  value={content.story.subtitle}
-                  onChange={(e) => updateContent(['story', 'subtitle'], e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                />
-              </div>
-              <div>
-                <div className="flex justify-between items-center mb-4">
-                  <label className="block text-sm font-medium text-[#4A2B5A]">
-                    Timeline-elementer
-                  </label>
-                  <button
-                    type="button"
-                    onClick={addTimelineItem}
-                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
-                  >
-                    + Legg til
-                  </button>
-                </div>
-                <div className="space-y-4">
-                  {content.story.timeline.map((item, index) => (
-                    <div key={index} className="border border-[#E8B4B8] rounded-lg p-4">
-                      <div className="flex justify-between items-start mb-3">
-                        <h3 className="font-medium text-[#2D1B3D]">Element {index + 1}</h3>
-                        <button
-                          type="button"
-                          onClick={() => removeTimelineItem(index)}
-                          className="text-red-500 hover:text-red-700 text-sm"
-                        >
-                          Fjern
-                        </button>
-                      </div>
-                      <div className="space-y-3">
-                        <input
-                          type="text"
-                          placeholder="Dato"
-                          value={item.date}
-                          onChange={(e) => updateTimelineItem(index, 'date', e.target.value)}
-                          className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                        />
-                        <input
-                          type="text"
-                          placeholder="Tittel"
-                          value={item.title}
-                          onChange={(e) => updateTimelineItem(index, 'title', e.target.value)}
-                          className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                        />
-                        <textarea
-                          placeholder="Tekst"
-                          value={item.text}
-                          onChange={(e) => updateTimelineItem(index, 'text', e.target.value)}
-                          rows={3}
-                          className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-
           {/* Wedding Details */}
           <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
             <h2 className="text-2xl font-bold text-[#2D1B3D] mb-4">Praktisk informasjon</h2>
@@ -1283,116 +1157,6 @@ export default function AdminPage() {
             </div>
           </section>
 
-          {/* Footer */}
-          <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
-            <h2 className="text-2xl font-bold text-[#2D1B3D] mb-4">Footer</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                  Overskrift
-                </label>
-                <input
-                  type="text"
-                  value={content.footer.heading}
-                  onChange={(e) => updateContent(['footer', 'heading'], e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                  Tagline
-                </label>
-                <textarea
-                  value={content.footer.tagline}
-                  onChange={(e) => updateContent(['footer', 'tagline'], e.target.value)}
-                  rows={2}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                  Kontakt-tekst
-                </label>
-                <input
-                  type="text"
-                  value={content.footer.contactText}
-                  onChange={(e) => updateContent(['footer', 'contactText'], e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Vis kontaktinfo-tekst
-                  </label>
-                  <input
-                    type="text"
-                    value={content.footer.showContactText}
-                    onChange={(e) => updateContent(['footer', 'showContactText'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Skjul kontaktinfo-tekst
-                  </label>
-                  <input
-                    type="text"
-                    value={content.footer.hideContactText}
-                    onChange={(e) => updateContent(['footer', 'hideContactText'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Brudens navn
-                  </label>
-                  <input
-                    type="text"
-                    value={content.footer.contact.bride.name}
-                    onChange={(e) => updateContent(['footer', 'contact', 'bride', 'name'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Brudens telefon
-                  </label>
-                  <input
-                    type="text"
-                    value={content.footer.contact.bride.phone}
-                    onChange={(e) => updateContent(['footer', 'contact', 'bride', 'phone'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Brudgommens navn
-                  </label>
-                  <input
-                    type="text"
-                    value={content.footer.contact.groom.name}
-                    onChange={(e) => updateContent(['footer', 'contact', 'groom', 'name'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Brudgommens telefon
-                  </label>
-                  <input
-                    type="text"
-                    value={content.footer.contact.groom.phone}
-                    onChange={(e) => updateContent(['footer', 'contact', 'groom', 'phone'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
-
           {/* RSVP Section */}
           <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
             <h2 className="text-2xl font-bold text-[#2D1B3D] mb-4">RSVP-seksjon</h2>
@@ -1624,6 +1388,198 @@ export default function AdminPage() {
                       className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
                     />
                   </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Story Section */}
+          <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
+            <h2 className="text-2xl font-bold text-[#2D1B3D] mb-4">Vår historie</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                  Tittel
+                </label>
+                <input
+                  type="text"
+                  value={content.story.title}
+                  onChange={(e) => updateContent(['story', 'title'], e.target.value)}
+                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                  Undertittel
+                </label>
+                <input
+                  type="text"
+                  value={content.story.subtitle}
+                  onChange={(e) => updateContent(['story', 'subtitle'], e.target.value)}
+                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                />
+              </div>
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <label className="block text-sm font-medium text-[#4A2B5A]">
+                    Timeline-elementer
+                  </label>
+                  <button
+                    type="button"
+                    onClick={addTimelineItem}
+                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
+                  >
+                    + Legg til
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  {content.story.timeline.map((item, index) => (
+                    <div key={index} className="border border-[#E8B4B8] rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="font-medium text-[#2D1B3D]">Element {index + 1}</h3>
+                        <button
+                          type="button"
+                          onClick={() => removeTimelineItem(index)}
+                          className="text-red-500 hover:text-red-700 text-sm"
+                        >
+                          Fjern
+                        </button>
+                      </div>
+                      <div className="space-y-3">
+                        <input
+                          type="text"
+                          placeholder="Dato"
+                          value={item.date}
+                          onChange={(e) => updateTimelineItem(index, 'date', e.target.value)}
+                          className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Tittel"
+                          value={item.title}
+                          onChange={(e) => updateTimelineItem(index, 'title', e.target.value)}
+                          className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                        />
+                        <textarea
+                          placeholder="Tekst"
+                          value={item.text}
+                          onChange={(e) => updateTimelineItem(index, 'text', e.target.value)}
+                          rows={3}
+                          className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Footer */}
+          <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
+            <h2 className="text-2xl font-bold text-[#2D1B3D] mb-4">Footer</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                  Overskrift
+                </label>
+                <input
+                  type="text"
+                  value={content.footer.heading}
+                  onChange={(e) => updateContent(['footer', 'heading'], e.target.value)}
+                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                  Tagline
+                </label>
+                <textarea
+                  value={content.footer.tagline}
+                  onChange={(e) => updateContent(['footer', 'tagline'], e.target.value)}
+                  rows={2}
+                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                  Kontakt-tekst
+                </label>
+                <input
+                  type="text"
+                  value={content.footer.contactText}
+                  onChange={(e) => updateContent(['footer', 'contactText'], e.target.value)}
+                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Vis kontaktinfo-tekst
+                  </label>
+                  <input
+                    type="text"
+                    value={content.footer.showContactText}
+                    onChange={(e) => updateContent(['footer', 'showContactText'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Skjul kontaktinfo-tekst
+                  </label>
+                  <input
+                    type="text"
+                    value={content.footer.hideContactText}
+                    onChange={(e) => updateContent(['footer', 'hideContactText'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Brudens navn
+                  </label>
+                  <input
+                    type="text"
+                    value={content.footer.contact.bride.name}
+                    onChange={(e) => updateContent(['footer', 'contact', 'bride', 'name'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Brudens telefon
+                  </label>
+                  <input
+                    type="text"
+                    value={content.footer.contact.bride.phone}
+                    onChange={(e) => updateContent(['footer', 'contact', 'bride', 'phone'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Brudgommens navn
+                  </label>
+                  <input
+                    type="text"
+                    value={content.footer.contact.groom.name}
+                    onChange={(e) => updateContent(['footer', 'contact', 'groom', 'name'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
+                    Brudgommens telefon
+                  </label>
+                  <input
+                    type="text"
+                    value={content.footer.contact.groom.phone}
+                    onChange={(e) => updateContent(['footer', 'contact', 'groom', 'phone'], e.target.value)}
+                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  />
                 </div>
               </div>
             </div>

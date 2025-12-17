@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { StorySectionProps } from '@/types';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
@@ -79,19 +79,24 @@ export const StorySection: React.FC<StorySectionProps> = () => {
       .catch(err => console.error('Error loading story content:', err));
   }, []);
 
-  const storyImages = [
+  const storyImages = useMemo(() => [
     { src: "/images/story-1.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_30%]" },
     { src: "/images/story-2.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_35%]" },
     { src: "/images/story-3.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_30%]" },
     { src: "/images/story-4.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_40%]" }
-  ];
+  ], []);
 
-  const timeline = content?.timeline || [];
+  const timeline = useMemo(() => content?.timeline || [], [content?.timeline]);
 
-  const handleImageClick = (src: string, alt: string) => setSelectedImage({ src, alt });
-  const closeModal = () => setSelectedImage(null);
+  const handleImageClick = useCallback((src: string, alt: string) => {
+    setSelectedImage({ src, alt });
+  }, []);
 
-  const toggleItem = (index: number) => {
+  const closeModal = useCallback(() => {
+    setSelectedImage(null);
+  }, []);
+
+  const toggleItem = useCallback((index: number) => {
     setExpandedItems(prev => {
       const newSet = new Set(prev);
       if (newSet.has(index)) {
@@ -101,7 +106,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
       }
       return newSet;
     });
-  };
+  }, []);
 
   return (
     <section id="our-story" className="py-24 md:py-32 relative overflow-hidden">
