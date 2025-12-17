@@ -589,7 +589,11 @@ export default function AdminPage() {
       // Delete removed guests
       for (const existing of existingGuests) {
         if (!guests.find((g: { name: string; seat_number: number; id?: string }) => g.id === existing.id)) {
-          await fetch(`/api/admin/seating/guests?id=${existing.id}`, { method: 'DELETE' });
+          const deleteResponse = await fetch(`/api/admin/seating/guests?id=${existing.id}`, { method: 'DELETE' });
+          if (!deleteResponse.ok) {
+            const deleteData = await deleteResponse.json();
+            throw new Error(deleteData.error || 'Kunne ikke slette gjest');
+          }
         }
       }
       
@@ -598,7 +602,7 @@ export default function AdminPage() {
         if (guest.name.trim()) {
           if (guest.id) {
             // Update existing
-            await fetch('/api/admin/seating/guests', {
+            const updateResponse = await fetch('/api/admin/seating/guests', {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -608,9 +612,13 @@ export default function AdminPage() {
                 seat_number: guest.seat_number,
               }),
             });
+            if (!updateResponse.ok) {
+              const updateData = await updateResponse.json();
+              throw new Error(updateData.error || 'Kunne ikke oppdatere gjest');
+            }
           } else {
             // Create new
-            await fetch('/api/admin/seating/guests', {
+            const createResponse = await fetch('/api/admin/seating/guests', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -619,6 +627,10 @@ export default function AdminPage() {
                 seat_number: guest.seat_number,
               }),
             });
+            if (!createResponse.ok) {
+              const createData = await createResponse.json();
+              throw new Error(createData.error || 'Kunne ikke opprette gjest');
+            }
           }
         }
       }
@@ -626,8 +638,8 @@ export default function AdminPage() {
       setSuccess('Gjester lagret!');
       setTimeout(() => setSuccess(''), 3000);
       await loadSeatingTables();
-    } catch {
-      setError('Feil ved lagring av gjester');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Feil ved lagring av gjester');
     } finally {
       setLoading(false);
     }
