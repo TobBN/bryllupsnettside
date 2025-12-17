@@ -115,7 +115,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
             aria-controls="story-content"
             aria-label={isSectionExpanded ? 'Kollaps vår historie' : 'Ekspander vår historie'}
           >
-            <div className="glass-card rounded-2xl p-8 md:p-10 max-w-4xl mx-auto">
+            <div className="glass-card rounded-2xl p-8 md:p-10 max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <h2 id="story-heading" className="text-4xl md:text-6xl lg:text-7xl leading-tight text-white mb-6 text-center drop-shadow-lg">
@@ -145,7 +145,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
             isSectionExpanded ? 'max-h-[9999px] opacity-100' : 'max-h-0 opacity-0'
           }`}
         >
-          <div className="grid md:grid-cols-2 gap-16 items-start">
+          <div className="grid md:grid-cols-2 gap-8 items-start">
           {/* Tidslinje i glassmorphism-kort */}
           <div className="glass-card rounded-2xl p-6 md:p-8">
             <ol ref={timelineRef} className="relative border-l-2 border-[#E8B4B8]/50 pl-6">

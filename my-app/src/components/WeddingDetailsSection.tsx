@@ -71,13 +71,6 @@ interface WeddingDetailsContent {
     searchLabel: string;
     noResultsText: string;
   };
-  faq?: {
-    title: string;
-    items: Array<{
-      question: string;
-      answer: string;
-    }>;
-  };
 }
 
 interface DetailBoxProps {
@@ -92,7 +85,7 @@ const DetailBox: React.FC<DetailBoxProps> = ({ title, icon, children, isExpanded
   return (
     <div 
       className={`glass-card rounded-2xl p-6 cursor-pointer transition-all duration-300 hover-lift ${
-        isExpanded ? 'ring-2 ring-[#E8B4B8]/50 shadow-2xl' : ''
+        isExpanded ? 'ring-2 ring-[#E8B4B8]/50 shadow-2xl m-1' : ''
       }`}
       onClick={onToggle}
       role="button"
@@ -148,9 +141,6 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [tablesLoading, setTablesLoading] = useState<boolean>(false);
   
-  // FAQ state
-  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
-  
   const headingRef = useScrollReveal({ animationType: 'fade-up', threshold: 0.3 });
   const cardsRef = useScrollReveal({ animationType: 'scale', threshold: 0.1 });
 
@@ -166,9 +156,6 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
         }
         if (data.seatingChart && !weddingDetails.seatingChart) {
           weddingDetails.seatingChart = data.seatingChart;
-        }
-        if (data.faq && !weddingDetails.faq) {
-          weddingDetails.faq = data.faq;
         }
         setContent(weddingDetails);
       })
@@ -240,7 +227,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
             aria-controls="wedding-details-content"
             aria-label={isSectionExpanded ? 'Kollaps praktisk informasjon' : 'Ekspander praktisk informasjon'}
           >
-            <div className="glass-card rounded-2xl p-8 md:p-10 max-w-4xl mx-auto">
+            <div className="glass-card rounded-2xl p-8 md:p-10 max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto">
               <div className="flex items-center justify-center">
                 <h2 
                   id="details-heading"
@@ -268,7 +255,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
             isSectionExpanded ? 'max-h-[9999px] opacity-100' : 'max-h-0 opacity-0'
           }`}
         >
-          <div ref={cardsRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div ref={cardsRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto">
           {/* Sted */}
           <DetailBox
             title={content?.venue.title || 'Sted'}
@@ -387,16 +374,16 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
             </div>
           </DetailBox>
 
-          {/* Info */}
+          {/* Informasjon */}
           <DetailBox
-            title={content?.info.title || 'Info'}
+            title={content?.info.title || 'Informasjon'}
             icon={
               <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             }
-            isExpanded={expandedBox === (content?.info.title || 'Info')}
-            onToggle={() => toggleBox(content?.info.title || 'Info')}
+            isExpanded={expandedBox === (content?.info.title || 'Informasjon')}
+            onToggle={() => toggleBox(content?.info.title || 'Informasjon')}
           >
             <div className="space-y-4">
               <p className="font-body text-white/95 leading-relaxed drop-shadow-sm whitespace-pre-line">
@@ -562,68 +549,6 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
             </DetailBox>
           )}
 
-          {/* FAQ */}
-          {content?.faq && (
-            <DetailBox
-              title={content.faq?.title || 'FAQ'}
-              icon={
-                <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              }
-              isExpanded={expandedBox === (content.faq?.title || 'FAQ')}
-              onToggle={() => toggleBox(content.faq?.title || 'FAQ')}
-            >
-              <div className="space-y-3" onClick={(e) => e.stopPropagation()}>
-                {content.faq?.items && content.faq.items.length > 0 ? (
-                  content.faq.items.map((item, index) => (
-                    <div key={index} className="bg-white/10 rounded-lg overflow-hidden">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setExpandedFaq(expandedFaq === index ? null : index);
-                        }}
-                        className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white/20"
-                        aria-expanded={expandedFaq === index}
-                        aria-controls={`faq-answer-${index}`}
-                      >
-                        <span className="font-body font-medium text-white pr-4">
-                          {item.question}
-                        </span>
-                        <svg
-                          className={`w-5 h-5 text-white flex-shrink-0 transition-transform duration-300 ${
-                            expandedFaq === index ? 'rotate-180' : ''
-                          }`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
-                      <div
-                        id={`faq-answer-${index}`}
-                        className={`overflow-hidden transition-all duration-300 ${
-                          expandedFaq === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                        }`}
-                      >
-                        <div className="px-4 pb-3">
-                          <p className="font-body text-white/90 leading-relaxed">
-                            {item.answer}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="font-body text-white/80 text-center py-4">
-                    Ingen spørsmål er lagt til ennå.
-                  </p>
-                )}
-              </div>
-            </DetailBox>
-          )}
         </div>
         </div>
       </div>

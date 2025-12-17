@@ -114,12 +114,6 @@ export async function GET() {
         };
       }
       
-      if (!weddingDetails.faq) {
-        weddingDetails.faq = {
-          title: 'Ofte stilte spørsmål',
-          items: []
-        };
-      }
     }
 
     return NextResponse.json(content);

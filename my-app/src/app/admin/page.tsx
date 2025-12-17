@@ -69,13 +69,6 @@ interface ContentData {
       searchLabel: string;
       noResultsText: string;
     };
-    faq?: {
-      title: string;
-      items: Array<{
-        question: string;
-        answer: string;
-      }>;
-    };
   };
   footer: {
     heading: string;
@@ -1259,9 +1252,9 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* Info */}
+            {/* Informasjon */}
             <div className="mt-6 pt-6 border-t border-[#E8B4B8]">
-              <h3 className="text-xl font-semibold text-[#2D1B3D] mb-4">Info</h3>
+              <h3 className="text-xl font-semibold text-[#2D1B3D] mb-4">Informasjon</h3>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
@@ -1793,9 +1786,9 @@ export default function AdminPage() {
             )}
           </section>
 
-          {/* Praktisk informasjon: Program, Bord-kart og FAQ */}
+          {/* Praktisk informasjon: Program og Bord-kart */}
           <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl mb-6">
-            <h2 className="text-2xl font-bold text-[#2D1B3D] mb-4">Program, bord-kart og FAQ</h2>
+            <h2 className="text-2xl font-bold text-[#2D1B3D] mb-4">Program og bord-kart</h2>
 
             {/* Schedule */}
             <div className="mt-6 pt-6 border-t border-[#E8B4B8]">
@@ -2180,99 +2173,6 @@ export default function AdminPage() {
             </div>
             </div>
 
-            {/* FAQ */}
-            <div className="mt-6 pt-6 border-t border-[#E8B4B8]">
-              <h3 className="text-xl font-semibold text-[#2D1B3D] mb-4">FAQ</h3>
-              {content && (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                      Tittel
-                    </label>
-                    <input
-                      type="text"
-                      value={content.weddingDetails.faq?.title || ''}
-                      onChange={(e) => updateContent(['weddingDetails', 'faq', 'title'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                    />
-                  </div>
-                  
-                  {/* FAQ items */}
-                  <div className="border-t border-[#E8B4B8] pt-4 mt-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-lg font-semibold text-[#4A2B5A]">Spørsmål og svar</h4>
-                      <button
-                        onClick={() => {
-                          const currentItems = content.weddingDetails.faq?.items || [];
-                          updateContent(['weddingDetails', 'faq', 'items'], [...currentItems, { question: '', answer: '' }]);
-                        }}
-                        className="px-4 py-2 bg-[#E8B4B8] text-white rounded-lg hover:opacity-90 transition-opacity text-sm"
-                      >
-                        Legg til spørsmål
-                      </button>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      {(content.weddingDetails.faq?.items || []).map((item: { question: string; answer: string }, index: number) => (
-                        <div key={index} className="border border-[#E8B4B8] rounded-lg p-4">
-                          <div className="space-y-3">
-                            <div>
-                              <label className="block text-sm font-medium text-[#4A2B5A] mb-1">
-                                Spørsmål
-                              </label>
-                              <input
-                                type="text"
-                                value={item.question}
-                                onChange={(e) => {
-                                  const updated = [...(content.weddingDetails.faq?.items || [])];
-                                  updated[index] = { ...updated[index], question: e.target.value };
-                                  updateContent(['weddingDetails', 'faq', 'items'], updated);
-                                }}
-                                placeholder="Hva er spørsmålet?"
-                                className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-[#4A2B5A] mb-1">
-                                Svar
-                              </label>
-                              <textarea
-                                value={item.answer}
-                                onChange={(e) => {
-                                  const updated = [...(content.weddingDetails.faq?.items || [])];
-                                  updated[index] = { ...updated[index], answer: e.target.value };
-                                  updateContent(['weddingDetails', 'faq', 'items'], updated);
-                                }}
-                                placeholder="Svaret på spørsmålet..."
-                                rows={3}
-                                className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                              />
-                            </div>
-                            <div className="flex justify-end">
-                              <button
-                                onClick={() => {
-                                  const updated = [...(content.weddingDetails.faq?.items || [])];
-                                  updated.splice(index, 1);
-                                  updateContent(['weddingDetails', 'faq', 'items'], updated);
-                                }}
-                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:opacity-90 transition-opacity"
-                              >
-                                Slett
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                      {(!content.weddingDetails.faq?.items || content.weddingDetails.faq.items.length === 0) && (
-                        <p className="text-[#4A2B5A] text-center py-4 text-sm">
-                          Ingen spørsmål. Klikk &quot;Legg til spørsmål&quot; for å begynne.
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
           </section>
 
           {/* Save Button */}

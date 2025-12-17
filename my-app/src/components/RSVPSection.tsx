@@ -181,11 +181,11 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
   };
 
   return (
-    <section id="rsvp" className="py-16 md:py-20 relative">
+    <section id="rsvp" className="py-20 md:py-32 relative">
       <div className="container mx-auto px-4 relative z-10">
         {/* Overskrift og undertittel i glassmorphism-kort */}
         <div className="text-center mb-10">
-          <div className="glass-card rounded-2xl p-8 md:p-10 max-w-4xl mx-auto mb-8">
+          <div className="glass-card rounded-2xl p-8 md:p-10 max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto mb-8">
             <h2 
               id="rsvp-heading"
               className="text-3xl md:text-5xl lg:text-6xl leading-tight text-white mb-6 drop-shadow-lg"
@@ -208,7 +208,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
         </div>
 
         {!isSubmitted ? (
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto">
             {!showForm ? (
               <div className="text-center space-y-8">
                 <div className="flex flex-col sm:flex-row gap-6 justify-center">
