@@ -145,7 +145,6 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
   const [tables, setTables] = useState<PublicTable[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
-  const [selectedTable, setSelectedTable] = useState<number | null>(null);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [tablesLoading, setTablesLoading] = useState<boolean>(false);
   
@@ -203,7 +202,6 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
     
     if (!query || query.length < 2) {
       setSearchResult(null);
-      setSelectedTable(null);
       return;
     }
 
@@ -214,25 +212,14 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
       
       if (data.success && data.found) {
         setSearchResult(data.data);
-        // Don't auto-select table on search - let user click to see guest list
       } else {
         setSearchResult(null);
-        setSelectedTable(null);
       }
     } catch (error) {
       console.error('Error searching:', error);
       setSearchResult(null);
-      setSelectedTable(null);
     } finally {
       setIsSearching(false);
-    }
-  };
-
-  const handleTableClick = (tableNumber: number) => {
-    if (selectedTable === tableNumber) {
-      setSelectedTable(null);
-    } else {
-      setSelectedTable(tableNumber);
     }
   };
 
@@ -549,19 +536,14 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                 ) : (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" onClick={(e) => e.stopPropagation()}>
                     {tables.map((table) => {
-                      const isSelected = selectedTable === table.table_number;
                       const isHighlighted = searchResult?.table_number === table.table_number;
                       
                       return (
                         <div key={table.table_number} className="relative">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleTableClick(table.table_number);
-                            }}
-                            className={`w-full aspect-square rounded-full glass-card flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white/20 ${
+                          <div
+                            className={`w-full aspect-square rounded-full glass-card flex flex-col items-center justify-center transition-all duration-300 ${
                               isHighlighted ? 'ring-4 ring-[#F4A261] shadow-2xl' : ''
-                            } ${isSelected ? 'ring-2 ring-[#E8B4B8]' : ''}`}
+                            }`}
                             aria-label={`Bord ${table.table_number}`}
                           >
                             <span className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg mb-2">
@@ -570,29 +552,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                             <span className="text-sm md:text-base text-white/90 drop-shadow-md">
                               {table.guest_count}/{table.capacity}
                             </span>
-                          </button>
-                          
-                          {/* Guest list when table is selected */}
-                          {isSelected && (
-                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 glass-card rounded-2xl p-4 z-10 min-w-[200px] max-w-[300px]">
-                              <h3 className="font-body font-semibold text-white mb-3 text-center">
-                                Bord {table.table_number}
-                              </h3>
-                              <ul className="space-y-2">
-                                {table.guests.length > 0 ? (
-                                  table.guests.map((guest, idx) => (
-                                    <li key={idx} className="font-body text-white/95 text-sm">
-                                      {guest.name}
-                                    </li>
-                                  ))
-                                ) : (
-                                  <li className="font-body text-white/70 text-sm italic text-center">
-                                    Ingen gjester satt opp
-                                  </li>
-                                )}
-                              </ul>
-                            </div>
-                          )}
+                          </div>
                         </div>
                       );
                     })}
