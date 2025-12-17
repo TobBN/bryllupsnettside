@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, memo } from 'react';
+import { useState, useEffect, useCallback, memo, useRef } from 'react';
 import { WeddingDetailsSectionProps } from '@/types';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
@@ -92,6 +92,11 @@ const DetailBoxComponent: React.FC<DetailBoxProps> = ({ title, icon, children, i
       tabIndex={0}
       aria-label={`Klikk for å ${isExpanded ? 'lukke' : 'åpne'} ${title.toLowerCase()} informasjon`}
       onKeyDown={(e) => {
+        // Don't handle keys if focus is on an input or textarea element
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+          return;
+        }
         if (e.key === 'Enter' || e.key === ' ') {
           onToggle();
         }
@@ -144,6 +149,10 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [tablesLoading, setTablesLoading] = useState<boolean>(false);
   
+  // Track search requests to handle race conditions
+  const searchRequestIdRef = useRef<number>(0);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
   const headingRef = useScrollReveal({ animationType: 'fade-up', threshold: 0.3 });
   const cardsRef = useScrollReveal({ animationType: 'scale', threshold: 0.1 });
 
@@ -172,6 +181,15 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
     }
   }, [expandedBox, content?.seatingChart?.title]);
 
+  // Cleanup debounce timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const loadTables = async () => {
     try {
       setTablesLoading(true);
@@ -188,29 +206,54 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
   };
 
   const handleSearch = useCallback(async (query: string) => {
+    // Update query immediately for responsive UI
     setSearchQuery(query);
     
-    if (!query || query.length < 2) {
+    // Clear result immediately if query is empty or too short
+    if (!query || query.trim().length < 2) {
       setSearchResult(null);
+      setIsSearching(false);
+      // Clear any pending debounce
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+        debounceTimeoutRef.current = null;
+      }
       return;
     }
 
-    try {
-      setIsSearching(true);
-      const res = await fetch(`/api/seating/search?q=${encodeURIComponent(query)}`);
-      const data = await res.json();
-      
-      if (data.success && data.found) {
-        setSearchResult(data.data);
-      } else {
-        setSearchResult(null);
-      }
-    } catch (error) {
-      console.error('Error searching:', error);
-      setSearchResult(null);
-    } finally {
-      setIsSearching(false);
+    // Clear previous debounce timeout
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
     }
+
+    // Debounce the API call
+    debounceTimeoutRef.current = setTimeout(async () => {
+      // Increment request ID to track this request
+      const currentRequestId = ++searchRequestIdRef.current;
+      
+      try {
+        setIsSearching(true);
+        const res = await fetch(`/api/seating/search?q=${encodeURIComponent(query.trim())}`);
+        const data = await res.json();
+        
+        // Only update state if this is still the latest request
+        if (currentRequestId === searchRequestIdRef.current) {
+          if (data.success && data.found) {
+            setSearchResult(data.data);
+          } else {
+            setSearchResult(null);
+          }
+          setIsSearching(false);
+        }
+      } catch (error) {
+        // Only update state if this is still the latest request
+        if (currentRequestId === searchRequestIdRef.current) {
+          console.error('Error searching:', error);
+          setSearchResult(null);
+          setIsSearching(false);
+        }
+      }
+    }, 300); // 300ms debounce delay
   }, []);
 
   const toggleBox = useCallback((title: string) => {
@@ -483,6 +526,10 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                       onChange={(e) => handleSearch(e.target.value)}
                       onClick={(e) => e.stopPropagation()}
                       onFocus={(e) => e.stopPropagation()}
+                      onKeyDown={(e) => {
+                        e.stopPropagation(); // Prevent DetailBox from handling the event
+                        // Allow normal typing behavior (spacebar, etc.)
+                      }}
                       placeholder={content.seatingChart?.searchPlaceholder || 'Skriv inn navnet ditt...'}
                       className="w-full px-6 py-4 border-2 border-white/30 rounded-2xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all duration-300 text-lg"
                     />
