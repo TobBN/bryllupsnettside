@@ -35,12 +35,16 @@ CREATE INDEX IF NOT EXISTS idx_seating_guests_name ON seating_guests(name);
 -- 4. Create trigger to update updated_at on seating_tables
 -- ============================================
 CREATE OR REPLACE FUNCTION update_seating_tables_updated_at()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
     NEW.updated_at = NOW();
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 DROP TRIGGER IF EXISTS update_seating_tables_updated_at_trigger ON seating_tables;
 CREATE TRIGGER update_seating_tables_updated_at_trigger
