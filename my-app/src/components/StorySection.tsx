@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect, useMemo, useCallback, memo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { StorySectionProps } from '@/types';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 

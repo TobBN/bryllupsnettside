@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, memo } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { WeddingDetailsSectionProps } from '@/types';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
@@ -81,7 +81,7 @@ interface DetailBoxProps {
   onToggle: () => void;
 }
 
-const DetailBox: React.FC<DetailBoxProps> = memo(({ title, icon, children, isExpanded, onToggle }) => {
+const DetailBoxComponent: React.FC<DetailBoxProps> = ({ title, icon, children, isExpanded, onToggle }) => {
   return (
     <div 
       className={`glass-card rounded-2xl p-6 cursor-pointer transition-all duration-300 hover-lift ${
@@ -127,7 +127,10 @@ const DetailBox: React.FC<DetailBoxProps> = memo(({ title, icon, children, isExp
       </div>
     </div>
   );
-});
+};
+
+const DetailBox = memo(DetailBoxComponent);
+DetailBox.displayName = 'DetailBox';
 
 export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () => {
   const [expandedBox, setExpandedBox] = useState<string | null>(null);

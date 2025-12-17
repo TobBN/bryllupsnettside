@@ -178,7 +178,6 @@ export default function AdminPage() {
     if (isAuthenticated) {
       loadSeatingTables();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   const checkAuth = async () => {
@@ -238,7 +237,7 @@ export default function AdminPage() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('/api/admin/auth', { method: 'DELETE' });
+      await fetch('/api/admin/auth', { method: 'DELETE' });
       setIsAuthenticated(false);
       setContent(null);
     } catch (error) {
