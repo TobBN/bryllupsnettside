@@ -58,7 +58,8 @@ export const POST = async (req: NextRequest) => {
     const supabase = supabaseServer();
     
     // Insert RSVP record first
-    const { data: rsvpData, error: rsvpError } = await supabase.from('rsvps').insert({
+    let rsvpData: { id: string } | null = null;
+    const { data: initialRsvpData, error: rsvpError } = await supabase.from('rsvps').insert({
       name: guestNames[0], // Keep first name in rsvps.name for backward compatibility
       phone: phone || null,
       email: email || null,
@@ -68,7 +69,10 @@ export const POST = async (req: NextRequest) => {
       // Note: guest_count column removed - using rsvp_guests table instead
     }).select().single();
 
-    if (rsvpError) {
+    // If no error, use initial data
+    if (!rsvpError && initialRsvpData) {
+      rsvpData = initialRsvpData;
+    } else if (rsvpError) {
       console.error('Supabase RSVP insert error:', rsvpError);
       logSecurityEvent('rsvp_save_error', { clientId, error: rsvpError.message, code: rsvpError.code }, 'error');
       
@@ -97,7 +101,11 @@ export const POST = async (req: NextRequest) => {
         }
         
         // Use retry data instead
-        rsvpData = retryRsvpData;
+        if (retryRsvpData) {
+          rsvpData = retryRsvpData;
+        } else {
+          return NextResponse.json({ ok: false, error: 'Kunne ikke lagre RSVP. Prøv igjen senere.' }, { status: 500 });
+        }
       } else {
         // Provide more specific error messages
         if (rsvpError.code === '23505') { // Unique constraint violation
@@ -111,9 +119,18 @@ export const POST = async (req: NextRequest) => {
       }
     }
 
+    // Ensure we have rsvpData (either from initial insert or retry)
+    if (!rsvpData) {
+      rsvpData = initialRsvpData;
+    }
+    
+    if (!rsvpData) {
+      return NextResponse.json({ ok: false, error: 'Kunne ikke lagre RSVP. Prøv igjen senere.' }, { status: 500 });
+    }
+
     // Insert guest records
     const guestRecords = guests.map((guest: { name: string; allergies?: string }, index: number) => ({
-      rsvp_id: rsvpData.id,
+      rsvp_id: rsvpData!.id,
       name: (guest.name ?? '').toString().trim(),
       allergies: guest.allergies ? String(guest.allergies).trim() : null,
       guest_order: index + 1,
