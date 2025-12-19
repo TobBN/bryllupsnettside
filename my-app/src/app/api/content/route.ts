@@ -114,6 +114,31 @@ export async function GET() {
         };
       }
       
+      // Add default gifts content if missing
+      if (!weddingDetails.gifts) {
+        weddingDetails.gifts = {
+          title: 'Gaveønsker',
+          description: 'Vi blir både glade for gaver fra ønskelisten og pengebidrag til vår bryllupsreise',
+          links: [
+            {
+              url: '',
+              label: '🎁 Se vår ønskeliste på Stas.app'
+            }
+          ]
+        };
+      } else if (weddingDetails.gifts && typeof weddingDetails.gifts === 'object') {
+        const gifts = weddingDetails.gifts as Record<string, unknown>;
+        // Ensure links array exists and has at least one element
+        if (!gifts.links || !Array.isArray(gifts.links) || gifts.links.length === 0) {
+          gifts.links = [
+            {
+              url: '',
+              label: '🎁 Se vår ønskeliste på Stas.app'
+            }
+          ];
+        }
+      }
+      
     }
 
     return NextResponse.json(content);

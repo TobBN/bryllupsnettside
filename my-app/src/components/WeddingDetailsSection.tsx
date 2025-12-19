@@ -44,7 +44,6 @@ interface WeddingDetailsContent {
       url: string;
       label: string;
     }>;
-    vipps: string;
   };
   food: {
     title: string;
@@ -375,24 +374,18 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
               <p className="font-body text-white/95 leading-relaxed drop-shadow-sm">
                 {content?.gifts.description || 'Vi blir både glade for gaver fra ønskelisten og pengebidrag til vår bryllupsreise'}
               </p>
-              <div className="space-y-2">
-                {content?.gifts.links.map((link, index) => (
+              {content?.gifts.links && content.gifts.links.length > 0 && content.gifts.links[0].url && (
+                <div className="space-y-2">
                   <a 
-                    key={index}
-                    href={link.url} 
+                    href={content.gifts.links[0].url} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="font-body text-[#E8B4B8] hover:text-white transition-colors block drop-shadow-sm"
                   >
-                    {link.label}
+                    {content.gifts.links[0].label || '🎁 Se vår ønskeliste på Stas.app'}
                   </a>
-                ))}
-                <div className="pt-2 border-t border-white/30">
-                  <p className="font-body text-white/95 drop-shadow-sm">
-                    {content?.gifts.vipps || '💰 Vipps: til bryllupsreise'}
-                  </p>
                 </div>
-              </div>
+              )}
             </div>
           </DetailBox>
 

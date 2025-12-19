@@ -42,7 +42,6 @@ interface ContentData {
         url: string;
         label: string;
       }>;
-      vipps: string;
     };
     food: {
       title: string;
@@ -711,50 +710,19 @@ export default function AdminPage() {
     setContent(newContent);
   };
 
-  const addGiftLink = () => {
+  const updateGiftLink = (field: string, value: string) => {
     if (!content) return;
+    // Ensure links array exists and has at least one element
+    const currentLinks = content.weddingDetails.gifts.links || [];
+    const firstLink = currentLinks[0] || { url: '', label: '' };
+    
     const newContent = {
       ...content,
       weddingDetails: {
         ...content.weddingDetails,
         gifts: {
           ...content.weddingDetails.gifts,
-          links: [
-            ...content.weddingDetails.gifts.links,
-            { url: '', label: '' },
-          ],
-        },
-      },
-    };
-    setContent(newContent);
-  };
-
-  const removeGiftLink = (index: number) => {
-    if (!content) return;
-    const newContent = {
-      ...content,
-      weddingDetails: {
-        ...content.weddingDetails,
-        gifts: {
-          ...content.weddingDetails.gifts,
-          links: content.weddingDetails.gifts.links.filter((_, i) => i !== index),
-        },
-      },
-    };
-    setContent(newContent);
-  };
-
-  const updateGiftLink = (index: number, field: string, value: string) => {
-    if (!content) return;
-    const newContent = {
-      ...content,
-      weddingDetails: {
-        ...content.weddingDetails,
-        gifts: {
-          ...content.weddingDetails.gifts,
-          links: content.weddingDetails.gifts.links.map((link, i) =>
-            i === index ? { ...link, [field]: value } : link
-          ),
+          links: [{ ...firstLink, [field]: value }],
         },
       },
     };
@@ -1038,61 +1006,25 @@ export default function AdminPage() {
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <label className="block text-sm font-medium text-[#4A2B5A]">
-                      Lenker
-                    </label>
-                    <button
-                      type="button"
-                      onClick={addGiftLink}
-                      className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
-                    >
-                      + Legg til lenke
-                    </button>
-                  </div>
-                  <div className="space-y-3">
-                    {content.weddingDetails.gifts.links.map((link, index) => (
-                      <div key={index} className="border border-[#E8B4B8] rounded-lg p-3">
-                        <div className="flex justify-between items-start mb-2">
-                          <span className="text-sm font-medium text-[#2D1B3D]">Lenke {index + 1}</span>
-                          <button
-                            type="button"
-                            onClick={() => removeGiftLink(index)}
-                            className="text-red-500 hover:text-red-700 text-sm"
-                          >
-                            Fjern
-                          </button>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <input
-                            type="text"
-                            placeholder="URL"
-                            value={link.url}
-                            onChange={(e) => updateGiftLink(index, 'url', e.target.value)}
-                            className="px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                          />
-                          <input
-                            type="text"
-                            placeholder="Label"
-                            value={link.label}
-                            onChange={(e) => updateGiftLink(index, 'label', e.target.value)}
-                            className="px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
-                    Vipps-tekst
+                    Stas.app lenke
                   </label>
-                  <input
-                    type="text"
-                    value={content.weddingDetails.gifts.vipps}
-                    onChange={(e) => updateContent(['weddingDetails', 'gifts', 'vipps'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
-                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      placeholder="https://stas.app/..."
+                      value={content.weddingDetails.gifts.links[0]?.url || ''}
+                      onChange={(e) => updateGiftLink('url', e.target.value)}
+                      className="px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    />
+                    <input
+                      type="text"
+                      placeholder="🎁 Se vår ønskeliste på Stas.app"
+                      value={content.weddingDetails.gifts.links[0]?.label || ''}
+                      onChange={(e) => updateGiftLink('label', e.target.value)}
+                      className="px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
