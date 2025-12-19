@@ -72,15 +72,43 @@ export const POST = async (req: NextRequest) => {
       console.error('Supabase RSVP insert error:', rsvpError);
       logSecurityEvent('rsvp_save_error', { clientId, error: rsvpError.message, code: rsvpError.code }, 'error');
       
-      // Provide more specific error messages
-      if (rsvpError.code === '23505') { // Unique constraint violation
-        return NextResponse.json({ ok: false, error: 'Det eksisterer allerede en RSVP med dette navnet. Kontakt oss hvis du ønsker å endre svaret ditt.' }, { status: 409 });
+      // Handle missing is_read column (PGRST204) - retry without it
+      if (rsvpError.code === 'PGRST204' && rsvpError.message?.includes('is_read')) {
+        console.warn('is_read column missing, retrying insert without it. Please run supabase_add_rsvp_read_status.sql migration.');
+        const { data: retryRsvpData, error: retryError } = await supabase.from('rsvps').insert({
+          name: guestNames[0],
+          phone: phone || null,
+          email: email || null,
+          response,
+          message: message || null,
+        }).select().single();
+        
+        if (retryError) {
+          console.error('Supabase RSVP retry insert error:', retryError);
+          logSecurityEvent('rsvp_retry_save_error', { clientId, error: retryError.message, code: retryError.code }, 'error');
+          
+          if (retryError.code === '23505') {
+            return NextResponse.json({ ok: false, error: 'Det eksisterer allerede en RSVP med dette navnet. Kontakt oss hvis du ønsker å endre svaret ditt.' }, { status: 409 });
+          }
+          const errorMessage = process.env.NODE_ENV === 'development' 
+            ? `RSVP retry feil: ${retryError.message} (${retryError.code})`
+            : 'Kunne ikke lagre RSVP. Prøv igjen senere.';
+          return NextResponse.json({ ok: false, error: errorMessage }, { status: 500 });
+        }
+        
+        // Use retry data instead
+        rsvpData = retryRsvpData;
+      } else {
+        // Provide more specific error messages
+        if (rsvpError.code === '23505') { // Unique constraint violation
+          return NextResponse.json({ ok: false, error: 'Det eksisterer allerede en RSVP med dette navnet. Kontakt oss hvis du ønsker å endre svaret ditt.' }, { status: 409 });
+        }
+        // Return detailed error in development, generic in production
+        const errorMessage = process.env.NODE_ENV === 'development' 
+          ? `RSVP feil: ${rsvpError.message} (${rsvpError.code})`
+          : 'Kunne ikke lagre RSVP. Prøv igjen senere.';
+        return NextResponse.json({ ok: false, error: errorMessage }, { status: 500 });
       }
-      // Return detailed error in development, generic in production
-      const errorMessage = process.env.NODE_ENV === 'development' 
-        ? `RSVP feil: ${rsvpError.message} (${rsvpError.code})`
-        : 'Kunne ikke lagre RSVP. Prøv igjen senere.';
-      return NextResponse.json({ ok: false, error: errorMessage }, { status: 500 });
     }
 
     // Insert guest records
