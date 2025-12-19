@@ -49,7 +49,6 @@ export interface ContentData {
         url: string;
         label: string;
       }>;
-      vipps: string;
     };
     food: {
       title: string;
