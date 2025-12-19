@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Parisienne, Dancing_Script, Playfair_Display, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { IntlProvider } from '@/components/IntlProvider';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const parisienne = Parisienne({
   weight: '400',
@@ -60,6 +62,8 @@ export default function RootLayout({
         <IntlProvider>
           {children}
         </IntlProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
