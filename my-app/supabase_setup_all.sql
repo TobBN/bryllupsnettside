@@ -4,6 +4,9 @@
 -- Trygt å kjøre flere ganger (idempotent)
 -- ============================================================
 
+-- Nullstill constraints (trygt om de ikke finnes)
+ALTER TABLE IF EXISTS rsvps DROP CONSTRAINT IF EXISTS check_guest_count_positive;
+
 -- Nullstill alle policies (trygt om de ikke finnes)
 DROP POLICY IF EXISTS "Allow public read access" ON seating_tables;
 DROP POLICY IF EXISTS "Allow service role insert access" ON seating_tables;
