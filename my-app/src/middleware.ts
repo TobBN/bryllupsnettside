@@ -36,21 +36,19 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'same-origin');
 
-  // Content Security Policy (Internet.nl-friendly)
-  // - No unsafe-inline/unsafe-eval in production
-  // - No broad scheme allowlist like img-src https:
-  const connectSrc = ["'self'", supabaseOrigin].filter(Boolean).join(' ');
-  const scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval'";
+  // Content Security Policy
+  // script-src uses nonce to avoid unsafe-inline/unsafe-eval.
+  // Vercel Analytics loads from va.vercel-scripts.com and reports to vitals.vercel-insights.com.
+  const connectSrc = ["'self'", supabaseOrigin, 'https://vitals.vercel-insights.com'].filter(Boolean).join(' ');
+  const scriptSrc = `'self' 'nonce-${nonce}' https://va.vercel-scripts.com`;
 
   const csp = [
     "default-src 'self'",
     `script-src ${scriptSrc}`,
-    // No inline style attributes; keep style-src strict
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     "img-src 'self' data: blob: https:",
     `connect-src ${connectSrc}`,
-    // No embedded frames needed for this site; links to maps are regular anchors
     "frame-src 'self' https://maps.google.com",
     "object-src 'none'",
     "base-uri 'self'",

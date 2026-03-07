@@ -1,9 +1,9 @@
 import { createHmac, timingSafeEqual } from 'crypto';
-import { appendFileSync } from 'fs';
-import { join } from 'path';
 
-const LOG_PATH = join(process.cwd(), '.cursor', 'debug.log');
-const SECRET_KEY = process.env.COOKIE_SECRET || process.env.ADMIN_PASSWORD || 'default-secret-change-in-production';
+if (process.env.NODE_ENV === 'production' && !process.env.COOKIE_SECRET) {
+  throw new Error('COOKIE_SECRET env var er påkrevd i produksjon. Sett den i Vercel Dashboard.');
+}
+const SECRET_KEY = process.env.COOKIE_SECRET || process.env.ADMIN_PASSWORD || 'dev-only-secret';
 
 // Rate limiting store (in-memory, reset on server restart)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
@@ -79,17 +79,19 @@ export function getClientIdentifier(request: Request | { headers: { get: (key: s
 
 // Log security events
 export function logSecurityEvent(event: string, data: Record<string, unknown>, severity: 'info' | 'warning' | 'error' = 'info') {
-  try {
-    const logEntry = {
-      timestamp: new Date().toISOString(),
-      event,
-      severity,
-      data,
-      location: 'security.ts',
-    };
-    appendFileSync(LOG_PATH, JSON.stringify(logEntry) + '\n');
-  } catch {
-    // Silently fail if logging fails
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    event,
+    severity,
+    data,
+  };
+  const message = JSON.stringify(logEntry);
+  if (severity === 'error') {
+    console.error(message);
+  } else if (severity === 'warning') {
+    console.warn(message);
+  } else {
+    console.log(message);
   }
 }
 
