@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from 'crypto';
+import { supabaseServer } from '@/lib/supabase';
 
 // Throw at runtime, not at build time (NEXT_PHASE is set during `next build`)
 if (
@@ -9,9 +10,6 @@ if (
   throw new Error('COOKIE_SECRET env var er påkrevd i produksjon. Sett den i Vercel Dashboard.');
 }
 const SECRET_KEY = process.env.COOKIE_SECRET || process.env.ADMIN_PASSWORD || 'dev-only-secret';
-
-// Rate limiting store (in-memory, reset on server restart)
-const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
 // Timing-safe password comparison to prevent timing attacks
 export function timingSafeCompare(a: string, b: string): boolean {
@@ -56,22 +54,26 @@ export function verifyCookie(signedValue: string): string | null {
   return value;
 }
 
-// Rate limiting check
-export function checkRateLimit(identifier: string, maxAttempts: number = 5, windowMs: number = 15 * 60 * 1000): boolean {
-  const now = Date.now();
-  const record = rateLimitStore.get(identifier);
-  
-  if (!record || now > record.resetTime) {
-    rateLimitStore.set(identifier, { count: 1, resetTime: now + windowMs });
-    return true;
+// Rate limiting check — uses Supabase for persistence across serverless restarts.
+// Fails open (allows request) if the DB call fails, to avoid locking out legitimate users.
+export async function checkRateLimit(identifier: string, maxAttempts: number = 5, windowMs: number = 15 * 60 * 1000): Promise<boolean> {
+  try {
+    const supabase = supabaseServer();
+    const { data, error } = await supabase.rpc('check_and_increment_rate_limit', {
+      p_identifier: identifier,
+      p_max_attempts: maxAttempts,
+      p_window_ms: windowMs,
+    });
+
+    if (error) {
+      console.warn(JSON.stringify({ event: 'rate_limit_db_error', error: error.message }));
+      return true; // Fail open
+    }
+
+    return data as boolean;
+  } catch {
+    return true; // Fail open
   }
-  
-  if (record.count >= maxAttempts) {
-    return false;
-  }
-  
-  record.count++;
-  return true;
 }
 
 // Get client identifier for rate limiting

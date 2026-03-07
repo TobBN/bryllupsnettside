@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useContent } from './ContentContext';
 
 interface ScheduleContent {
   title: string;
@@ -15,16 +16,10 @@ interface ScheduleContent {
 
 export const ScheduleSection: React.FC = () => {
   const [isSectionExpanded, setIsSectionExpanded] = useState<boolean>(false);
-  const [content, setContent] = useState<ScheduleContent | null>(null);
+  const contentData = useContent();
+  const content = contentData?.schedule as ScheduleContent | undefined;
 
   const headingRef = useScrollReveal<HTMLDivElement>({ animationType: 'fade-up', threshold: 0.3 });
-
-  useEffect(() => {
-    fetch('/api/content')
-      .then(res => res.json())
-      .then(data => setContent(data.schedule))
-      .catch(err => console.error('Error loading schedule content:', err));
-  }, []);
 
   return (
     <section id="schedule" className="py-24 md:py-32 relative overflow-hidden">

@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { StorySectionProps } from '@/types';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useContent } from './ContentContext';
 
 interface TimelineItem {
   date: string;
@@ -64,20 +65,14 @@ const ImageModal: React.FC<ImageModalProps> = ({ src, alt, isOpen, onClose }) =>
 
 export const StorySection: React.FC<StorySectionProps> = () => {
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null);
-  const [content, setContent] = useState<StoryContent | null>(null);
+  const contentData = useContent();
+  const content = contentData?.story as StoryContent | undefined;
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
   const [isSectionExpanded, setIsSectionExpanded] = useState<boolean>(false);
-  
+
   const headingRef = useScrollReveal<HTMLDivElement>({ animationType: 'fade-up', threshold: 0.3 });
   const timelineRef = useScrollReveal<HTMLOListElement>({ animationType: 'fade-left', threshold: 0.2 });
   const imagesRef = useScrollReveal<HTMLDivElement>({ animationType: 'fade-right', threshold: 0.2 });
-
-  useEffect(() => {
-    fetch('/api/content')
-      .then(res => res.json())
-      .then(data => setContent(data.story))
-      .catch(err => console.error('Error loading story content:', err));
-  }, []);
 
   const storyImages = useMemo(() => [
     { src: "/images/story-1.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_30%]" },

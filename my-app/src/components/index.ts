@@ -9,3 +9,4 @@ export { RSVPSection } from './RSVPSection';
 export { SeatingChartSection } from './SeatingChartSection';
 export { Footer } from './Footer';
 export { IntlProvider, useLocaleContext } from './IntlProvider';
+export { ContentProvider } from './ContentContext';

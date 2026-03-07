@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { RSVPSectionProps } from '@/types';
+import { useContent } from './ContentContext';
 
 interface RSVPContent {
   title: string;
@@ -41,14 +42,8 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [content, setContent] = useState<RSVPContent | null>(null);
-
-  useEffect(() => {
-    fetch('/api/content')
-      .then(res => res.json())
-      .then(data => setContent(data.rsvp))
-      .catch(err => console.error('Error loading RSVP content:', err));
-  }, []);
+  const contentData = useContent();
+  const content = contentData?.rsvp as RSVPContent | undefined;
 
   // Handle hash navigation for QR code direct access
   useEffect(() => {

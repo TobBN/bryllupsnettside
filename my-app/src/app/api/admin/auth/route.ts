@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   const clientId = getClientIdentifier(request);
   
   // Rate limiting: max 5 attempts per 15 minutes
-  if (!checkRateLimit(`login:${clientId}`, 5, 15 * 60 * 1000)) {
+  if (!await checkRateLimit(`login:${clientId}`, 5, 15 * 60 * 1000)) {
     logSecurityEvent('rate_limit_exceeded', { clientId }, 'warning');
     return NextResponse.json(
       { error: 'For mange innloggingsforsøk. Prøv igjen om 15 minutter.' },

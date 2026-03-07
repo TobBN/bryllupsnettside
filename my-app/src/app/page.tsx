@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import { TimeLeft } from "@/types";
 import { calculateTimeLeft, WEDDING_DATE } from "@/utils/dateUtils";
 import { useTranslations } from 'next-intl';
-import { 
-  HeroSection, 
-  StorySection, 
+import {
+  HeroSection,
+  StorySection,
   WeddingDetailsSection,
   RSVPSection,
-  Footer 
+  Footer,
+  ContentProvider,
 } from "@/components";
 
 
@@ -120,14 +121,16 @@ export default function Home() {
       )}
 
       {/* Main content */}
-      <main className={`${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 ease-in-out`}>
-        <HeroSection timeLeft={timeLeft} />
-        <WeddingDetailsSection />
-        <RSVPSection />
-        <StorySection />
-      </main>
+      <ContentProvider>
+        <main className={`${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500 ease-in-out`}>
+          <HeroSection timeLeft={timeLeft} />
+          <WeddingDetailsSection />
+          <RSVPSection />
+          <StorySection />
+        </main>
 
-      <Footer />
+        <Footer />
+      </ContentProvider>
 
       {/* Removed alert/notification button */}
 

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback, memo, useRef } from 'react';
+import { useState, useEffect, useCallback, memo, useRef, useMemo } from 'react';
 import { WeddingDetailsSectionProps } from '@/types';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useContent } from './ContentContext';
 
 interface PublicGuest {
   name: string;
@@ -138,8 +139,16 @@ DetailBox.displayName = 'DetailBox';
 
 export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () => {
   const [expandedBox, setExpandedBox] = useState<string | null>(null);
-  const [content, setContent] = useState<WeddingDetailsContent | null>(null);
   const [isSectionExpanded, setIsSectionExpanded] = useState<boolean>(false);
+
+  const allContent = useContent();
+  const content = useMemo<WeddingDetailsContent | null>(() => {
+    if (!allContent) return null;
+    const wd = { ...((allContent.weddingDetails as Record<string, unknown>) || {}) };
+    if (allContent.schedule && !wd.schedule) wd.schedule = allContent.schedule;
+    if (allContent.seatingChart && !wd.seatingChart) wd.seatingChart = allContent.seatingChart;
+    return wd as WeddingDetailsContent;
+  }, [allContent]);
   
   // Seating chart state
   const [tables, setTables] = useState<PublicTable[]>([]);
@@ -155,23 +164,6 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
   const headingRef = useScrollReveal({ animationType: 'fade-up', threshold: 0.3 });
   const cardsRef = useScrollReveal({ animationType: 'scale', threshold: 0.1 });
 
-  useEffect(() => {
-    fetch('/api/content')
-      .then(res => res.json())
-      .then(data => {
-        // Handle both old structure (schedule/seatingChart/faq at top level) and new structure (under weddingDetails)
-        const weddingDetails = data.weddingDetails || {};
-        // If schedule/seatingChart/faq are at top level, move them under weddingDetails
-        if (data.schedule && !weddingDetails.schedule) {
-          weddingDetails.schedule = data.schedule;
-        }
-        if (data.seatingChart && !weddingDetails.seatingChart) {
-          weddingDetails.seatingChart = data.seatingChart;
-        }
-        setContent(weddingDetails);
-      })
-      .catch(err => console.error('Error loading wedding details content:', err));
-  }, []);
 
   // Load tables when seating chart box is expanded
   useEffect(() => {

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { CountdownTimer } from './CountdownTimer';
 import { HeroSectionProps } from '@/types';
 import { useTranslations } from 'next-intl';
+import { useContent } from './ContentContext';
 
 interface HeroContent {
   date: string;
@@ -16,16 +17,12 @@ interface HeroContent {
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
   const [mounted, setMounted] = useState(false);
-  const [content, setContent] = useState<HeroContent | null>(null);
+  const contentData = useContent();
+  const content = contentData?.hero as HeroContent | undefined;
   const t = useTranslations('hero');
 
   useEffect(() => {
     setMounted(true);
-    // Fetch content from API
-    fetch('/api/content')
-      .then(res => res.json())
-      .then(data => setContent(data.hero))
-      .catch(err => console.error('Error loading hero content:', err));
   }, []);
 
   // Determine greeting text based on days until wedding

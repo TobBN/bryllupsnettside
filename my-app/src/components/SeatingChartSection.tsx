@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useContent } from './ContentContext';
 
 interface SeatingChartContent {
   title: string;
@@ -31,7 +32,8 @@ interface SearchResult {
 
 export const SeatingChartSection: React.FC = () => {
   const [isSectionExpanded, setIsSectionExpanded] = useState<boolean>(false);
-  const [content, setContent] = useState<SeatingChartContent | null>(null);
+  const contentData = useContent();
+  const content = contentData?.seatingChart as SeatingChartContent | undefined;
   const [tables, setTables] = useState<PublicTable[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
@@ -40,13 +42,6 @@ export const SeatingChartSection: React.FC = () => {
   const [tablesLoading, setTablesLoading] = useState<boolean>(true);
 
   const headingRef = useScrollReveal<HTMLDivElement>({ animationType: 'fade-up', threshold: 0.3 });
-
-  useEffect(() => {
-    fetch('/api/content')
-      .then(res => res.json())
-      .then(data => setContent(data.seatingChart))
-      .catch(err => console.error('Error loading seating chart content:', err));
-  }, []);
 
   useEffect(() => {
     if (isSectionExpanded) {
