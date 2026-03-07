@@ -147,7 +147,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
     const wd = { ...((allContent.weddingDetails as Record<string, unknown>) || {}) };
     if (allContent.schedule && !wd.schedule) wd.schedule = allContent.schedule;
     if (allContent.seatingChart && !wd.seatingChart) wd.seatingChart = allContent.seatingChart;
-    return wd as WeddingDetailsContent;
+    return wd as unknown as WeddingDetailsContent;
   }, [allContent]);
   
   // Seating chart state
