@@ -1,6 +1,11 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 
-if (process.env.NODE_ENV === 'production' && !process.env.COOKIE_SECRET) {
+// Throw at runtime, not at build time (NEXT_PHASE is set during `next build`)
+if (
+  process.env.NODE_ENV === 'production' &&
+  process.env.NEXT_PHASE !== 'phase-production-build' &&
+  !process.env.COOKIE_SECRET
+) {
   throw new Error('COOKIE_SECRET env var er påkrevd i produksjon. Sett den i Vercel Dashboard.');
 }
 const SECRET_KEY = process.env.COOKIE_SECRET || process.env.ADMIN_PASSWORD || 'dev-only-secret';
