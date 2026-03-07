@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Parisienne, Dancing_Script, Playfair_Display, Cormorant_Garamond } from "next/font/google";
-import { headers } from 'next/headers';
 import "./globals.css";
 import { IntlProvider } from '@/components/IntlProvider';
 import { Analytics } from '@vercel/analytics/react';
@@ -52,21 +51,19 @@ export const viewport = {
   viewportFit: 'cover' // Handle iPhone notch
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const nonce = (await headers()).get('x-nonce') ?? undefined;
-
   return (
     <html lang="no" className={`scroll-smooth ${parisienne.variable} ${dancingScript.variable} ${playfairDisplay.variable} ${cormorantGaramond.variable}`}>
       <body className="relative antialiased font-sans bg-[#FEFAE0] text-[#2D1B3D]">
         <IntlProvider>
           {children}
         </IntlProvider>
-        <Analytics nonce={nonce} />
-        <SpeedInsights nonce={nonce} />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
