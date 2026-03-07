@@ -1,8 +1,31 @@
 -- ============================================================
 -- KOMPLETT OPPSETT FOR SUPABASE TESTPROSJEKT
 -- Lim inn ALT dette i SQL Editor og klikk "Run"
+-- Trygt å kjøre flere ganger (idempotent)
 -- ============================================================
 
+-- Nullstill alle policies (trygt om de ikke finnes)
+DROP POLICY IF EXISTS "Allow public read access" ON seating_tables;
+DROP POLICY IF EXISTS "Allow service role insert access" ON seating_tables;
+DROP POLICY IF EXISTS "Allow service role update access" ON seating_tables;
+DROP POLICY IF EXISTS "Allow service role delete access" ON seating_tables;
+DROP POLICY IF EXISTS "Allow public read access" ON seating_guests;
+DROP POLICY IF EXISTS "Allow service role insert access" ON seating_guests;
+DROP POLICY IF EXISTS "Allow service role update access" ON seating_guests;
+DROP POLICY IF EXISTS "Allow service role delete access" ON seating_guests;
+DROP POLICY IF EXISTS "Allow public read access" ON website_content;
+DROP POLICY IF EXISTS "Allow service role insert access" ON website_content;
+DROP POLICY IF EXISTS "Allow service role update access" ON website_content;
+DROP POLICY IF EXISTS "Allow service role delete access" ON website_content;
+DROP POLICY IF EXISTS "Allow service role write access" ON website_content;
+DROP POLICY IF EXISTS "Allow public insert" ON rsvps;
+DROP POLICY IF EXISTS "Allow service role read access" ON rsvps;
+DROP POLICY IF EXISTS "Allow service role update access" ON rsvps;
+DROP POLICY IF EXISTS "Allow service role delete access" ON rsvps;
+DROP POLICY IF EXISTS "Allow public insert" ON rsvp_guests;
+DROP POLICY IF EXISTS "Allow service role read access" ON rsvp_guests;
+DROP POLICY IF EXISTS "Allow service role update access" ON rsvp_guests;
+DROP POLICY IF EXISTS "Allow service role delete access" ON rsvp_guests;
 
 -- ============================================================
 -- 1. supabase_migration_complete.sql
