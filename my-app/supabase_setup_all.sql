@@ -245,6 +245,11 @@ CREATE TRIGGER update_seating_tables_updated_at_trigger
 ALTER TABLE seating_tables ENABLE ROW LEVEL SECURITY;
 ALTER TABLE seating_guests ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public read access" ON seating_tables;
+DROP POLICY IF EXISTS "Allow service role insert access" ON seating_tables;
+DROP POLICY IF EXISTS "Allow service role update access" ON seating_tables;
+DROP POLICY IF EXISTS "Allow service role delete access" ON seating_tables;
+
 CREATE POLICY "Allow public read access" ON seating_tables
   FOR SELECT USING (true);
 
@@ -258,6 +263,11 @@ CREATE POLICY "Allow service role update access" ON seating_tables
 
 CREATE POLICY "Allow service role delete access" ON seating_tables
   FOR DELETE USING ((select auth.role()) = 'service_role');
+
+DROP POLICY IF EXISTS "Allow public read access" ON seating_guests;
+DROP POLICY IF EXISTS "Allow service role insert access" ON seating_guests;
+DROP POLICY IF EXISTS "Allow service role update access" ON seating_guests;
+DROP POLICY IF EXISTS "Allow service role delete access" ON seating_guests;
 
 CREATE POLICY "Allow public read access" ON seating_guests
   FOR SELECT USING (true);
@@ -297,6 +307,8 @@ ADD COLUMN IF NOT EXISTS guest_count INTEGER DEFAULT 1 NOT NULL;
 
 UPDATE rsvps SET guest_count = 1 WHERE guest_count IS NULL OR guest_count < 1;
 
+ALTER TABLE rsvps
+DROP CONSTRAINT IF EXISTS check_guest_count_positive;
 ALTER TABLE rsvps
 ADD CONSTRAINT check_guest_count_positive CHECK (guest_count >= 1);
 
