@@ -107,7 +107,7 @@ export const POST = async (req: NextRequest) => {
     if (guestsError) {
       console.error('Supabase guests insert error:', guestsError);
       // Try to clean up: delete the RSVP record if guest insertion fails
-      await supabase.from('rsvps').delete().eq('id', rsvpData.id);
+      await supabase.from('rsvps').delete().eq('id', rsvpData!.id);
       logSecurityEvent('rsvp_guests_save_error', { clientId, error: guestsError.message, code: guestsError.code }, 'error');
       
       // Check if table doesn't exist
