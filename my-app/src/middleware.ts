@@ -37,10 +37,13 @@ export function middleware(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'same-origin');
 
   // Content Security Policy
-  // script-src uses nonce to avoid unsafe-inline/unsafe-eval.
+  // Next.js App Router injects inline <script> tags (RSC flight data: self.__next_f.push(...))
+  // without nonce attributes, so 'unsafe-inline' is required for hydration to work.
+  // 'unsafe-eval' is intentionally omitted — it is not needed in production builds.
+  // Nonce is generated and forwarded via x-nonce header for future explicit Script usage.
   // Vercel Analytics loads from va.vercel-scripts.com and reports to vitals.vercel-insights.com.
   const connectSrc = ["'self'", supabaseOrigin, 'https://vitals.vercel-insights.com'].filter(Boolean).join(' ');
-  const scriptSrc = `'self' 'nonce-${nonce}' https://va.vercel-scripts.com`;
+  const scriptSrc = `'self' 'unsafe-inline' 'nonce-${nonce}' https://va.vercel-scripts.com`;
 
   const csp = [
     "default-src 'self'",
