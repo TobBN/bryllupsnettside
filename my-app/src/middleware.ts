@@ -43,7 +43,11 @@ export function middleware(request: NextRequest) {
   // Nonce is generated and forwarded via x-nonce header for future explicit Script usage.
   // Vercel Analytics loads from va.vercel-scripts.com and reports to vitals.vercel-insights.com.
   const connectSrc = ["'self'", supabaseOrigin, 'https://vitals.vercel-insights.com'].filter(Boolean).join(' ');
-  const scriptSrc = `'self' 'unsafe-inline' 'nonce-${nonce}' https://va.vercel-scripts.com`;
+  // NOTE: When a nonce is present in script-src, browsers ignore 'unsafe-inline'.
+  // Next.js injects inline scripts (RSC hydration: self.__next_f.push(...)) without
+  // nonce attributes, so we must NOT include the nonce in script-src here.
+  // The nonce is still forwarded via x-nonce header for future explicit <Script nonce={}> usage.
+  const scriptSrc = `'self' 'unsafe-inline' https://va.vercel-scripts.com`;
 
   const csp = [
     "default-src 'self'",
