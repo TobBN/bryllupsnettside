@@ -27,7 +27,15 @@ export function IntlProvider({children}: {children: ReactNode}) {
 
   return (
     <LocaleContext.Provider value={{locale, setLocale}}>
-      <NextIntlClientProvider locale={locale} messages={messages[locale]}>
+      <NextIntlClientProvider
+        locale={locale}
+        messages={messages[locale]}
+        onError={(error) => {
+          // Suppress ENVIRONMENT_FALLBACK during Next.js static page generation
+          if (error.code !== 'ENVIRONMENT_FALLBACK') console.error(error);
+        }}
+        getMessageFallback={({key}) => key}
+      >
         {children}
       </NextIntlClientProvider>
     </LocaleContext.Provider>

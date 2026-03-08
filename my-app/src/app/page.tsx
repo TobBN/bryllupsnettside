@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { TimeLeft } from "@/types";
 import { calculateTimeLeft, WEDDING_DATE } from "@/utils/dateUtils";
-import { useTranslations } from 'next-intl';
 import {
   HeroSection,
   StorySection,
@@ -15,7 +14,6 @@ import {
 
 
 export default function Home() {
-  const t = useTranslations('common');
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
@@ -115,7 +113,7 @@ export default function Home() {
         <div className="fixed inset-0 z-50 bg-gradient-to-br from-[#FEFAE0] to-[#F4D1D4] flex items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-[#E8B4B8] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="font-body text-[#2D1B3D] text-lg">{t('loading')}</p>
+            <p className="font-body text-[#2D1B3D] text-lg">Laster bryllupsnettside...</p>
           </div>
         </div>
       )}
@@ -140,7 +138,7 @@ export default function Home() {
         className={`fixed bottom-6 right-6 w-10 h-10 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white rounded-full shadow-xl transition-all duration-300 group z-40 motion-reduce:transition-none ${
           showScrollTop ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
-        aria-label={t('scrollToTop')}
+        aria-label="Rull til toppen"
       >
         <svg className="w-5 h-5 mx-auto transform group-hover:-translate-y-0.5 transition-transform duration-300 motion-reduce:transition-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
