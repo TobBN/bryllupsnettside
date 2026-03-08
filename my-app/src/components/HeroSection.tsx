@@ -47,7 +47,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
     <>
       {/* Global fixed background - visible throughout the page */}
       <div
-        className="fixed inset-0 z-0 bg-[url('/couple-bg.jpg')] bg-cover bg-no-repeat bg-[position:center_30%] hero-bg-fixed"
+        className="fixed inset-0 z-0 bg-[#2D1B3D] bg-[url('/couple-bg.jpg')] bg-cover bg-no-repeat bg-[position:center_30%] hero-bg-fixed"
       />
       
       <section
