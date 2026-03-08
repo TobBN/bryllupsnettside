@@ -745,7 +745,7 @@ export default function AdminPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                 required
               />
             </div>
@@ -779,26 +779,34 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FEFAE0] via-white to-[#F4D1D4] py-8 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl mb-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-4xl font-bold text-[#2D1B3D]">
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow-2xl mb-6 sticky top-2 z-50">
+          <div className="flex flex-wrap justify-between items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#2D1B3D]">
               Admin Panel
             </h1>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-            >
-              Logg ut
-            </button>
+            <div className="flex gap-2 sm:gap-3 items-center">
+              <button
+                onClick={handleSave}
+                disabled={loading}
+                className="px-4 sm:px-6 py-2 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 font-semibold text-sm sm:text-base"
+              >
+                {loading ? 'Lagrer...' : 'Lagre'}
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-3 sm:px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm sm:text-base"
+              >
+                Logg ut
+              </button>
+            </div>
           </div>
-
           {success && (
-            <div className="mb-4 p-4 bg-green-100 text-green-800 rounded-lg">
+            <div className="mt-3 p-3 bg-green-100 text-green-800 rounded-lg text-sm">
               {success}
             </div>
           )}
           {error && (
-            <div className="mb-4 p-4 bg-red-100 text-red-800 rounded-lg">
+            <div className="mt-3 p-3 bg-red-100 text-red-800 rounded-lg text-sm">
               {error}
             </div>
           )}
@@ -817,7 +825,7 @@ export default function AdminPage() {
                   type="text"
                   value={content.hero.date}
                   onChange={(e) => updateContent(['hero', 'date'], e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                 />
               </div>
               <div>
@@ -828,10 +836,10 @@ export default function AdminPage() {
                   type="text"
                   value={content.hero.location}
                   onChange={(e) => updateContent(['hero', 'location'], e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                     Brudens navn
@@ -840,7 +848,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.hero.names.bride}
                     onChange={(e) => updateContent(['hero', 'names', 'bride'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
@@ -851,7 +859,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.hero.names.groom}
                     onChange={(e) => updateContent(['hero', 'names', 'groom'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
               </div>
@@ -874,7 +882,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.weddingDetails.venue.title}
                     onChange={(e) => updateContent(['weddingDetails', 'venue', 'title'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
@@ -884,11 +892,11 @@ export default function AdminPage() {
                   <textarea
                     value={content.weddingDetails.venue.description}
                     onChange={(e) => updateContent(['weddingDetails', 'venue', 'description'], e.target.value)}
-                    rows={2}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    rows={3}
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                       Nettside URL
@@ -897,7 +905,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.weddingDetails.venue.website}
                       onChange={(e) => updateContent(['weddingDetails', 'venue', 'website'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                   <div>
@@ -908,7 +916,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.weddingDetails.venue.websiteLabel}
                       onChange={(e) => updateContent(['weddingDetails', 'venue', 'websiteLabel'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                 </div>
@@ -920,7 +928,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.weddingDetails.venue.address}
                     onChange={(e) => updateContent(['weddingDetails', 'venue', 'address'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
@@ -931,7 +939,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.weddingDetails.venue.mapsLink}
                     onChange={(e) => updateContent(['weddingDetails', 'venue', 'mapsLink'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
               </div>
@@ -949,7 +957,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.weddingDetails.dressCode.title}
                     onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'title'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
@@ -959,8 +967,8 @@ export default function AdminPage() {
                   <textarea
                     value={content.weddingDetails.dressCode.dressCode}
                     onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'dressCode'], e.target.value)}
-                    rows={2}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    rows={3}
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     placeholder="Mørk dress (med tilpasninger ved varmt vær)"
                   />
                 </div>
@@ -972,7 +980,7 @@ export default function AdminPage() {
                     value={content.weddingDetails.dressCode.point}
                     onChange={(e) => updateContent(['weddingDetails', 'dressCode', 'point'], e.target.value)}
                     rows={4}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     placeholder="Pyntet og elegant – gjerne i lette materialer og lysere toner om det blir varmt. Kle deg så du trives hele kvelden, ser bra ut på bilder og kan danse hele natten."
                   />
                 </div>
@@ -991,7 +999,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.weddingDetails.gifts.title}
                     onChange={(e) => updateContent(['weddingDetails', 'gifts', 'title'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
@@ -1001,28 +1009,28 @@ export default function AdminPage() {
                   <textarea
                     value={content.weddingDetails.gifts.description}
                     onChange={(e) => updateContent(['weddingDetails', 'gifts', 'description'], e.target.value)}
-                    rows={2}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    rows={3}
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                     Stas.app lenke
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input
                       type="text"
                       placeholder="https://stas.app/..."
                       value={content.weddingDetails.gifts.links[0]?.url || ''}
                       onChange={(e) => updateGiftLink('url', e.target.value)}
-                      className="px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="px-3 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                     <input
                       type="text"
                       placeholder="🎁 Se vår ønskeliste på Stas.app"
                       value={content.weddingDetails.gifts.links[0]?.label || ''}
                       onChange={(e) => updateGiftLink('label', e.target.value)}
-                      className="px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="px-3 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                 </div>
@@ -1041,7 +1049,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.weddingDetails.food.title}
                     onChange={(e) => updateContent(['weddingDetails', 'food', 'title'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
@@ -1051,8 +1059,8 @@ export default function AdminPage() {
                   <textarea
                     value={content.weddingDetails.food.description}
                     onChange={(e) => updateContent(['weddingDetails', 'food', 'description'], e.target.value)}
-                    rows={2}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    rows={3}
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
@@ -1063,7 +1071,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.weddingDetails.food.allergyNote}
                     onChange={(e) => updateContent(['weddingDetails', 'food', 'allergyNote'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
               </div>
@@ -1081,7 +1089,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.weddingDetails.info.title}
                     onChange={(e) => updateContent(['weddingDetails', 'info', 'title'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
@@ -1092,7 +1100,7 @@ export default function AdminPage() {
                     value={content.weddingDetails.info.description}
                     onChange={(e) => updateContent(['weddingDetails', 'info', 'description'], e.target.value)}
                     rows={6}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     placeholder="Eksempel: Barn kan delta på vielsen, fram til bordsetting..."
                   />
                 </div>
@@ -1112,7 +1120,7 @@ export default function AdminPage() {
                   type="text"
                   value={content.rsvp.title}
                   onChange={(e) => updateContent(['rsvp', 'title'], e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                 />
               </div>
               <div>
@@ -1127,7 +1135,7 @@ export default function AdminPage() {
                     newSubtitle[0] = e.target.value;
                     updateContent(['rsvp', 'subtitle'], newSubtitle);
                   }}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                 />
               </div>
               <div>
@@ -1142,10 +1150,10 @@ export default function AdminPage() {
                     newSubtitle[1] = e.target.value;
                     updateContent(['rsvp', 'subtitle'], newSubtitle);
                   }}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                     Knapp: Jeg kommer
@@ -1154,7 +1162,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.rsvp.buttons.attending}
                     onChange={(e) => updateContent(['rsvp', 'buttons', 'attending'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
@@ -1165,14 +1173,14 @@ export default function AdminPage() {
                     type="text"
                     value={content.rsvp.buttons.notAttending}
                     onChange={(e) => updateContent(['rsvp', 'buttons', 'notAttending'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
               </div>
               <div className="border-t border-[#E8B4B8] pt-4 mt-4">
                 <h3 className="text-lg font-semibold text-[#2D1B3D] mb-4">Skjema-felter</h3>
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                         Navn label
@@ -1181,7 +1189,7 @@ export default function AdminPage() {
                         type="text"
                         value={content.rsvp.form.nameLabel}
                         onChange={(e) => updateContent(['rsvp', 'form', 'nameLabel'], e.target.value)}
-                        className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                        className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                       />
                     </div>
                     <div>
@@ -1192,11 +1200,11 @@ export default function AdminPage() {
                         type="text"
                         value={content.rsvp.form.namePlaceholder}
                         onChange={(e) => updateContent(['rsvp', 'form', 'namePlaceholder'], e.target.value)}
-                        className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                        className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                         Telefon label
@@ -1205,7 +1213,7 @@ export default function AdminPage() {
                         type="text"
                         value={content.rsvp.form.phoneLabel}
                         onChange={(e) => updateContent(['rsvp', 'form', 'phoneLabel'], e.target.value)}
-                        className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                        className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                       />
                     </div>
                     <div>
@@ -1216,11 +1224,11 @@ export default function AdminPage() {
                         type="text"
                         value={content.rsvp.form.phonePlaceholder}
                         onChange={(e) => updateContent(['rsvp', 'form', 'phonePlaceholder'], e.target.value)}
-                        className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                        className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                         Antall personer label
@@ -1229,7 +1237,7 @@ export default function AdminPage() {
                         type="text"
                         value={content.rsvp.form.guestCountLabel}
                         onChange={(e) => updateContent(['rsvp', 'form', 'guestCountLabel'], e.target.value)}
-                        className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                        className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                       />
                     </div>
                   </div>
@@ -1241,7 +1249,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.rsvp.form.allergiesLabel}
                       onChange={(e) => updateContent(['rsvp', 'form', 'allergiesLabel'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                   <div>
@@ -1252,7 +1260,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.rsvp.form.allergiesPlaceholder}
                       onChange={(e) => updateContent(['rsvp', 'form', 'allergiesPlaceholder'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                   <div>
@@ -1263,14 +1271,14 @@ export default function AdminPage() {
                       type="text"
                       value={content.rsvp.form.allergiesHelpText}
                       onChange={(e) => updateContent(['rsvp', 'form', 'allergiesHelpText'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                 </div>
               </div>
               <div className="border-t border-[#E8B4B8] pt-4 mt-4">
                 <h3 className="text-lg font-semibold text-[#2D1B3D] mb-4">Knapper</h3>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                       Send svar
@@ -1279,7 +1287,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.rsvp.form.submitButton}
                       onChange={(e) => updateContent(['rsvp', 'form', 'submitButton'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                   <div>
@@ -1290,7 +1298,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.rsvp.form.backButton}
                       onChange={(e) => updateContent(['rsvp', 'form', 'backButton'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                   <div>
@@ -1301,7 +1309,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.rsvp.form.newResponseButton}
                       onChange={(e) => updateContent(['rsvp', 'form', 'newResponseButton'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                 </div>
@@ -1317,7 +1325,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.rsvp.messages.attending}
                       onChange={(e) => updateContent(['rsvp', 'messages', 'attending'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                   <div>
@@ -1328,7 +1336,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.rsvp.messages.notAttending}
                       onChange={(e) => updateContent(['rsvp', 'messages', 'notAttending'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                 </div>
@@ -1348,7 +1356,7 @@ export default function AdminPage() {
                   type="text"
                   value={content.story.title}
                   onChange={(e) => updateContent(['story', 'title'], e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                 />
               </div>
               <div>
@@ -1359,7 +1367,7 @@ export default function AdminPage() {
                   type="text"
                   value={content.story.subtitle}
                   onChange={(e) => updateContent(['story', 'subtitle'], e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                 />
               </div>
               <div>
@@ -1394,21 +1402,21 @@ export default function AdminPage() {
                           placeholder="Dato"
                           value={item.date}
                           onChange={(e) => updateTimelineItem(index, 'date', e.target.value)}
-                          className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                          className="w-full px-3 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                         />
                         <input
                           type="text"
                           placeholder="Tittel"
                           value={item.title}
                           onChange={(e) => updateTimelineItem(index, 'title', e.target.value)}
-                          className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                          className="w-full px-3 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                         />
                         <textarea
                           placeholder="Tekst"
                           value={item.text}
                           onChange={(e) => updateTimelineItem(index, 'text', e.target.value)}
                           rows={3}
-                          className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                          className="w-full px-3 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                         />
                       </div>
                     </div>
@@ -1430,7 +1438,7 @@ export default function AdminPage() {
                   type="text"
                   value={content.footer.heading}
                   onChange={(e) => updateContent(['footer', 'heading'], e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                 />
               </div>
               <div>
@@ -1440,8 +1448,8 @@ export default function AdminPage() {
                 <textarea
                   value={content.footer.tagline}
                   onChange={(e) => updateContent(['footer', 'tagline'], e.target.value)}
-                  rows={2}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  rows={3}
+                  className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                 />
               </div>
               <div>
@@ -1452,10 +1460,10 @@ export default function AdminPage() {
                   type="text"
                   value={content.footer.contactText}
                   onChange={(e) => updateContent(['footer', 'contactText'], e.target.value)}
-                  className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                  className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                     Vis kontaktinfo-tekst
@@ -1464,7 +1472,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.footer.showContactText}
                     onChange={(e) => updateContent(['footer', 'showContactText'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
@@ -1475,11 +1483,11 @@ export default function AdminPage() {
                     type="text"
                     value={content.footer.hideContactText}
                     onChange={(e) => updateContent(['footer', 'hideContactText'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-[#4A2B5A] mb-2">
                     Brudens navn
@@ -1488,7 +1496,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.footer.contact.bride.name}
                     onChange={(e) => updateContent(['footer', 'contact', 'bride', 'name'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
@@ -1499,7 +1507,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.footer.contact.bride.phone}
                     onChange={(e) => updateContent(['footer', 'contact', 'bride', 'phone'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
@@ -1510,7 +1518,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.footer.contact.groom.name}
                     onChange={(e) => updateContent(['footer', 'contact', 'groom', 'name'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
                 <div>
@@ -1521,7 +1529,7 @@ export default function AdminPage() {
                     type="text"
                     value={content.footer.contact.groom.phone}
                     onChange={(e) => updateContent(['footer', 'contact', 'groom', 'phone'], e.target.value)}
-                    className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                    className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                   />
                 </div>
               </div>
@@ -1702,7 +1710,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.weddingDetails.schedule?.title || ''}
                       onChange={(e) => updateContent(['weddingDetails', 'schedule', 'title'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                   <div>
@@ -1713,7 +1721,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.weddingDetails.schedule?.subtitle || ''}
                       onChange={(e) => updateContent(['weddingDetails', 'schedule', 'subtitle'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                   
@@ -1749,7 +1757,7 @@ export default function AdminPage() {
                                   updateContent(['weddingDetails', 'schedule', 'items'], updated);
                                 }}
                                 placeholder="14:00"
-                                className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                                className="w-full px-3 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                               />
                             </div>
                             <div className="col-span-12 md:col-span-8">
@@ -1765,7 +1773,7 @@ export default function AdminPage() {
                                   updateContent(['weddingDetails', 'schedule', 'items'], updated);
                                 }}
                                 placeholder="Vielse"
-                                className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                                className="w-full px-3 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                               />
                             </div>
                             <div className="col-span-12 md:col-span-1 flex items-end">
@@ -1793,8 +1801,8 @@ export default function AdminPage() {
                                 updateContent(['weddingDetails', 'schedule', 'items'], updated);
                               }}
                               placeholder="Beskrivelse av aktiviteten..."
-                              rows={2}
-                              className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                              rows={3}
+                              className="w-full px-3 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                             />
                           </div>
                         </div>
@@ -1823,7 +1831,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.weddingDetails.seatingChart?.title || ''}
                       onChange={(e) => updateContent(['weddingDetails', 'seatingChart', 'title'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                   <div>
@@ -1834,7 +1842,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.weddingDetails.seatingChart?.subtitle || ''}
                       onChange={(e) => updateContent(['weddingDetails', 'seatingChart', 'subtitle'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                   <div>
@@ -1845,7 +1853,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.weddingDetails.seatingChart?.searchLabel || ''}
                       onChange={(e) => updateContent(['weddingDetails', 'seatingChart', 'searchLabel'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                   <div>
@@ -1856,7 +1864,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.weddingDetails.seatingChart?.searchPlaceholder || ''}
                       onChange={(e) => updateContent(['weddingDetails', 'seatingChart', 'searchPlaceholder'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                   <div>
@@ -1867,7 +1875,7 @@ export default function AdminPage() {
                       type="text"
                       value={content.weddingDetails.seatingChart?.noResultsText || ''}
                       onChange={(e) => updateContent(['weddingDetails', 'seatingChart', 'noResultsText'], e.target.value)}
-                      className="w-full px-4 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-4 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                     />
                   </div>
                 </div>
@@ -1890,7 +1898,7 @@ export default function AdminPage() {
               {/* Create new table */}
               <div className="bg-[#F4D1D4]/30 rounded-lg p-4 mb-6">
                 <h4 className="font-semibold text-[#4A2B5A] mb-3">Legg til nytt bord</h4>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-[#4A2B5A] mb-1">
                       Bord-nummer
@@ -1899,7 +1907,7 @@ export default function AdminPage() {
                       type="number"
                       value={newTableNumber}
                       onChange={(e) => setNewTableNumber(e.target.value)}
-                      className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-3 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                       min="1"
                     />
                   </div>
@@ -1911,7 +1919,7 @@ export default function AdminPage() {
                       type="number"
                       value={newTableCapacity}
                       onChange={(e) => setNewTableCapacity(e.target.value)}
-                      className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                      className="w-full px-3 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                       min="1"
                       max="8"
                     />
@@ -1939,7 +1947,7 @@ export default function AdminPage() {
                     <div key={table.id} className="border border-[#E8B4B8] rounded-lg p-4">
                       {editingTable === table.id ? (
                         <div className="space-y-3">
-                          <div className="grid grid-cols-3 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div>
                               <label className="block text-sm font-medium text-[#4A2B5A] mb-1">
                                 Bord-nummer
@@ -1948,7 +1956,7 @@ export default function AdminPage() {
                                 type="number"
                                 value={editTableNumber}
                                 onChange={(e) => setEditTableNumber(e.target.value)}
-                                className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                                className="w-full px-3 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                                 min="1"
                               />
                             </div>
@@ -1960,7 +1968,7 @@ export default function AdminPage() {
                                 type="number"
                                 value={editTableCapacity}
                                 onChange={(e) => setEditTableCapacity(e.target.value)}
-                                className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]"
+                                className="w-full px-3 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                                 min="1"
                                 max="8"
                               />
@@ -2050,7 +2058,7 @@ export default function AdminPage() {
                                       setTableGuests({ ...tableGuests, [table.id]: updated });
                                     }}
                                     placeholder="Navn..."
-                                    className="w-full px-3 py-2 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-sm"
+                                    className="w-full px-3 py-3 border border-[#E8B4B8] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E8B4B8] text-base"
                                   />
                                 </div>
                               );
