@@ -266,7 +266,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
               id="details-heading"
               className="text-3xl sm:text-4xl md:text-5xl leading-tight text-white drop-shadow-lg"
             >
-              {content?.title || 'Praktisk informasjon'}
+              {content?.title}
             </h2>
           </div>
         </div>
