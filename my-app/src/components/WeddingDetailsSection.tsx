@@ -361,6 +361,9 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
             onToggle={() => toggleBox('food')}
           >
             <div className="font-body text-sm sm:text-base leading-relaxed text-white/90">
+              {content?.food.courses && content.food.courses.length > 0 && content?.food.description && (
+                <p className="whitespace-pre-line mb-4 text-white/80">{content.food.description}</p>
+              )}
               {content?.food.courses && content.food.courses.length > 0 ? (
                 <div className="space-y-4">
                   {content.food.courses.map((course, i) => (
@@ -399,6 +402,9 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
             onToggle={() => toggleBox('info')}
           >
             <div className="font-body text-sm sm:text-base leading-relaxed text-white/90">
+              {content?.info.items && content.info.items.length > 0 && content?.info.description && (
+                <p className="whitespace-pre-line mb-4 text-white/80">{content.info.description}</p>
+              )}
               {content?.info.items && content.info.items.length > 0 ? (
                 <div className="space-y-0 divide-y divide-white/15">
                   {content.info.items.map((item, i) => (
