@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useRef, useCallback, useMemo } from 'react';
+import Image from 'next/image';
 import type { ContentData } from '@/types/admin';
 
 interface Props {
@@ -11,6 +13,12 @@ const inputClass = "w-full px-3 py-2.5 border border-[#E8B4B8] rounded-lg focus:
 const textareaClass = `${inputClass} resize-y`;
 
 export function StoryEditor({ content, update }: Props) {
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const images = useMemo(() => content.story.images || [], [content.story.images]);
+
   const addItem = () => {
     update(['story', 'timeline'], [...content.story.timeline, { date: '', title: '', text: '' }]);
   };
@@ -25,6 +33,73 @@ export function StoryEditor({ content, update }: Props) {
       content.story.timeline.map((item, i) => i === index ? { ...item, [field]: value } : item)
     );
   };
+
+  const handleUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/admin/story-images', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setUploadError(data.error || 'Opplasting feilet');
+        return;
+      }
+
+      const newImages = [...images, { url: data.url, alt: 'Alexandra og Tobias', storageName: data.name }];
+      update(['story', 'images'], newImages);
+    } catch {
+      setUploadError('Nettverksfeil ved opplasting');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }, [images, update]);
+
+  const removeImage = useCallback(async (index: number) => {
+    const img = images[index];
+
+    // Delete from storage if it has a storageName
+    if (img.storageName) {
+      try {
+        await fetch('/api/admin/story-images', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: img.storageName }),
+        });
+      } catch {
+        // Continue removing from content even if storage delete fails
+      }
+    }
+
+    update(['story', 'images'], images.filter((_, i) => i !== index));
+  }, [images, update]);
+
+  const updateImageAlt = useCallback((index: number, alt: string) => {
+    update(
+      ['story', 'images'],
+      images.map((img, i) => i === index ? { ...img, alt } : img),
+    );
+  }, [images, update]);
+
+  const moveImage = useCallback((index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= images.length) return;
+    const newImages = [...images];
+    [newImages[index], newImages[target]] = [newImages[target], newImages[index]];
+    update(['story', 'images'], newImages);
+  }, [images, update]);
 
   return (
     <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-md">
@@ -52,6 +127,90 @@ export function StoryEditor({ content, update }: Props) {
             />
           </div>
         </div>
+      </div>
+
+      {/* Image management */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-[#2D1B3D]">Bilder ({images.length})</h3>
+          <div className="flex items-center gap-2">
+            {uploadError && <span className="text-xs text-red-500">{uploadError}</span>}
+            <label
+              className={`text-sm px-3 py-1.5 rounded-lg transition-colors font-medium cursor-pointer ${
+                uploading
+                  ? 'bg-gray-200 text-gray-400 cursor-wait'
+                  : 'bg-[#E8B4B8]/30 hover:bg-[#E8B4B8]/50 text-[#2D1B3D]'
+              }`}
+            >
+              {uploading ? 'Laster opp...' : '+ Last opp bilde'}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                onChange={handleUpload}
+                disabled={uploading}
+                className="hidden"
+              />
+            </label>
+          </div>
+        </div>
+
+        {images.length === 0 ? (
+          <p className="text-sm text-[#4A2B5A]/60 italic">
+            Ingen bilder lagt til ennå. Standard plassholder-bilder vises på nettsiden.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {images.map((img, i) => (
+              <div key={img.storageName || img.url} className="border border-[#E8B4B8]/60 rounded-xl overflow-hidden bg-white/50">
+                <div className="relative aspect-[4/3]">
+                  <Image
+                    src={img.url}
+                    alt={img.alt}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 50vw, 25vw"
+                  />
+                </div>
+                <div className="p-2 space-y-1.5">
+                  <input
+                    type="text"
+                    value={img.alt}
+                    onChange={(e) => updateImageAlt(i, e.target.value)}
+                    className="w-full px-2 py-1 border border-[#E8B4B8]/40 rounded text-xs"
+                    placeholder="Alt-tekst"
+                  />
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => moveImage(i, -1)}
+                        disabled={i === 0}
+                        className="text-xs px-1.5 py-0.5 rounded bg-[#E8B4B8]/20 hover:bg-[#E8B4B8]/40 disabled:opacity-30 transition-colors"
+                        title="Flytt til venstre"
+                      >
+                        ←
+                      </button>
+                      <button
+                        onClick={() => moveImage(i, 1)}
+                        disabled={i === images.length - 1}
+                        className="text-xs px-1.5 py-0.5 rounded bg-[#E8B4B8]/20 hover:bg-[#E8B4B8]/40 disabled:opacity-30 transition-colors"
+                        title="Flytt til høyre"
+                      >
+                        →
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => removeImage(i)}
+                      className="text-xs text-red-400 hover:text-red-600 transition-colors"
+                    >
+                      Fjern
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="flex items-center justify-between mb-3">

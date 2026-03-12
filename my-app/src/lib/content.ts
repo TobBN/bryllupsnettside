@@ -18,6 +18,11 @@ export interface ContentData {
       title: string;
       text: string;
     }>;
+    images?: Array<{
+      url: string;
+      alt: string;
+      storageName?: string;
+    }>;
   };
   weddingDetails: {
     title: string;

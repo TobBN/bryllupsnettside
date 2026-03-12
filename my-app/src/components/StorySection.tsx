@@ -12,10 +12,17 @@ interface TimelineItem {
   text: string;
 }
 
+interface StoryImage {
+  url: string;
+  alt: string;
+  storageName?: string;
+}
+
 interface StoryContent {
   title: string;
   subtitle: string;
   timeline: TimelineItem[];
+  images?: StoryImage[];
 }
 
 interface ImageModalProps {
@@ -71,12 +78,19 @@ export const StorySection: React.FC<StorySectionProps> = () => {
   const timelineRef = useScrollReveal<HTMLOListElement>({ animationType: 'fade-left', threshold: 0.2 });
   const imagesRef = useScrollReveal<HTMLDivElement>({ animationType: 'fade-right', threshold: 0.2 });
 
-  const storyImages = useMemo(() => [
-    { src: "/images/story-1.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_30%]" },
-    { src: "/images/story-2.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_35%]" },
-    { src: "/images/story-3.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_30%]" },
-    { src: "/images/story-4.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_40%]" }
+  const defaultImages = useMemo(() => [
+    { src: "/images/story-1.jpg", alt: "Alexandra og Tobias" },
+    { src: "/images/story-2.jpg", alt: "Alexandra og Tobias" },
+    { src: "/images/story-3.jpg", alt: "Alexandra og Tobias" },
+    { src: "/images/story-4.jpg", alt: "Alexandra og Tobias" }
   ], []);
+
+  const storyImages = useMemo(() => {
+    if (content?.images && content.images.length > 0) {
+      return content.images.map((img) => ({ src: img.url, alt: img.alt }));
+    }
+    return defaultImages;
+  }, [content?.images, defaultImages]);
 
   const timeline = useMemo(() => content?.timeline || [], [content?.timeline]);
 
@@ -173,7 +187,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
                   src={img.src}
                   alt={img.alt}
                   fill
-                  className={`object-cover ${img.objectClass} transition-transform duration-500 group-hover:scale-105`}
+                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 50vw, 25vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-[#2D1B3D]/10 via-transparent to-[#E8B4B8]/10 group-hover:opacity-0 transition-opacity duration-300" />
