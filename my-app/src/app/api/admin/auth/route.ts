@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { timingSafeCompare, signCookie, checkRateLimit, getClientIdentifier, logSecurityEvent } from '@/lib/security';
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'; // Default for development
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+if (!ADMIN_PASSWORD) {
+  throw new Error('ADMIN_PASSWORD env var er ikke satt. Sett den i .env.local eller Vercel Dashboard.');
+}
+// Safe to use as string after guard above
+const ADMIN_PASSWORD_SAFE = ADMIN_PASSWORD as string;
 
 export async function POST(request: NextRequest) {
   const clientId = getClientIdentifier(request);
@@ -28,7 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Timing-safe password comparison
-    const isValid = timingSafeCompare(password, ADMIN_PASSWORD);
+    const isValid = timingSafeCompare(password, ADMIN_PASSWORD_SAFE);
 
     if (isValid) {
       const signedValue = signCookie('authenticated');

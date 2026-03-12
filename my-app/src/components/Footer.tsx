@@ -59,9 +59,9 @@ export const Footer: React.FC<FooterProps> = () => {
             >
               {showContact ? (content?.hideContactText || 'Skjul kontaktinfo') : (content?.showContactText || 'Vis kontaktinfo')}
             </button>
-            {showContact && (
+            {showContact && content?.contact && (
               <p className="font-body text-sm text-white/70 mt-2">
-                {content?.contact.bride.name || 'Alexandra'}: {content?.contact.bride.phone || '+47 950 20 606'} • {content?.contact.groom.name || 'Tobias'}: {content?.contact.groom.phone || '+47 905 95 348'}
+                {content.contact.bride.name}: {content.contact.bride.phone} • {content.contact.groom.name}: {content.contact.groom.phone}
               </p>
             )}
           </div>

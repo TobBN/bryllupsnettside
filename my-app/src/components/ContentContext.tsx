@@ -1,20 +1,18 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 
 type ContentData = Record<string, unknown>;
 
 const ContentContext = createContext<ContentData | null>(null);
 
-export function ContentProvider({ children }: { children: ReactNode }) {
-  const [content, setContent] = useState<ContentData | null>(null);
+interface ContentProviderProps {
+  children: ReactNode;
+  initialContent?: ContentData | null;
+}
 
-  useEffect(() => {
-    fetch('/api/content')
-      .then(res => res.json())
-      .then(setContent)
-      .catch(err => console.error('Error loading content:', err));
-  }, []);
+export function ContentProvider({ children, initialContent = null }: ContentProviderProps) {
+  const [content] = useState<ContentData | null>(initialContent);
 
   return (
     <ContentContext.Provider value={content}>
