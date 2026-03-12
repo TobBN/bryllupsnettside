@@ -57,9 +57,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
         {/* Content card - proportional scaling with enhanced glassmorphism */}
         <div
           className={`relative z-20 mx-4 w-full
-          max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl
+          max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl
           rounded-2xl glass-card
-          p-6 sm:p-8 md:p-10 lg:p-12
+          p-6 sm:p-8 md:p-10
           transition-all duration-700 motion-reduce:transition-none motion-reduce:transform-none ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"} motion-reduce:translate-y-0`}
         >
           {/* Decorative line - scales with container */}
@@ -78,15 +78,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
             <span className="inline-block">{content?.names.groom || 'Tobias'}</span>
           </h1>
 
-          {/* Date and location - consistent scaling */}
-          <div className="text-center text-white/95 mb-4 sm:mb-6 space-y-1 sm:space-y-2">
-            <p className="text-sm sm:text-base md:text-lg">
+          {/* Date and location */}
+          <div className="text-center text-white/90 mb-4 sm:mb-6 space-y-1.5">
+            <p className="text-xs sm:text-sm md:text-base tracking-wide uppercase">
               {getGreetingText()}
             </p>
-            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium">
+            <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-white">
               {content?.date || t('date')}
             </p>
-            <p className="text-sm sm:text-base md:text-lg">
+            <p className="text-sm sm:text-base text-white/80">
               {content?.location || t('location')}
             </p>
           </div>
