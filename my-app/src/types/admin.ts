@@ -39,11 +39,20 @@ export interface ContentData {
     food: {
       title: string;
       description: string;
+      courses?: Array<{
+        name: string;
+        description: string;
+        drink?: string;
+      }>;
       allergyNote: string;
     };
     info: {
       title: string;
       description: string;
+      items?: Array<{
+        question: string;
+        answer: string;
+      }>;
     };
     schedule?: {
       title: string;
