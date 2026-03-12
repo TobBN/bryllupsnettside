@@ -81,6 +81,14 @@ export async function GET() {
       if (!footer.hideContactText) footer.hideContactText = 'Skjul kontaktinfo';
     }
 
+    // Add default story images if missing
+    if (content.story && typeof content.story === 'object') {
+      const story = content.story as Record<string, unknown>;
+      if (!story.images) {
+        story.images = [];
+      }
+    }
+
     // Add default weddingDetails.info if missing
     if (content.weddingDetails && typeof content.weddingDetails === 'object') {
       const weddingDetails = content.weddingDetails as Record<string, unknown>;
