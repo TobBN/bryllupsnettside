@@ -6,8 +6,8 @@
   "countdown": {
     "days": "Days",
     "hours": "Hours",
-    "minutes": "Minutes",
-    "seconds": "Seconds"
+    "minutes": "MIN",
+    "seconds": "SEC"
   },
   "hero": {
     "saveTheDate": "Save the date",
