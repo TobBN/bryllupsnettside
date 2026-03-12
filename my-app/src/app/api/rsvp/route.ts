@@ -1,12 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase';
 import { checkRateLimit, getClientIdentifier, logSecurityEvent } from '@/lib/security';
+import { RSVP_DEADLINE } from '@/utils/dateUtils';
 
 export const POST = async (req: NextRequest) => {
+  // RSVP deadline check
+  if (new Date() > RSVP_DEADLINE) {
+    return NextResponse.json(
+      { ok: false, error: 'Fristen for å melde seg på har gått ut.' },
+      { status: 410 }
+    );
+  }
+
   const clientId = getClientIdentifier(req);
-  
+
   // Rate limiting: max 5 attempts per 15 minutes
-  if (!checkRateLimit(`rsvp:${clientId}`, 5, 15 * 60 * 1000)) {
+  if (!await checkRateLimit(`rsvp:${clientId}`, 5, 15 * 60 * 1000)) {
     logSecurityEvent('rsvp_rate_limit_exceeded', { clientId }, 'warning');
     return NextResponse.json(
       { ok: false, error: 'For mange RSVP-forsøk. Prøv igjen om 15 minutter.' },
@@ -69,64 +78,21 @@ export const POST = async (req: NextRequest) => {
       // Note: guest_count column removed - using rsvp_guests table instead
     }).select().single();
 
-    // If no error, use initial data
-    if (!rsvpError && initialRsvpData) {
-      rsvpData = initialRsvpData;
-    } else if (rsvpError) {
+    if (rsvpError) {
       console.error('Supabase RSVP insert error:', rsvpError);
       logSecurityEvent('rsvp_save_error', { clientId, error: rsvpError.message, code: rsvpError.code }, 'error');
-      
-      // Handle missing is_read column (PGRST204) - retry without it
-      if (rsvpError.code === 'PGRST204' && rsvpError.message?.includes('is_read')) {
-        console.warn('is_read column missing, retrying insert without it. Please run supabase_add_rsvp_read_status.sql migration.');
-        const { data: retryRsvpData, error: retryError } = await supabase.from('rsvps').insert({
-          name: guestNames[0],
-          phone: phone || null,
-          email: email || null,
-          response,
-          message: message || null,
-        }).select().single();
-        
-        if (retryError) {
-          console.error('Supabase RSVP retry insert error:', retryError);
-          logSecurityEvent('rsvp_retry_save_error', { clientId, error: retryError.message, code: retryError.code }, 'error');
-          
-          if (retryError.code === '23505') {
-            return NextResponse.json({ ok: false, error: 'Det eksisterer allerede en RSVP med dette navnet. Kontakt oss hvis du ønsker å endre svaret ditt.' }, { status: 409 });
-          }
-          const errorMessage = process.env.NODE_ENV === 'development' 
-            ? `RSVP retry feil: ${retryError.message} (${retryError.code})`
-            : 'Kunne ikke lagre RSVP. Prøv igjen senere.';
-          return NextResponse.json({ ok: false, error: errorMessage }, { status: 500 });
-        }
-        
-        // Use retry data instead
-        if (retryRsvpData) {
-          rsvpData = retryRsvpData;
-        } else {
-          return NextResponse.json({ ok: false, error: 'Kunne ikke lagre RSVP. Prøv igjen senere.' }, { status: 500 });
-        }
-      } else {
-        // Provide more specific error messages
-        if (rsvpError.code === '23505') { // Unique constraint violation
-          return NextResponse.json({ ok: false, error: 'Det eksisterer allerede en RSVP med dette navnet. Kontakt oss hvis du ønsker å endre svaret ditt.' }, { status: 409 });
-        }
-        // Return detailed error in development, generic in production
-        const errorMessage = process.env.NODE_ENV === 'development' 
-          ? `RSVP feil: ${rsvpError.message} (${rsvpError.code})`
-          : 'Kunne ikke lagre RSVP. Prøv igjen senere.';
-        return NextResponse.json({ ok: false, error: errorMessage }, { status: 500 });
-      }
-    }
 
-    // Ensure we have rsvpData (either from initial insert or retry)
-    if (!rsvpData) {
-      rsvpData = initialRsvpData;
-    }
-    
-    if (!rsvpData) {
+      if (rsvpError.code === '23505') {
+        return NextResponse.json({ ok: false, error: 'Det eksisterer allerede en RSVP med dette navnet. Kontakt oss hvis du ønsker å endre svaret ditt.' }, { status: 409 });
+      }
       return NextResponse.json({ ok: false, error: 'Kunne ikke lagre RSVP. Prøv igjen senere.' }, { status: 500 });
     }
+
+    if (!initialRsvpData) {
+      return NextResponse.json({ ok: false, error: 'Kunne ikke lagre RSVP. Prøv igjen senere.' }, { status: 500 });
+    }
+
+    rsvpData = initialRsvpData;
 
     // Insert guest records
     const guestRecords = guests.map((guest: { name: string; allergies?: string }, index: number) => ({
@@ -141,7 +107,7 @@ export const POST = async (req: NextRequest) => {
     if (guestsError) {
       console.error('Supabase guests insert error:', guestsError);
       // Try to clean up: delete the RSVP record if guest insertion fails
-      await supabase.from('rsvps').delete().eq('id', rsvpData.id);
+      await supabase.from('rsvps').delete().eq('id', rsvpData!.id);
       logSecurityEvent('rsvp_guests_save_error', { clientId, error: guestsError.message, code: guestsError.code }, 'error');
       
       // Check if table doesn't exist

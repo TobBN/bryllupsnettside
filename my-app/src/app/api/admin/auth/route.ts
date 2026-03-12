@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { timingSafeCompare, signCookie, checkRateLimit, getClientIdentifier, logSecurityEvent } from '@/lib/security';
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'; // Default for development
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+if (!ADMIN_PASSWORD) {
+  throw new Error('ADMIN_PASSWORD env var er ikke satt. Sett den i .env.local eller Vercel Dashboard.');
+}
+// Safe to use as string after guard above
+const ADMIN_PASSWORD_SAFE = ADMIN_PASSWORD as string;
 
 export async function POST(request: NextRequest) {
   const clientId = getClientIdentifier(request);
   
   // Rate limiting: max 5 attempts per 15 minutes
-  if (!checkRateLimit(`login:${clientId}`, 5, 15 * 60 * 1000)) {
+  if (!await checkRateLimit(`login:${clientId}`, 5, 15 * 60 * 1000)) {
     logSecurityEvent('rate_limit_exceeded', { clientId }, 'warning');
     return NextResponse.json(
       { error: 'For mange innloggingsforsøk. Prøv igjen om 15 minutter.' },
@@ -28,7 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Timing-safe password comparison
-    const isValid = timingSafeCompare(password, ADMIN_PASSWORD);
+    const isValid = timingSafeCompare(password, ADMIN_PASSWORD_SAFE);
 
     if (isValid) {
       const signedValue = signCookie('authenticated');

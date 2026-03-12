@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { CountdownTimer } from './CountdownTimer';
 import { HeroSectionProps } from '@/types';
 import { useTranslations } from 'next-intl';
+import { useContent } from './ContentContext';
 
 interface HeroContent {
   date: string;
@@ -16,16 +17,12 @@ interface HeroContent {
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
   const [mounted, setMounted] = useState(false);
-  const [content, setContent] = useState<HeroContent | null>(null);
+  const contentData = useContent();
+  const content = contentData?.hero as HeroContent | undefined;
   const t = useTranslations('hero');
 
   useEffect(() => {
     setMounted(true);
-    // Fetch content from API
-    fetch('/api/content')
-      .then(res => res.json())
-      .then(data => setContent(data.hero))
-      .catch(err => console.error('Error loading hero content:', err));
   }, []);
 
   // Determine greeting text based on days until wedding
@@ -50,7 +47,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
     <>
       {/* Global fixed background - visible throughout the page */}
       <div
-        className="fixed inset-0 z-0 bg-[url('/couple-bg.jpg')] bg-cover bg-no-repeat bg-[position:center_30%] hero-bg-fixed"
+        className="fixed inset-0 z-0 bg-[#2D1B3D] bg-[url('/couple-bg.jpg')] bg-cover bg-no-repeat bg-[position:center_30%] hero-bg-fixed"
       />
       
       <section
@@ -60,9 +57,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
         {/* Content card - proportional scaling with enhanced glassmorphism */}
         <div
           className={`relative z-20 mx-4 w-full
-          max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl
+          max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl
           rounded-2xl glass-card
-          p-6 sm:p-8 md:p-10 lg:p-12
+          p-6 sm:p-8 md:p-10
           transition-all duration-700 motion-reduce:transition-none motion-reduce:transform-none ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"} motion-reduce:translate-y-0`}
         >
           {/* Decorative line - scales with container */}
@@ -81,15 +78,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
             <span className="inline-block">{content?.names.groom || 'Tobias'}</span>
           </h1>
 
-          {/* Date and location - consistent scaling */}
-          <div className="text-center text-white/95 mb-4 sm:mb-6 space-y-1 sm:space-y-2">
-            <p className="text-sm sm:text-base md:text-lg">
+          {/* Date and location */}
+          <div className="text-center text-white/90 mb-4 sm:mb-6 space-y-1.5">
+            <p className="text-xs sm:text-sm md:text-base tracking-wide uppercase">
               {getGreetingText()}
             </p>
-            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium">
+            <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-white">
               {content?.date || t('date')}
             </p>
-            <p className="text-sm sm:text-base md:text-lg">
+            <p className="text-sm sm:text-base text-white/80">
               {content?.location || t('location')}
             </p>
           </div>

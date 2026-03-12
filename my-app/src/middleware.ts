@@ -36,21 +36,26 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'same-origin');
 
-  // Content Security Policy (Internet.nl-friendly)
-  // - No unsafe-inline/unsafe-eval in production
-  // - No broad scheme allowlist like img-src https:
-  const connectSrc = ["'self'", supabaseOrigin].filter(Boolean).join(' ');
-  const scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval'";
+  // Content Security Policy
+  // Next.js App Router injects inline <script> tags (RSC flight data: self.__next_f.push(...))
+  // without nonce attributes, so 'unsafe-inline' is required for hydration to work.
+  // 'unsafe-eval' is intentionally omitted — it is not needed in production builds.
+  // Nonce is generated and forwarded via x-nonce header for future explicit Script usage.
+  // Vercel Analytics loads from va.vercel-scripts.com and reports to vitals.vercel-insights.com.
+  const connectSrc = ["'self'", supabaseOrigin, 'https://vitals.vercel-insights.com'].filter(Boolean).join(' ');
+  // NOTE: When a nonce is present in script-src, browsers ignore 'unsafe-inline'.
+  // Next.js injects inline scripts (RSC hydration: self.__next_f.push(...)) without
+  // nonce attributes, so we must NOT include the nonce in script-src here.
+  // The nonce is still forwarded via x-nonce header for future explicit <Script nonce={}> usage.
+  const scriptSrc = `'self' 'unsafe-inline' https://va.vercel-scripts.com`;
 
   const csp = [
     "default-src 'self'",
     `script-src ${scriptSrc}`,
-    // No inline style attributes; keep style-src strict
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     "img-src 'self' data: blob: https:",
     `connect-src ${connectSrc}`,
-    // No embedded frames needed for this site; links to maps are regular anchors
     "frame-src 'self' https://maps.google.com",
     "object-src 'none'",
     "base-uri 'self'",

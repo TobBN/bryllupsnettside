@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { StorySectionProps } from '@/types';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useContent } from './ContentContext';
 
 interface TimelineItem {
   date: string;
@@ -28,7 +29,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ src, alt, isOpen, onClose }) =>
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md"
       onClick={onClose}
       role="dialog"
@@ -38,25 +39,23 @@ const ImageModal: React.FC<ImageModalProps> = ({ src, alt, isOpen, onClose }) =>
       <div className="relative max-w-5xl max-h-[90vh] mx-4">
         <button
           onClick={onClose}
-          className="absolute -top-16 right-0 text-white hover:text-[#E8B4B8] transition-colors z-10 group"
+          className="absolute -top-14 right-0 text-white hover:text-[#E8B4B8] transition-colors z-10 group"
           aria-label="Lukk bilde"
         >
-          <div className="w-12 h-12 bg-black/50 rounded-full flex items-center justify-center group-hover:bg-black/70 transition-colors">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-11 h-11 bg-black/50 rounded-full flex items-center justify-center group-hover:bg-black/70 transition-colors">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
         </button>
-        <div className="relative w-full h-full">
-          <Image
-            src={src}
-            alt={alt}
-            width={1000}
-            height={750}
-            className="w-full h-auto max-h-[90vh] object-contain rounded-2xl shadow-2xl"
-            priority
-          />
-        </div>
+        <Image
+          src={src}
+          alt={alt}
+          width={1000}
+          height={750}
+          className="w-full h-auto max-h-[90vh] object-contain rounded-2xl shadow-2xl"
+          priority
+        />
       </div>
     </div>
   );
@@ -64,20 +63,13 @@ const ImageModal: React.FC<ImageModalProps> = ({ src, alt, isOpen, onClose }) =>
 
 export const StorySection: React.FC<StorySectionProps> = () => {
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null);
-  const [content, setContent] = useState<StoryContent | null>(null);
+  const contentData = useContent();
+  const content = contentData?.story as StoryContent | undefined;
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
-  const [isSectionExpanded, setIsSectionExpanded] = useState<boolean>(false);
-  
+
   const headingRef = useScrollReveal<HTMLDivElement>({ animationType: 'fade-up', threshold: 0.3 });
   const timelineRef = useScrollReveal<HTMLOListElement>({ animationType: 'fade-left', threshold: 0.2 });
   const imagesRef = useScrollReveal<HTMLDivElement>({ animationType: 'fade-right', threshold: 0.2 });
-
-  useEffect(() => {
-    fetch('/api/content')
-      .then(res => res.json())
-      .then(data => setContent(data.story))
-      .catch(err => console.error('Error loading story content:', err));
-  }, []);
 
   const storyImages = useMemo(() => [
     { src: "/images/story-1.jpg", alt: "Alexandra og Tobias", objectClass: "object-[center_30%]" },
@@ -99,134 +91,108 @@ export const StorySection: React.FC<StorySectionProps> = () => {
   const toggleItem = useCallback((index: number) => {
     setExpandedItems(prev => {
       const newSet = new Set(prev);
-      if (newSet.has(index)) {
-        newSet.delete(index);
-      } else {
-        newSet.add(index);
-      }
+      if (newSet.has(index)) newSet.delete(index);
+      else newSet.add(index);
       return newSet;
     });
   }, []);
 
   return (
-    <section id="our-story" className="py-24 md:py-32 relative overflow-hidden">
+    <section id="our-story" className="py-16 md:py-24 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
-        {/* Overskrift og undertittel i glassmorphism-kort */}
-        <div ref={headingRef} className="mb-12">
-          <button
-            onClick={() => setIsSectionExpanded(!isSectionExpanded)}
-            className="w-full text-left focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]/50 rounded-2xl transition-all duration-300 hover:ring-2 hover:ring-[#E8B4B8]/30"
-            aria-expanded={isSectionExpanded}
-            aria-controls="story-content"
-            aria-label={isSectionExpanded ? 'Kollaps vår historie' : 'Ekspander vår historie'}
-          >
-            <div className="glass-card rounded-2xl p-8 md:p-10 max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h2 id="story-heading" className="text-4xl md:text-6xl lg:text-7xl leading-tight text-white mb-6 text-center drop-shadow-lg">
-                    {content?.title || 'Vår historie'}
-                  </h2>
-                  <p className="font-body text-lg md:text-xl text-white/95 max-w-3xl mx-auto text-center leading-[1.9] drop-shadow-md">
-                    {content?.subtitle || 'Et lite tilbakeblikk på vår reise sammen'}
-                  </p>
-                </div>
-                <svg
-                  className={`w-8 h-8 text-white transition-transform duration-300 flex-shrink-0 ml-4 ${isSectionExpanded ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
-            </div>
-          </button>
+
+        {/* Section heading — always visible */}
+        <div ref={headingRef} className="mb-10">
+          <div className="glass-card rounded-2xl p-7 md:p-9 max-w-xl mx-auto text-center">
+            <h2 id="story-heading" className="text-3xl sm:text-4xl md:text-5xl leading-tight text-white drop-shadow-lg mb-3">
+              {content?.title || 'Vår historie'}
+            </h2>
+            <p className="font-body text-base md:text-lg text-white/85 leading-relaxed drop-shadow-sm">
+              {content?.subtitle || 'Et lite tilbakeblikk på vår reise sammen'}
+            </p>
+          </div>
         </div>
 
-        <div
-          id="story-content"
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${
-            isSectionExpanded ? 'max-h-[9999px] opacity-100' : 'max-h-0 opacity-0'
-          }`}
-        >
-          <div className="grid md:grid-cols-2 gap-8 items-start">
-          {/* Tidslinje i glassmorphism-kort */}
-          <div className="glass-card rounded-2xl p-6 md:p-8">
-            <ol ref={timelineRef} className="relative border-l-2 border-[#E8B4B8]/50 pl-6">
-            {timeline.map((item, idx) => {
-              const isExpanded = expandedItems.has(idx);
-              return (
-                <li key={idx} className="mb-10 ml-2">
-                  <span className="absolute -left-3 mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-[#E8B4B8] to-[#F4A261] shadow-velvet"></span>
-                  <button
-                    onClick={() => toggleItem(idx)}
-                    className="w-full text-left focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]/50 rounded-lg p-2 -ml-2 transition-colors hover:bg-[#E8B4B8]/10"
-                    aria-expanded={isExpanded}
-                    aria-controls={`timeline-content-${idx}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <p className="font-small text-white/80 mb-1 font-medium">{item.date}</p>
-                        <h3 className="text-2xl md:text-3xl leading-snug text-white drop-shadow-md">{item.title}</h3>
+        {/* Content — always visible */}
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6 md:gap-8 items-start">
+
+          {/* Timeline */}
+          <div className="glass-card rounded-2xl p-5 md:p-7">
+            <ol ref={timelineRef} className="relative border-l-2 border-[#E8B4B8]/40 pl-5 space-y-0">
+              {timeline.map((item, idx) => {
+                const isExpanded = expandedItems.has(idx);
+                return (
+                  <li key={idx} className="relative pb-6 last:pb-0">
+                    <span className="absolute -left-[25px] top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-[#E8B4B8] to-[#F4A261] shadow-md" />
+
+                    <button
+                      onClick={() => toggleItem(idx)}
+                      className="w-full text-left focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]/50 rounded-lg px-2 py-1.5 -ml-2 transition-colors hover:bg-white/5"
+                      aria-expanded={isExpanded}
+                      aria-controls={`timeline-content-${idx}`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-white/60 font-medium mb-0.5 uppercase tracking-wide">{item.date}</p>
+                          <h3 className="text-lg sm:text-xl leading-snug text-white drop-shadow-sm font-semibold">{item.title}</h3>
+                        </div>
+                        <svg
+                          className={`w-4 h-4 text-white/60 shrink-0 mt-2 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+                          fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
                       </div>
-                      <svg
-                        className={`w-6 h-6 text-white transition-transform duration-300 flex-shrink-0 ml-4 ${isExpanded ? 'rotate-180' : ''}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
+                    </button>
+
+                    <div
+                      id={`timeline-content-${idx}`}
+                      className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}
+                    >
+                      <p className="font-body text-sm sm:text-base text-white/85 leading-relaxed drop-shadow-sm pl-2 pr-6">{item.text}</p>
                     </div>
-                  </button>
-                  <div
-                    id={`timeline-content-${idx}`}
-                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                      isExpanded ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'
-                    }`}
-                  >
-                    <p className="font-body text-white/90 leading-[1.9] drop-shadow-sm pl-2">{item.text}</p>
-                  </div>
-                </li>
-              );
-            })}
+                  </li>
+                );
+              })}
             </ol>
           </div>
 
-          {/* Bilder - beholder eksisterende design */}
-          <div ref={imagesRef} role="img" aria-label="Bilder fra vår historie" className="grid grid-cols-2 gap-6">
+          {/* Photos grid */}
+          <div ref={imagesRef} role="group" aria-label="Bilder fra vår historie" className="grid grid-cols-2 gap-3 md:gap-4">
             {storyImages.map((img, i) => (
-              <div 
+              <div
                 key={i}
-                className="relative rounded-2xl overflow-hidden shadow-velvet card-hover cursor-pointer group aspect-[4/3] img-hover-zoom"
+                className="relative rounded-2xl overflow-hidden shadow-lg cursor-pointer group aspect-[4/3]"
                 onClick={() => handleImageClick(img.src, img.alt)}
                 role="button"
                 tabIndex={0}
-                aria-label={`Klikk for å se ${img.alt} i større format`}
+                aria-label={`Se ${img.alt} i full størrelse`}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleImageClick(img.src, img.alt); }}
               >
                 <Image
                   src={img.src}
                   alt={img.alt}
                   fill
-                  className={`object-cover ${img.objectClass}`}
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className={`object-cover ${img.objectClass} transition-transform duration-500 group-hover:scale-105`}
+                  sizes="(max-width: 768px) 50vw, 25vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-br from-[#2D1B3D]/12 via-transparent to-[#E8B4B8]/15"></div>
-                <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-white/60 rounded-tr-lg"></div>
-                <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-white/60 rounded-bl-lg"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-[#2D1B3D]/10 via-transparent to-[#E8B4B8]/10 group-hover:opacity-0 transition-opacity duration-300" />
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="bg-black/40 rounded-full p-2">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
-        </div>
-
-        {selectedImage && (
-          <ImageModal src={selectedImage.src} alt={selectedImage.alt} isOpen={!!selectedImage} onClose={closeModal} />
-        )}
       </div>
+
+      {selectedImage && (
+        <ImageModal src={selectedImage.src} alt={selectedImage.alt} isOpen={!!selectedImage} onClose={closeModal} />
+      )}
     </section>
   );
 };

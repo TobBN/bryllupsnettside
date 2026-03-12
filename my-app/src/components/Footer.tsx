@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FooterProps } from '@/types';
 import { useTranslations } from 'next-intl';
+import { useContent } from './ContentContext';
 
 interface FooterContent {
   heading: string;
@@ -26,17 +27,9 @@ interface FooterContent {
 export const Footer: React.FC<FooterProps> = () => {
   const currentYear = new Date().getFullYear();
   const t = useTranslations('footer');
-  const [content, setContent] = useState<FooterContent | null>(null);
+  const contentData = useContent();
+  const content = contentData?.footer as FooterContent | undefined;
   const [showContact, setShowContact] = useState(false);
-
-  useEffect(() => {
-    fetch('/api/content')
-      .then(res => res.json())
-      .then(data => {
-        setContent(data.footer);
-      })
-      .catch(err => console.error('Error loading footer content:', err));
-  }, []);
 
   return (
     <footer className="bg-[#2D1B3D] text-white relative">
@@ -66,9 +59,9 @@ export const Footer: React.FC<FooterProps> = () => {
             >
               {showContact ? (content?.hideContactText || 'Skjul kontaktinfo') : (content?.showContactText || 'Vis kontaktinfo')}
             </button>
-            {showContact && (
+            {showContact && content?.contact && (
               <p className="font-body text-sm text-white/70 mt-2">
-                {content?.contact.bride.name || 'Alexandra'}: {content?.contact.bride.phone || '+47 950 20 606'} • {content?.contact.groom.name || 'Tobias'}: {content?.contact.groom.phone || '+47 905 95 348'}
+                {content.contact.bride.name}: {content.contact.bride.phone} • {content.contact.groom.name}: {content.contact.groom.phone}
               </p>
             )}
           </div>
