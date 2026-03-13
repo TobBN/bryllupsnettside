@@ -1,26 +1,11 @@
--- ============================================================
--- TESTDATA FOR SUPABASE TESTPROSJEKT
--- ============================================================
--- Bruk denne filen på et SEPARAT Supabase-prosjekt (ikke produksjon).
--- Kjør supabase_migration_complete.sql + alle andre migrasjoner FØR denne.
+-- ╔══════════════════════════════════════════════════════════════╗
+-- ║  ⚠️  ADVARSEL: DENNE FILEN SLETTER ALL DATA!              ║
+-- ║  KJØR ALDRI MOT PRODUKSJON!                                ║
+-- ║  Kun for test-prosjektet i Supabase.                       ║
+-- ╚══════════════════════════════════════════════════════════════╝
 --
--- Steg:
---   1. Lag nytt Supabase-prosjekt på https://app.supabase.com
---   2. Kjør alle SQL-migrasjoner i riktig rekkefølge (se nedenfor)
---   3. Kjør denne filen for å fylle med testdata
---   4. Oppdater Vercel Preview-miljø med det nye prosjektets URL og nøkler
---
--- Migrasjonrekkefølge:
---   1. supabase_migration_complete.sql
---   2. supabase_add_rsvp_guests_table.sql
---   3. supabase_add_seating_tables.sql
---   4. supabase_add_rsvp_read_status.sql
---   5. supabase_add_guest_count.sql
---   6. supabase_security_fix_optimized.sql
---   7. supabase_fix_seating_tables_search_path.sql
---   8. supabase_add_rls_rsvp_guests.sql
---   9. DENNE filen (supabase_test_seed.sql)
--- ============================================================
+-- Forutsetning: Kjør supabase_setup_all.sql FØRST for skjema/policies.
+-- Deretter denne filen for testdata.
 
 -- Rydd opp eventuelle gamle testdata (trygt å kjøre på nytt)
 DELETE FROM seating_guests;

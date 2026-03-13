@@ -335,13 +335,21 @@ CREATE POLICY "Public read access for story-images" ON storage.objects
   FOR SELECT USING (bucket_id = 'story-images');
 
 CREATE POLICY "Service role upload for story-images" ON storage.objects
-  FOR INSERT WITH CHECK (bucket_id = 'story-images');
+  FOR INSERT WITH CHECK (
+    bucket_id = 'story-images'
+    AND (select auth.role()) = 'service_role'
+  );
 
 CREATE POLICY "Service role update for story-images" ON storage.objects
-  FOR UPDATE USING (bucket_id = 'story-images');
+  FOR UPDATE
+  USING (bucket_id = 'story-images' AND (select auth.role()) = 'service_role')
+  WITH CHECK (bucket_id = 'story-images' AND (select auth.role()) = 'service_role');
 
 CREATE POLICY "Service role delete for story-images" ON storage.objects
-  FOR DELETE USING (bucket_id = 'story-images');
+  FOR DELETE USING (
+    bucket_id = 'story-images'
+    AND (select auth.role()) = 'service_role'
+  );
 
 
 -- ── 8. Verifisering (kontroller resultatet) ──────────────────
