@@ -36,16 +36,8 @@ export interface ContentData {
     };
     dressCode: {
       title: string;
-      general: string;
-      men: {
-        title: string;
-        description: string;
-      };
-      women: {
-        title: string;
-        description: string;
-      };
-      note: string;
+      dressCode: string;
+      point: string;
     };
     gifts: {
       title: string;

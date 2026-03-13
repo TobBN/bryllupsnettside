@@ -280,61 +280,66 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
 
           {/* Sted */}
           <DetailBox
-            title={content?.venue.title || 'Sted'}
+            title={content?.venue.title || ''}
             icon={iconLocation}
             isExpanded={expandedBox === 'venue'}
             onToggle={() => toggleBox('venue')}
           >
             <div className="space-y-3 font-body text-sm sm:text-base leading-relaxed text-white/90">
-              <p>{content?.venue.description || 'Vielse og fest på Garder Østgaard i Halden'}</p>
+              {content?.venue.description && <p>{content.venue.description}</p>}
               <div className="space-y-1.5 pt-1">
-                <a
-                  href={content?.venue.website || 'https://www.garder-ostgaard.no'}
-                  target="_blank" rel="noopener noreferrer"
-                  className="text-[#E8B4B8] hover:text-white transition-colors block"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {content?.venue.websiteLabel || 'www.garder-ostgaard.no'}
-                </a>
-                <a
-                  href={content?.venue.mapsLink || 'https://maps.google.com/?q=Brødenveien+31,+1763+Halden'}
-                  target="_blank" rel="noopener noreferrer"
-                  className="text-[#E8B4B8] hover:text-white transition-colors block"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  📍 {content?.venue.address || 'Brødenveien 31, 1763 Halden'}
-                </a>
+                {content?.venue.website && (
+                  <a
+                    href={content.venue.website}
+                    target="_blank" rel="noopener noreferrer"
+                    className="text-[#E8B4B8] hover:text-white transition-colors block"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {content?.venue.websiteLabel || content.venue.website}
+                  </a>
+                )}
+                {content?.venue.mapsLink && (
+                  <a
+                    href={content.venue.mapsLink}
+                    target="_blank" rel="noopener noreferrer"
+                    className="text-[#E8B4B8] hover:text-white transition-colors block"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    📍 {content?.venue.address || ''}
+                  </a>
+                )}
               </div>
             </div>
           </DetailBox>
 
           {/* Antrekk */}
           <DetailBox
-            title={content?.dressCode.title || 'Antrekk'}
+            title={content?.dressCode.title || ''}
             icon={iconDress}
             isExpanded={expandedBox === 'dressCode'}
             onToggle={() => toggleBox('dressCode')}
           >
             <div className="space-y-3 font-body text-sm sm:text-base leading-relaxed text-white/90">
-              <p>
-                <span className="font-semibold text-white/70 text-xs uppercase tracking-wide">Kleskode</span><br />
-                {content?.dressCode.dressCode || 'Mørk dress (med tilpasninger ved varmt vær)'}
-              </p>
-              <p className="border-t border-white/15 pt-3">
-                {content?.dressCode.point || 'Pyntet og elegant – gjerne i lette materialer og lysere toner om det blir varmt.'}
-              </p>
+              {content?.dressCode.dressCode && (
+                <p className="whitespace-pre-line">{content.dressCode.dressCode}</p>
+              )}
+              {content?.dressCode.point && (
+                <p className={`${content?.dressCode.dressCode ? 'border-t border-white/15 pt-3' : ''}`}>
+                  {content.dressCode.point}
+                </p>
+              )}
             </div>
           </DetailBox>
 
           {/* Gaveønsker */}
           <DetailBox
-            title={content?.gifts.title || 'Gaveønsker'}
+            title={content?.gifts.title || ''}
             icon={iconGift}
             isExpanded={expandedBox === 'gifts'}
             onToggle={() => toggleBox('gifts')}
           >
             <div className="space-y-3 font-body text-sm sm:text-base leading-relaxed text-white/90">
-              <p>{content?.gifts.description || 'Vi blir glade for gaver fra ønskelisten og pengebidrag til bryllupsreisen'}</p>
+              {content?.gifts.description && <p className="whitespace-pre-line">{content.gifts.description}</p>}
               {content?.gifts.links && content.gifts.links.length > 0 && content.gifts.links[0].url && (
                 <div className="space-y-1.5 border-t border-white/15 pt-3">
                   {content.gifts.links.map((link, i) => (
@@ -345,7 +350,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                       className="text-[#E8B4B8] hover:text-white transition-colors block"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      {link.label || '🎁 Se ønskelisten'}
+                      {link.label || link.url}
                     </a>
                   ))}
                 </div>
@@ -353,18 +358,18 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
             </div>
           </DetailBox>
 
-          {/* Mat — structured courses OR whitespace-pre-line fallback */}
+          {/* Mat — structured courses OR description fallback */}
           <DetailBox
-            title={content?.food.title || 'Mat'}
+            title={content?.food.title || ''}
             icon={iconFood}
             isExpanded={expandedBox === 'food'}
             onToggle={() => toggleBox('food')}
           >
             <div className="font-body text-sm sm:text-base leading-relaxed text-white/90">
-              {content?.food.courses && content.food.courses.length > 0 && content?.food.description && (
+              {content?.food.description && (
                 <p className="whitespace-pre-line mb-4 text-white/80">{content.food.description}</p>
               )}
-              {content?.food.courses && content.food.courses.length > 0 ? (
+              {content?.food.courses && content.food.courses.length > 0 && (
                 <div className="space-y-4">
                   {content.food.courses.map((course, i) => (
                     <div key={i} className={i > 0 ? 'border-t border-white/15 pt-4' : ''}>
@@ -381,10 +386,6 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="whitespace-pre-line">
-                  {content?.food.description || 'Meny kommer...'}
-                </p>
               )}
               {content?.food.allergyNote && (
                 <p className="text-white/60 italic text-xs border-t border-white/15 pt-3 mt-3">
@@ -394,27 +395,23 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
             </div>
           </DetailBox>
 
-          {/* Informasjon — FAQ style OR whitespace-pre-line fallback */}
+          {/* Informasjon — FAQ style */}
           <DetailBox
-            title={content?.info.title || 'Informasjon'}
+            title={content?.info.title || ''}
             icon={iconInfo}
             isExpanded={expandedBox === 'info'}
             onToggle={() => toggleBox('info')}
           >
             <div className="font-body text-sm sm:text-base leading-relaxed text-white/90">
-              {content?.info.items && content.info.items.length > 0 && content?.info.description && (
+              {content?.info.description && (
                 <p className="whitespace-pre-line mb-4 text-white/80">{content.info.description}</p>
               )}
-              {content?.info.items && content.info.items.length > 0 ? (
+              {content?.info.items && content.info.items.length > 0 && (
                 <div className="space-y-0 divide-y divide-white/15">
                   {content.info.items.map((item, i) => (
                     <InfoFaqItem key={i} question={item.question} answer={item.answer} />
                   ))}
                 </div>
-              ) : (
-                <p className="whitespace-pre-line">
-                  {content?.info.description || 'Praktisk informasjon for gjester...'}
-                </p>
               )}
             </div>
           </DetailBox>

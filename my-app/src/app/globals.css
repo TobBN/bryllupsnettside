@@ -61,16 +61,16 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-dancing), cursive !important;
+  font-family: var(--font-cormorant), serif;
   line-height: 1.7;
   font-weight: 400;
-  font-size: 1.25rem; /* 20px - økt fra 18px */
+  font-size: 1.0625rem; /* 17px */
   overflow-x: hidden;
 }
 
 /* Font classes */
 .font-serif {
-  font-family: var(--font-playfair), serif !important;
+  font-family: var(--font-playfair), serif;
   font-weight: 500;
   letter-spacing: -0.01em;
 }
@@ -82,36 +82,34 @@ body {
 }
 
 .font-body {
-  font-family: var(--font-dancing), cursive !important;
+  font-family: var(--font-cormorant), serif;
   font-weight: 400;
-  line-height: 1.8;
-  font-size: 1.25rem; /* 20px - økt fra 18px */
+  line-height: 1.7;
 }
 
 .font-body-light {
-  font-family: var(--font-dancing), cursive !important;
-  font-weight: 400;
+  font-family: var(--font-cormorant), serif;
+  font-weight: 300;
   line-height: 1.7;
-  font-size: 1.25rem; /* 20px - økt fra 18px */
 }
 
 .font-small {
-  font-family: var(--font-dancing), cursive !important;
+  font-family: var(--font-cormorant), serif;
   font-weight: 400;
   line-height: 1.6;
-  font-size: 1rem; /* 16px - økt fra 14.4px */
+  font-size: 0.9375rem; /* 15px */
 }
 
 .font-caption {
-  font-family: var(--font-dancing), cursive !important;
+  font-family: var(--font-cormorant), serif;
   font-weight: 400;
   line-height: 1.5;
-  font-size: 0.95rem; /* 15.2px - økt fra 12.8px */
+  font-size: 0.875rem; /* 14px */
 }
 
 /* Ensure all text elements use proper fonts */
 p, div, label, input, textarea, button {
-  font-family: var(--font-dancing), cursive !important;
+  font-family: var(--font-cormorant), serif;
 }
 
 /* Span elements inherit parent font unless specifically overridden */
@@ -127,9 +125,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Specific targeting for heading elements to ensure they override any other styles */
-.font-display, 
-h1.font-display, 
-h2.font-display, 
+.font-display,
+h1.font-display,
+h2.font-display,
 h3.font-display {
   font-family: var(--font-parisienne), 'Parisienne', cursive !important;
   font-weight: 400 !important;
@@ -142,22 +140,9 @@ section h1 span {
   font-weight: 400 !important;
 }
 
-/* Specific styling for small text elements - increased for accessibility */
-.text-sm {
-  font-family: var(--font-dancing), cursive !important;
-  font-size: 1rem !important; /* 16px - økt fra 14px */
-  line-height: 1.6 !important;
-}
-
-.text-xs {
-  font-family: var(--font-dancing), cursive !important;
-  font-size: 0.95rem !important; /* 15.2px - økt fra 12px */
-  line-height: 1.5 !important;
-}
-
 /* Footer and copyright text */
 footer, .copyright {
-  font-family: var(--font-dancing), cursive !important;
+  font-family: var(--font-cormorant), serif;
 }
 
 /* Utility classes */

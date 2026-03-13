@@ -98,6 +98,43 @@ export async function GET() {
           description: 'Praktisk informasjon for gjester...'
         };
       }
+
+      // Migrate old dressCode structure (general/men/women/note) to new format (dressCode/point)
+      if (weddingDetails.dressCode && typeof weddingDetails.dressCode === 'object') {
+        const dc = weddingDetails.dressCode as Record<string, unknown>;
+        if (!dc.dressCode && (dc.general || dc.men || dc.women)) {
+          const parts: string[] = [];
+          if (dc.general) parts.push(String(dc.general));
+          if (dc.men && typeof dc.men === 'object') {
+            const men = dc.men as Record<string, string>;
+            if (men.title && men.description) parts.push(`${men.title} ${men.description}`);
+          }
+          if (dc.women && typeof dc.women === 'object') {
+            const women = dc.women as Record<string, string>;
+            if (women.title && women.description) parts.push(`${women.title} ${women.description}`);
+          }
+          dc.dressCode = parts.join('\n\n');
+        }
+        if (!dc.point && dc.note) {
+          dc.point = dc.note;
+        }
+        // Clean up old fields so they don't persist as orphan data
+        delete dc.general;
+        delete dc.men;
+        delete dc.women;
+        delete dc.note;
+      }
+
+      // Migrate old gifts.vipps field into description if it exists
+      if (weddingDetails.gifts && typeof weddingDetails.gifts === 'object') {
+        const gifts = weddingDetails.gifts as Record<string, unknown>;
+        if (gifts.vipps) {
+          if (gifts.description && typeof gifts.description === 'string' && !String(gifts.description).includes(String(gifts.vipps))) {
+            gifts.description = `${gifts.description}\n\n${gifts.vipps}`;
+          }
+          delete gifts.vipps;
+        }
+      }
     }
 
     // Add default schedule, seatingChart, and faq content under weddingDetails if missing
