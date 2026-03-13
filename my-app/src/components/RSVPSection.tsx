@@ -319,7 +319,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                   </div>
                   
                   {submitError && (
-                    <div className="mt-6 p-4 bg-red-50 border-2 border-red-200 rounded-2xl">
+                    <div className="mt-6 p-4 bg-red-50 border-2 border-red-200 rounded-2xl" role="alert">
                       <p className="font-body text-red-700 text-center">{submitError}</p>
                     </div>
                   )}

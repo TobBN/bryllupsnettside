@@ -10,7 +10,7 @@ export const CountdownCard: React.FC<CountdownCardProps> = ({ value, label, grad
         <div className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1 sm:mb-2 drop-shadow-lg">
           {value.toString().padStart(2, '0')}
         </div>
-        <div className="font-body text-xs sm:text-sm md:text-base lg:text-lg text-white/90 font-medium uppercase tracking-wider">
+        <div className="font-body text-sm sm:text-base md:text-lg lg:text-lg text-white/95 font-medium uppercase tracking-wider">
           {label}
         </div>
       </div>

@@ -97,14 +97,14 @@ body {
   font-family: var(--font-cormorant), serif;
   font-weight: 400;
   line-height: 1.6;
-  font-size: 0.9375rem; /* 15px */
+  font-size: 1rem; /* 16px — WCAG minimum for body text */
 }
 
 .font-caption {
   font-family: var(--font-cormorant), serif;
   font-weight: 400;
   line-height: 1.5;
-  font-size: 0.875rem; /* 14px */
+  font-size: 0.9375rem; /* 15px — secondary/caption text */
 }
 
 /* Ensure all text elements use proper fonts */
@@ -796,9 +796,14 @@ footer, .copyright {
 }
 
 /* Focus styles for better accessibility */
-*:focus {
+*:focus-visible {
   outline: 2px solid var(--pink);
   outline-offset: 2px;
+}
+
+/* Remove default focus for mouse users, keep for keyboard */
+*:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Selection styling */

@@ -80,13 +80,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ timeLeft }) => {
 
           {/* Date and location */}
           <div className="text-center text-white/90 mb-4 sm:mb-6 space-y-1.5">
-            <p className="text-xs sm:text-sm md:text-base tracking-wide uppercase">
+            <p className="text-sm sm:text-base md:text-lg tracking-wide uppercase">
               {getGreetingText()}
             </p>
             <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-white">
               {content?.date || t('date')}
             </p>
-            <p className="text-sm sm:text-base text-white/80">
+            <p className="text-sm sm:text-base text-white/90">
               {content?.location || t('location')}
             </p>
           </div>

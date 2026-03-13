@@ -98,7 +98,7 @@ const DetailBoxComponent: React.FC<DetailBoxProps> = ({ title, icon, children, i
       }`}
     >
       <button
-        className="w-full text-left focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]/50 rounded-t-2xl"
+        className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8B4B8] rounded-t-2xl"
         onClick={onToggle}
         aria-expanded={isExpanded}
         aria-label={`${isExpanded ? 'Lukk' : 'Åpne'} ${title.toLowerCase()}`}
@@ -111,7 +111,7 @@ const DetailBoxComponent: React.FC<DetailBoxProps> = ({ title, icon, children, i
             {title}
           </h3>
           <svg
-            className={`w-5 h-5 text-white/70 shrink-0 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+            className={`w-5 h-5 text-white/90 shrink-0 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
             fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -367,18 +367,18 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
           >
             <div className="font-body text-sm sm:text-base leading-relaxed text-white/90">
               {content?.food.description && (
-                <p className="whitespace-pre-line mb-4 text-white/80">{content.food.description}</p>
+                <p className="whitespace-pre-line mb-4 text-white/90">{content.food.description}</p>
               )}
               {content?.food.courses && content.food.courses.length > 0 && (
                 <div className="space-y-4">
                   {content.food.courses.map((course, i) => (
                     <div key={i} className={i > 0 ? 'border-t border-white/15 pt-4' : ''}>
-                      <p className="font-semibold text-white text-xs uppercase tracking-wide mb-1.5">
+                      <p className="font-semibold text-white text-sm uppercase tracking-wide mb-1.5">
                         {course.name}
                       </p>
                       <p className="whitespace-pre-line">{course.description}</p>
                       {course.drink && (
-                        <p className="mt-1.5 text-white/70 text-xs flex items-center gap-1">
+                        <p className="mt-1.5 text-white/90 text-sm flex items-center gap-1">
                           <span>🥂</span>
                           <span>{course.drink}</span>
                         </p>
@@ -388,7 +388,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                 </div>
               )}
               {content?.food.allergyNote && (
-                <p className="text-white/60 italic text-xs border-t border-white/15 pt-3 mt-3">
+                <p className="text-white/90 italic text-sm border-t border-white/15 pt-3 mt-3">
                   {content.food.allergyNote}
                 </p>
               )}
@@ -404,7 +404,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
           >
             <div className="font-body text-sm sm:text-base leading-relaxed text-white/90">
               {content?.info.description && (
-                <p className="whitespace-pre-line mb-4 text-white/80">{content.info.description}</p>
+                <p className="whitespace-pre-line mb-4 text-white/90">{content.info.description}</p>
               )}
               {content?.info.items && content.info.items.length > 0 && (
                 <div className="space-y-0 divide-y divide-white/15">
@@ -426,7 +426,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
             >
               <div className="space-y-3">
                 {content.schedule?.subtitle && (
-                  <p className="font-body text-sm text-white/75 mb-3">{content.schedule.subtitle}</p>
+                  <p className="font-body text-sm text-white/90 mb-3">{content.schedule.subtitle}</p>
                 )}
                 {content.schedule?.items && content.schedule.items.length > 0 ? (
                   <div className="relative pl-4 border-l-2 border-[#E8B4B8]/50 space-y-4">
@@ -438,7 +438,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                           <div>
                             <p className="text-sm font-semibold text-white/95">{item.title}</p>
                             {item.description && (
-                              <p className="text-xs text-white/70 mt-0.5 leading-relaxed">{item.description}</p>
+                              <p className="text-sm text-white/90 mt-0.5 leading-relaxed">{item.description}</p>
                             )}
                           </div>
                         </div>
@@ -446,7 +446,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                     ))}
                   </div>
                 ) : (
-                  <p className="font-body text-white/60 text-sm py-2">Ingen programpunkter er satt opp ennå.</p>
+                  <p className="font-body text-white/90 text-sm py-2">Ingen programpunkter er satt opp ennå.</p>
                 )}
               </div>
             </DetailBox>
@@ -462,7 +462,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
             >
               <div className="space-y-4" onClick={(e) => e.stopPropagation()}>
                 {content.seatingChart?.subtitle && (
-                  <p className="font-body text-sm text-white/75">{content.seatingChart.subtitle}</p>
+                  <p className="font-body text-sm text-white/90">{content.seatingChart.subtitle}</p>
                 )}
 
                 <div>
@@ -492,13 +492,13 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                       <p className="font-body text-white font-semibold text-sm mb-1">
                         {searchResult.name} — Bord {searchResult.table_number}, Plass {searchResult.seat_number}
                       </p>
-                      <p className="font-body text-white/75 text-xs">
+                      <p className="font-body text-white/90 text-sm">
                         Medgjester: {searchResult.table_guests.filter(g => g.name !== searchResult.name).map(g => g.name).join(', ') || 'Ingen'}
                       </p>
                     </div>
                   )}
                   {searchQuery.length >= 2 && !isSearching && !searchResult && (
-                    <p className="mt-2 font-body text-white/60 text-xs text-center">
+                    <p className="mt-2 font-body text-white/90 text-sm text-center">
                       {content.seatingChart?.noResultsText || 'Ingen resultater funnet'}
                     </p>
                   )}
@@ -507,10 +507,10 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                 {tablesLoading ? (
                   <div className="text-center py-6">
                     <div className="w-8 h-8 border-4 border-[#E8B4B8] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-                    <p className="font-body text-white/75 text-sm">Laster bord-kart...</p>
+                    <p className="font-body text-white/90 text-sm">Laster bord-kart...</p>
                   </div>
                 ) : tables.length === 0 ? (
-                  <p className="font-body text-white/60 text-sm text-center py-2">Ingen bord er satt opp ennå.</p>
+                  <p className="font-body text-white/90 text-sm text-center py-2">Ingen bord er satt opp ennå.</p>
                 ) : (
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-3" onClick={(e) => e.stopPropagation()}>
                     {tables.map((table) => {
@@ -524,7 +524,7 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                           aria-label={`Bord ${table.table_number}`}
                         >
                           <span className="text-lg font-bold text-white drop-shadow">{table.table_number}</span>
-                          <span className="text-xs text-white/75">{table.guest_count}/{table.capacity}</span>
+                          <span className="text-sm text-white/90">{table.guest_count}/{table.capacity}</span>
                         </div>
                       );
                     })}
@@ -545,7 +545,7 @@ function InfoFaqItem({ question, answer }: { question: string; answer: string })
   return (
     <div className="py-3">
       <button
-        className="w-full text-left flex items-start justify-between gap-3 focus:outline-none group"
+        className="w-full text-left flex items-start justify-between gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8B4B8] rounded-lg group"
         onClick={(e) => { e.stopPropagation(); setOpen(v => !v); }}
         aria-expanded={open}
       >
@@ -553,14 +553,14 @@ function InfoFaqItem({ question, answer }: { question: string; answer: string })
           {question}
         </span>
         <svg
-          className={`w-4 h-4 text-white/50 shrink-0 mt-0.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-white/90 shrink-0 mt-0.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
           fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
       <div className={`overflow-hidden transition-all duration-200 ease-in-out ${open ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
-        <p className="text-white/80 text-sm leading-relaxed">{answer}</p>
+        <p className="text-white/90 text-sm leading-relaxed">{answer}</p>
       </div>
     </div>
   );
