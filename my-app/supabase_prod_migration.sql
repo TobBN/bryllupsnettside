@@ -306,7 +306,45 @@ CREATE POLICY "service_role_all" ON rate_limits
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 
 
--- ── 7. Verifisering (kontroller resultatet) ──────────────────
+-- ── 7. Storage: story-images bucket ──────────────────────────
+
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'story-images',
+  'story-images',
+  true,
+  5242880, -- 5 MB
+  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+)
+ON CONFLICT (id) DO UPDATE SET
+  public = EXCLUDED.public,
+  file_size_limit = EXCLUDED.file_size_limit,
+  allowed_mime_types = EXCLUDED.allowed_mime_types;
+
+-- Fjern alle kjente story-images policies (inkludert evt. manuelt opprettede)
+DROP POLICY IF EXISTS "Public read" ON storage.objects;
+DROP POLICY IF EXISTS "Service role insert" ON storage.objects;
+DROP POLICY IF EXISTS "Service role update" ON storage.objects;
+DROP POLICY IF EXISTS "Service role delete" ON storage.objects;
+DROP POLICY IF EXISTS "Public read access for story-images" ON storage.objects;
+DROP POLICY IF EXISTS "Service role upload for story-images" ON storage.objects;
+DROP POLICY IF EXISTS "Service role update for story-images" ON storage.objects;
+DROP POLICY IF EXISTS "Service role delete for story-images" ON storage.objects;
+
+CREATE POLICY "Public read access for story-images" ON storage.objects
+  FOR SELECT USING (bucket_id = 'story-images');
+
+CREATE POLICY "Service role upload for story-images" ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'story-images');
+
+CREATE POLICY "Service role update for story-images" ON storage.objects
+  FOR UPDATE USING (bucket_id = 'story-images');
+
+CREATE POLICY "Service role delete for story-images" ON storage.objects
+  FOR DELETE USING (bucket_id = 'story-images');
+
+
+-- ── 8. Verifisering (kontroller resultatet) ──────────────────
 
 SELECT
   (SELECT COUNT(*) FROM rsvps)        AS rsvp_svar,

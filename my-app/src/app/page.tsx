@@ -1,6 +1,9 @@
 import { supabaseServer } from '@/lib/supabase';
 import HomeClient from './HomeClient';
 
+// Revalidate content every 60 seconds so admin changes appear quickly
+export const revalidate = 60;
+
 export default async function Home() {
   let initialContent: Record<string, unknown> | null = null;
 
