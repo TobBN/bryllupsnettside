@@ -13,20 +13,18 @@ const SECRET_KEY = process.env.COOKIE_SECRET || process.env.ADMIN_PASSWORD || 'd
 
 // Timing-safe password comparison to prevent timing attacks
 export function timingSafeCompare(a: string, b: string): boolean {
-  // Normalize lengths to prevent timing leaks
-  const maxLength = Math.max(a.length, b.length);
-  const aBuffer = Buffer.alloc(maxLength, 0);
-  const bBuffer = Buffer.alloc(maxLength, 0);
-  aBuffer.write(a, 0, 'utf8');
-  bBuffer.write(b, 0, 'utf8');
-  
-  try {
-    // timingSafeEqual throws if buffers differ, returns undefined if equal
-    timingSafeEqual(aBuffer, bBuffer);
-    return a === b; // Double check actual values match
-  } catch {
+  const aBuffer = Buffer.from(a, 'utf8');
+  const bBuffer = Buffer.from(b, 'utf8');
+
+  // Length difference is unavoidably leaked, but we still do constant-time
+  // comparison on the content to avoid leaking *which* bytes differ.
+  if (aBuffer.length !== bBuffer.length) {
+    // Compare against self so we burn the same CPU time, then return false
+    timingSafeEqual(aBuffer, aBuffer);
     return false;
   }
+
+  return timingSafeEqual(aBuffer, bBuffer);
 }
 
 // Sign cookie value

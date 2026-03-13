@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import type { ContentData } from '@/types/admin';
 
-export function useContent() {
+export function useContentAdmin() {
   const [content, setContent] = useState<ContentData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

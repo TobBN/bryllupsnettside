@@ -23,7 +23,6 @@ export default function HomeClient({ initialContent }: HomeClientProps) {
     minutes: 0,
     seconds: 0
   });
-  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
@@ -35,29 +34,6 @@ export default function HomeClient({ initialContent }: HomeClientProps) {
 
     return () => clearInterval(timer);
   }, []);
-
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof Notification !== 'undefined') {
-      setNotificationPermission(Notification.permission);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (notificationPermission === 'granted' && 'serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then((registration) => {
-        registration.active?.postMessage({
-          type: 'scheduleNotifications',
-          weddingDate: WEDDING_DATE,
-        });
-      });
-    }
-  }, [notificationPermission]);
 
   useEffect(() => {
     const handleSmoothScroll = (e: Event) => {

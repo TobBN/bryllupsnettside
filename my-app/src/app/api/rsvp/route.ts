@@ -26,9 +26,16 @@ export const POST = async (req: NextRequest) => {
   try {
     const body = await req.json();
     const phone = body?.phone ? String(body.phone).trim() : '';
-    const email = body?.email ? String(body.email).trim() : null;
+    const rawEmail = body?.email ? String(body.email).trim() : null;
     const message = body?.message ? String(body.message).trim() : null;
     const guests = body?.guests || [];
+
+    // Validate email format if provided
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (rawEmail && !emailRegex.test(rawEmail)) {
+      return NextResponse.json({ ok: false, error: 'Ugyldig e-postadresse' }, { status: 400 });
+    }
+    const email = rawEmail;
     
     // Validate guests array
     if (!Array.isArray(guests) || guests.length < 1 || guests.length > 5) {
@@ -75,7 +82,7 @@ export const POST = async (req: NextRequest) => {
       response,
       message: message || null,
       is_read: false, // Mark as unread for admin notification
-      // Note: guest_count column removed - using rsvp_guests table instead
+      guest_count: guests.length,
     }).select().single();
 
     if (rsvpError) {

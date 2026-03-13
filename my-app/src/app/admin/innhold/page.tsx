@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useContent } from '@/hooks/admin/useContent';
+import { useContentAdmin } from '@/hooks/admin/useContent';
 import { HeroEditor } from '@/components/admin/content/HeroEditor';
 import { StoryEditor } from '@/components/admin/content/StoryEditor';
 import { DetailsEditor } from '@/components/admin/content/DetailsEditor';
@@ -10,7 +10,7 @@ import { RsvpContentEditor } from '@/components/admin/content/RsvpContentEditor'
 import { FooterEditor } from '@/components/admin/content/FooterEditor';
 
 export default function InnholdPage() {
-  const { content, loading, error, success, load, save, update } = useContent();
+  const { content, loading, error, success, load, save, update } = useContentAdmin();
 
   useEffect(() => {
     load();
