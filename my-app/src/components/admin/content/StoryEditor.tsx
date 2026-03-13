@@ -16,6 +16,8 @@ export function StoryEditor({ content, update }: Props) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingEventIndex, setUploadingEventIndex] = useState<number | null>(null);
+  const eventFileInputRefs = useRef<Map<number, HTMLInputElement>>(new Map());
 
   const images = useMemo(() => content.story.images || [], [content.story.images]);
 
@@ -23,7 +25,20 @@ export function StoryEditor({ content, update }: Props) {
     update(['story', 'timeline'], [...content.story.timeline, { date: '', title: '', text: '' }]);
   };
 
-  const removeItem = (index: number) => {
+  const removeItem = async (index: number) => {
+    const item = content.story.timeline[index];
+    // Delete event image from storage if it exists
+    if (item.image?.storageName) {
+      try {
+        await fetch('/api/admin/story-images', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: item.image.storageName }),
+        });
+      } catch {
+        // Continue removing event even if storage delete fails
+      }
+    }
     update(['story', 'timeline'], content.story.timeline.filter((_, i) => i !== index));
   };
 
@@ -100,6 +115,73 @@ export function StoryEditor({ content, update }: Props) {
     [newImages[index], newImages[target]] = [newImages[target], newImages[index]];
     update(['story', 'images'], newImages);
   }, [images, update]);
+
+  const handleEventImageUpload = useCallback(async (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingEventIndex(index);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/admin/story-images', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setUploadError(data.error || 'Opplasting feilet');
+        return;
+      }
+
+      const updatedTimeline = content.story.timeline.map((item, i) =>
+        i === index ? { ...item, image: { url: data.url, alt: item.title || 'Hendelse-bilde', storageName: data.name } } : item
+      );
+      update(['story', 'timeline'], updatedTimeline);
+    } catch {
+      setUploadError('Nettverksfeil ved opplasting');
+    } finally {
+      setUploadingEventIndex(null);
+      const input = eventFileInputRefs.current.get(index);
+      if (input) input.value = '';
+    }
+  }, [content.story.timeline, update]);
+
+  const removeEventImage = useCallback(async (index: number) => {
+    const item = content.story.timeline[index];
+    if (!item.image) return;
+
+    if (item.image.storageName) {
+      try {
+        await fetch('/api/admin/story-images', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: item.image.storageName }),
+        });
+      } catch {
+        // Continue removing from content even if storage delete fails
+      }
+    }
+
+    const updatedTimeline = content.story.timeline.map((item, i) => {
+      if (i !== index) return item;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { image: _removed, ...rest } = item;
+      return rest;
+    });
+    update(['story', 'timeline'], updatedTimeline);
+  }, [content.story.timeline, update]);
+
+  const updateEventImageAlt = useCallback((index: number, alt: string) => {
+    const updatedTimeline = content.story.timeline.map((item, i) =>
+      i === index && item.image ? { ...item, image: { ...item.image, alt } } : item
+    );
+    update(['story', 'timeline'], updatedTimeline);
+  }, [content.story.timeline, update]);
 
   return (
     <section className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-md">
@@ -265,6 +347,62 @@ export function StoryEditor({ content, update }: Props) {
                 rows={3}
                 className={textareaClass}
               />
+            </div>
+
+            {/* Event image */}
+            <div className="mt-3 pt-3 border-t border-[#E8B4B8]/30">
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs font-medium text-[#4A2B5A]">Bilde</label>
+                {!item.image && (
+                  <label
+                    className={`text-xs px-2.5 py-1 rounded-lg transition-colors font-medium cursor-pointer ${
+                      uploadingEventIndex === i
+                        ? 'bg-gray-200 text-gray-400 cursor-wait'
+                        : 'bg-[#E8B4B8]/30 hover:bg-[#E8B4B8]/50 text-[#2D1B3D]'
+                    }`}
+                  >
+                    {uploadingEventIndex === i ? 'Laster opp...' : '+ Last opp'}
+                    <input
+                      ref={(el) => { if (el) eventFileInputRefs.current.set(i, el); }}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      onChange={(e) => handleEventImageUpload(i, e)}
+                      disabled={uploadingEventIndex !== null}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+              </div>
+              {item.image ? (
+                <div className="flex gap-3 items-start">
+                  <div className="relative w-28 aspect-[4/3] rounded-lg overflow-hidden shrink-0">
+                    <Image
+                      src={item.image.url}
+                      alt={item.image.alt}
+                      fill
+                      className="object-cover"
+                      sizes="112px"
+                    />
+                  </div>
+                  <div className="flex-1 space-y-1.5">
+                    <input
+                      type="text"
+                      value={item.image.alt}
+                      onChange={(e) => updateEventImageAlt(i, e.target.value)}
+                      className="w-full px-2 py-1 border border-[#E8B4B8]/40 rounded text-xs"
+                      placeholder="Alt-tekst"
+                    />
+                    <button
+                      onClick={() => removeEventImage(i)}
+                      className="text-xs text-red-400 hover:text-red-600 transition-colors"
+                    >
+                      Fjern bilde
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-[#4A2B5A]/50 italic">Ingen bilde lagt til for denne hendelsen.</p>
+              )}
             </div>
           </div>
         ))}

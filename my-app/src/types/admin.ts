@@ -14,6 +14,11 @@ export interface ContentData {
       date: string;
       title: string;
       text: string;
+      image?: {
+        url: string;
+        alt: string;
+        storageName?: string;
+      };
     }>;
     images?: Array<{
       url: string;
