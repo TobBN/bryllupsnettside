@@ -1,6 +1,7 @@
 -- ============================================================
--- KOMPLETT OPPSETT FOR SUPABASE TESTPROSJEKT
--- Lim inn ALT dette i SQL Editor og klikk "Run"
+-- KOMPLETT SKJEMA-OPPSETT (trygt for både test og prod)
+-- Inneholder: tabeller, indexer, triggers, RLS policies, storage
+-- Inneholder IKKE testdata (se supabase_test_seed.sql)
 -- Trygt å kjøre flere ganger (idempotent)
 -- ============================================================
 
@@ -414,104 +415,54 @@ CREATE POLICY "Allow service role delete access" ON rsvp_guests
 
 
 -- ============================================================
--- 8. supabase_test_seed.sql – TESTDATA
+-- 8. Storage: story-images bucket
 -- ============================================================
+-- MERK: Testdata er flyttet til separat fil: supabase_test_seed.sql
+-- Kjør den BARE mot testprosjektet, ALDRI mot prod!
 
-DELETE FROM seating_guests;
-DELETE FROM seating_tables;
-DELETE FROM rsvp_guests;
-DELETE FROM rsvps;
-
-WITH r1 AS (
-  INSERT INTO rsvps (name, phone, email, response, message)
-  VALUES ('Test Familie Hansen', '+47 900 00 001', 'hansen@test.no', 'yes', 'Gleder oss masse!')
-  RETURNING id
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'story-images',
+  'story-images',
+  true,
+  5242880, -- 5 MB
+  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 )
-INSERT INTO rsvp_guests (rsvp_id, name, allergies, guest_order)
-SELECT id, 'Kari Hansen', NULL, 1 FROM r1
-UNION ALL
-SELECT id, 'Per Hansen', 'Nøtter', 2 FROM r1;
+ON CONFLICT (id) DO UPDATE SET
+  public = EXCLUDED.public,
+  file_size_limit = EXCLUDED.file_size_limit,
+  allowed_mime_types = EXCLUDED.allowed_mime_types;
 
-WITH r2 AS (
-  INSERT INTO rsvps (name, phone, email, response, message)
-  VALUES ('Test Familie Olsen', '+47 900 00 002', 'olsen@test.no', 'yes', NULL)
-  RETURNING id
-)
-INSERT INTO rsvp_guests (rsvp_id, name, allergies, guest_order)
-SELECT id, 'Lise Olsen', NULL, 1 FROM r2
-UNION ALL
-SELECT id, 'Erik Olsen', NULL, 2 FROM r2
-UNION ALL
-SELECT id, 'Maja Olsen', 'Laktose', 3 FROM r2;
+-- Fjern alle kjente story-images policies (inkludert evt. manuelt opprettede)
+DROP POLICY IF EXISTS "Public read" ON storage.objects;
+DROP POLICY IF EXISTS "Service role insert" ON storage.objects;
+DROP POLICY IF EXISTS "Service role update" ON storage.objects;
+DROP POLICY IF EXISTS "Service role delete" ON storage.objects;
+DROP POLICY IF EXISTS "Public read access for story-images" ON storage.objects;
+DROP POLICY IF EXISTS "Service role upload for story-images" ON storage.objects;
+DROP POLICY IF EXISTS "Service role update for story-images" ON storage.objects;
+DROP POLICY IF EXISTS "Service role delete for story-images" ON storage.objects;
 
-WITH r3 AS (
-  INSERT INTO rsvps (name, phone, email, response, message)
-  VALUES ('Test Bjørn Dahl', '+47 900 00 003', NULL, 'yes', 'Sees der!')
-  RETURNING id
-)
-INSERT INTO rsvp_guests (rsvp_id, name, allergies, guest_order)
-SELECT id, 'Bjørn Dahl', NULL, 1 FROM r3;
+CREATE POLICY "Public read access for story-images" ON storage.objects
+  FOR SELECT USING (bucket_id = 'story-images');
 
-WITH r4 AS (
-  INSERT INTO rsvps (name, phone, email, response, message)
-  VALUES ('Test Par Bakke', '+47 900 00 004', 'bakke@test.no', 'yes', NULL)
-  RETURNING id
-)
-INSERT INTO rsvp_guests (rsvp_id, name, allergies, guest_order)
-SELECT id, 'Anne Bakke', 'Gluten, Egg', 1 FROM r4
-UNION ALL
-SELECT id, 'Jonas Bakke', NULL, 2 FROM r4;
+CREATE POLICY "Service role upload for story-images" ON storage.objects
+  FOR INSERT WITH CHECK (
+    bucket_id = 'story-images'
+    AND (select auth.role()) = 'service_role'
+  );
 
-WITH r5 AS (
-  INSERT INTO rsvps (name, phone, email, response, message)
-  VALUES ('Test Ikke Komme', '+47 900 00 005', NULL, 'no', 'Dessverre kan vi ikke komme. Gratulerer!')
-  RETURNING id
-)
-INSERT INTO rsvp_guests (rsvp_id, name, allergies, guest_order)
-SELECT id, 'Sigrid Strand', NULL, 1 FROM r5;
+CREATE POLICY "Service role update for story-images" ON storage.objects
+  FOR UPDATE
+  USING (bucket_id = 'story-images' AND (select auth.role()) = 'service_role')
+  WITH CHECK (bucket_id = 'story-images' AND (select auth.role()) = 'service_role');
 
-WITH r6 AS (
-  INSERT INTO rsvps (name, phone, email, response, message)
-  VALUES ('Test Kanskje Lund', '+47 900 00 006', 'lund@test.no', 'maybe', 'Vi håper vi kan komme!')
-  RETURNING id
-)
-INSERT INTO rsvp_guests (rsvp_id, name, allergies, guest_order)
-SELECT id, 'Thomas Lund', NULL, 1 FROM r6
-UNION ALL
-SELECT id, 'Maria Lund', NULL, 2 FROM r6;
+CREATE POLICY "Service role delete for story-images" ON storage.objects
+  FOR DELETE USING (
+    bucket_id = 'story-images'
+    AND (select auth.role()) = 'service_role'
+  );
 
-WITH r7 AS (
-  INSERT INTO rsvps (name, phone, email, response, message)
-  VALUES ('Test Stor Familie Berg', '+47 900 00 007', 'berg@test.no', 'yes', NULL)
-  RETURNING id
-)
-INSERT INTO rsvp_guests (rsvp_id, name, allergies, guest_order)
-SELECT id, 'Hanne Berg', NULL, 1 FROM r7
-UNION ALL
-SELECT id, 'Morten Berg', NULL, 2 FROM r7
-UNION ALL
-SELECT id, 'Sofia Berg', 'Nøtter, Fisk', 3 FROM r7
-UNION ALL
-SELECT id, 'Noah Berg', NULL, 4 FROM r7
-UNION ALL
-SELECT id, 'Ella Berg', 'Melk', 5 FROM r7;
-
-INSERT INTO seating_tables (table_number, capacity) VALUES
-  (1, 8), (2, 8), (3, 6), (4, 6);
-
-WITH t1 AS (SELECT id FROM seating_tables WHERE table_number = 1)
-INSERT INTO seating_guests (table_id, name, seat_number)
-SELECT id, 'Kari Hansen', 1 FROM t1
-UNION ALL
-SELECT id, 'Per Hansen', 2 FROM t1
-UNION ALL
-SELECT id, 'Bjørn Dahl', 3 FROM t1;
-
-WITH t2 AS (SELECT id FROM seating_tables WHERE table_number = 2)
-INSERT INTO seating_guests (table_id, name, seat_number)
-SELECT id, 'Lise Olsen', 1 FROM t2
-UNION ALL
-SELECT id, 'Erik Olsen', 2 FROM t2;
 
 -- Verifisering
 SELECT 'RSVPs' as tabell, COUNT(*) as antall FROM rsvps

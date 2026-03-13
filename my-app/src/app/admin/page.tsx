@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRsvpAdmin } from '@/hooks/admin/useRsvpAdmin';
 import { useSeatingAdmin } from '@/hooks/admin/useSeatingAdmin';
+import { WEDDING_DATE } from '@/utils/dateUtils';
 
 export default function AdminDashboard() {
   const { rsvps, unreadCount, load: loadRsvps } = useRsvpAdmin();
@@ -56,7 +57,7 @@ export default function AdminDashboard() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[#2D1B3D]">Dashboard</h1>
-        <p className="text-sm text-[#4A2B5A]/60 mt-1">Alexandra &amp; Tobias · 24. juli 2026</p>
+        <p className="text-sm text-[#4A2B5A]/60 mt-1">Alexandra &amp; Tobias · {WEDDING_DATE.toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
       </div>
 
       {!loaded ? (

@@ -23,7 +23,6 @@ export default function HomeClient({ initialContent }: HomeClientProps) {
     minutes: 0,
     seconds: 0
   });
-  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
@@ -35,29 +34,6 @@ export default function HomeClient({ initialContent }: HomeClientProps) {
 
     return () => clearInterval(timer);
   }, []);
-
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof Notification !== 'undefined') {
-      setNotificationPermission(Notification.permission);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (notificationPermission === 'granted' && 'serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then((registration) => {
-        registration.active?.postMessage({
-          type: 'scheduleNotifications',
-          weddingDate: WEDDING_DATE,
-        });
-      });
-    }
-  }, [notificationPermission]);
 
   useEffect(() => {
     const handleSmoothScroll = (e: Event) => {
@@ -87,7 +63,7 @@ export default function HomeClient({ initialContent }: HomeClientProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FEFAE0] via-white to-[#F4D1D4]">
+    <div className="min-h-screen bg-gradient-to-br from-cream via-white to-pink-light">
       <ContentProvider initialContent={initialContent}>
         <main>
           <HeroSection timeLeft={timeLeft} />
@@ -101,7 +77,7 @@ export default function HomeClient({ initialContent }: HomeClientProps) {
 
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className={`fixed bottom-6 right-6 w-10 h-10 bg-gradient-to-r from-[#E8B4B8] to-[#F4A261] text-white rounded-full shadow-xl transition-all duration-300 group z-40 motion-reduce:transition-none ${
+        className={`fixed bottom-6 right-6 w-10 h-10 bg-gradient-to-r from-pink to-apricot text-white rounded-full shadow-xl transition-all duration-300 group z-40 motion-reduce:transition-none ${
           showScrollTop ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         aria-label="Rull til toppen"

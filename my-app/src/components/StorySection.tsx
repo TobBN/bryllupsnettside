@@ -10,6 +10,11 @@ interface TimelineItem {
   date: string;
   title: string;
   text: string;
+  image?: {
+    url: string;
+    alt: string;
+    storageName?: string;
+  };
 }
 
 interface StoryImage {
@@ -78,19 +83,12 @@ export const StorySection: React.FC<StorySectionProps> = () => {
   const timelineRef = useScrollReveal<HTMLOListElement>({ animationType: 'fade-left', threshold: 0.2 });
   const imagesRef = useScrollReveal<HTMLDivElement>({ animationType: 'fade-right', threshold: 0.2 });
 
-  const defaultImages = useMemo(() => [
-    { src: "/images/story-1.jpg", alt: "Alexandra og Tobias" },
-    { src: "/images/story-2.jpg", alt: "Alexandra og Tobias" },
-    { src: "/images/story-3.jpg", alt: "Alexandra og Tobias" },
-    { src: "/images/story-4.jpg", alt: "Alexandra og Tobias" }
-  ], []);
-
   const storyImages = useMemo(() => {
     if (content?.images && content.images.length > 0) {
       return content.images.map((img) => ({ src: img.url, alt: img.alt }));
     }
-    return defaultImages;
-  }, [content?.images, defaultImages]);
+    return [];
+  }, [content?.images]);
 
   const timeline = useMemo(() => content?.timeline || [], [content?.timeline]);
 
@@ -128,7 +126,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
         </div>
 
         {/* Content — always visible */}
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6 md:gap-8 items-start">
+        <div className="max-w-xl mx-auto">
 
           {/* Timeline */}
           <div className="glass-card rounded-2xl p-5 md:p-7">
@@ -161,9 +159,36 @@ export const StorySection: React.FC<StorySectionProps> = () => {
 
                     <div
                       id={`timeline-content-${idx}`}
-                      className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}
+                      className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[600px] opacity-100 mt-2' : 'max-h-0 opacity-0'}`}
                     >
                       <p className="font-body text-sm sm:text-base text-white/85 leading-relaxed drop-shadow-sm pl-2 pr-6">{item.text}</p>
+                      {item.image && (
+                        <div
+                          className="mt-3 pl-2 pr-6 cursor-pointer"
+                          onClick={() => handleImageClick(item.image!.url, item.image!.alt)}
+                          role="button"
+                          tabIndex={0}
+                          aria-label={`Se ${item.image.alt} i full størrelse`}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleImageClick(item.image!.url, item.image!.alt); }}
+                        >
+                          <div className="relative rounded-xl overflow-hidden shadow-md group aspect-[16/9]">
+                            <Image
+                              src={item.image.url}
+                              alt={item.image.alt}
+                              fill
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
+                              sizes="(max-width: 768px) 90vw, 40vw"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <div className="bg-black/40 rounded-full p-2">
+                                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </li>
                 );
@@ -171,36 +196,38 @@ export const StorySection: React.FC<StorySectionProps> = () => {
             </ol>
           </div>
 
-          {/* Photos grid */}
-          <div ref={imagesRef} role="group" aria-label="Bilder fra vår historie" className="grid grid-cols-2 gap-3 md:gap-4">
-            {storyImages.map((img, i) => (
-              <div
-                key={i}
-                className="relative rounded-2xl overflow-hidden shadow-lg cursor-pointer group aspect-[4/3]"
-                onClick={() => handleImageClick(img.src, img.alt)}
-                role="button"
-                tabIndex={0}
-                aria-label={`Se ${img.alt} i full størrelse`}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleImageClick(img.src, img.alt); }}
-              >
-                <Image
-                  src={img.src}
-                  alt={img.alt}
-                  fill
-                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-br from-[#2D1B3D]/10 via-transparent to-[#E8B4B8]/10 group-hover:opacity-0 transition-opacity duration-300" />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="bg-black/40 rounded-full p-2">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                    </svg>
+          {/* Photos grid — below timeline */}
+          {storyImages.length > 0 && (
+            <div ref={imagesRef} role="group" aria-label="Bilder fra vår historie" className="grid grid-cols-2 gap-3 md:gap-4 mt-6">
+              {storyImages.map((img, i) => (
+                <div
+                  key={i}
+                  className="relative rounded-2xl overflow-hidden shadow-lg cursor-pointer group aspect-[4/3]"
+                  onClick={() => handleImageClick(img.src, img.alt)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Se ${img.alt} i full størrelse`}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleImageClick(img.src, img.alt); }}
+                >
+                  <Image
+                    src={img.src}
+                    alt={img.alt}
+                    fill
+                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#2D1B3D]/10 via-transparent to-[#E8B4B8]/10 group-hover:opacity-0 transition-opacity duration-300" />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="bg-black/40 rounded-full p-2">
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
