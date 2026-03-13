@@ -8,6 +8,23 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: {
+        velvet: {
+          DEFAULT: 'var(--velvet)',
+          light: 'var(--velvet-light)',
+        },
+        pink: {
+          DEFAULT: 'var(--pink)',
+          light: 'var(--pink-light)',
+          dark: 'var(--pink-dark)',
+        },
+        apricot: {
+          DEFAULT: 'var(--apricot)',
+          light: 'var(--apricot-light)',
+          dark: 'var(--apricot-dark)',
+        },
+        cream: 'var(--cream)',
+      },
       fontFamily: {
         display: ['var(--font-parisienne)', 'Parisienne', 'cursive'],
         serif: ['var(--font-playfair)', 'Playfair Display', 'serif'],
