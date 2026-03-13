@@ -83,19 +83,12 @@ export const StorySection: React.FC<StorySectionProps> = () => {
   const timelineRef = useScrollReveal<HTMLOListElement>({ animationType: 'fade-left', threshold: 0.2 });
   const imagesRef = useScrollReveal<HTMLDivElement>({ animationType: 'fade-right', threshold: 0.2 });
 
-  const defaultImages = useMemo(() => [
-    { src: "/images/story-1.jpg", alt: "Alexandra og Tobias" },
-    { src: "/images/story-2.jpg", alt: "Alexandra og Tobias" },
-    { src: "/images/story-3.jpg", alt: "Alexandra og Tobias" },
-    { src: "/images/story-4.jpg", alt: "Alexandra og Tobias" }
-  ], []);
-
   const storyImages = useMemo(() => {
     if (content?.images && content.images.length > 0) {
       return content.images.map((img) => ({ src: img.url, alt: img.alt }));
     }
-    return defaultImages;
-  }, [content?.images, defaultImages]);
+    return [];
+  }, [content?.images]);
 
   const timeline = useMemo(() => content?.timeline || [], [content?.timeline]);
 
@@ -204,6 +197,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
           </div>
 
           {/* Photos grid */}
+          {storyImages.length > 0 && (
           <div ref={imagesRef} role="group" aria-label="Bilder fra vår historie" className="grid grid-cols-2 gap-3 md:gap-4">
             {storyImages.map((img, i) => (
               <div
@@ -233,6 +227,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
               </div>
             ))}
           </div>
+          )}
         </div>
       </div>
 
