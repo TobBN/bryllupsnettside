@@ -17,6 +17,7 @@ export function StoryEditor({ content, update }: Props) {
   const [uploadError, setUploadError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingEventIndex, setUploadingEventIndex] = useState<number | null>(null);
+  const [eventUploadError, setEventUploadError] = useState<{ index: number; message: string } | null>(null);
   const eventFileInputRefs = useRef<Map<number, HTMLInputElement>>(new Map());
 
   const images = useMemo(() => content.story.images || [], [content.story.images]);
@@ -121,6 +122,7 @@ export function StoryEditor({ content, update }: Props) {
     if (!file) return;
 
     setUploadingEventIndex(index);
+    setEventUploadError(null);
 
     try {
       const formData = new FormData();
@@ -131,10 +133,16 @@ export function StoryEditor({ content, update }: Props) {
         body: formData,
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        setEventUploadError({ index, message: `Server svarte med status ${res.status}` });
+        return;
+      }
 
       if (!res.ok) {
-        setUploadError(data.error || 'Opplasting feilet');
+        setEventUploadError({ index, message: data.error || `Opplasting feilet (${res.status})` });
         return;
       }
 
@@ -142,8 +150,9 @@ export function StoryEditor({ content, update }: Props) {
         i === index ? { ...item, image: { url: data.url, alt: item.title || 'Hendelse-bilde', storageName: data.name } } : item
       );
       update(['story', 'timeline'], updatedTimeline);
-    } catch {
-      setUploadError('Nettverksfeil ved opplasting');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ukjent feil';
+      setEventUploadError({ index, message: `Nettverksfeil: ${message}` });
     } finally {
       setUploadingEventIndex(null);
       const input = eventFileInputRefs.current.get(index);
@@ -373,6 +382,9 @@ export function StoryEditor({ content, update }: Props) {
                   </label>
                 )}
               </div>
+              {eventUploadError?.index === i && (
+                <p className="text-xs text-red-500 mb-2">{eventUploadError.message}</p>
+              )}
               {item.image ? (
                 <div className="flex gap-3 items-start">
                   <div className="relative w-28 aspect-[4/3] rounded-lg overflow-hidden shrink-0">
