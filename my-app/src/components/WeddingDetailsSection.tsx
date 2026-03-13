@@ -487,21 +487,23 @@ export const WeddingDetailsSection: React.FC<WeddingDetailsSectionProps> = () =>
                       </div>
                     )}
                   </div>
-                  {searchResult && (
-                    <div className="mt-3 p-3 bg-white/15 rounded-xl border border-[#E8B4B8]/40">
-                      <p className="font-body text-white font-semibold text-sm mb-1">
-                        {searchResult.name} — Bord {searchResult.table_number}, Plass {searchResult.seat_number}
+                  <div aria-live="polite" aria-atomic="true">
+                    {searchResult && (
+                      <div className="mt-3 p-3 bg-white/15 rounded-xl border border-[#E8B4B8]/40">
+                        <p className="font-body text-white font-semibold text-sm mb-1">
+                          {searchResult.name} — Bord {searchResult.table_number}, Plass {searchResult.seat_number}
+                        </p>
+                        <p className="font-body text-white/90 text-sm">
+                          Medgjester: {searchResult.table_guests.filter(g => g.name !== searchResult.name).map(g => g.name).join(', ') || 'Ingen'}
+                        </p>
+                      </div>
+                    )}
+                    {searchQuery.length >= 2 && !isSearching && !searchResult && (
+                      <p className="mt-2 font-body text-white/90 text-sm text-center" role="status">
+                        {content.seatingChart?.noResultsText || 'Ingen resultater funnet'}
                       </p>
-                      <p className="font-body text-white/90 text-sm">
-                        Medgjester: {searchResult.table_guests.filter(g => g.name !== searchResult.name).map(g => g.name).join(', ') || 'Ingen'}
-                      </p>
-                    </div>
-                  )}
-                  {searchQuery.length >= 2 && !isSearching && !searchResult && (
-                    <p className="mt-2 font-body text-white/90 text-sm text-center">
-                      {content.seatingChart?.noResultsText || 'Ingen resultater funnet'}
-                    </p>
-                  )}
+                    )}
+                  </div>
                 </div>
 
                 {tablesLoading ? (

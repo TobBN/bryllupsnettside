@@ -285,9 +285,10 @@ export const RSVPSection: React.FC<RSVPSectionProps> = () => {
                               rows={2}
                               className="w-full px-4 py-3 border border-white/30 rounded-xl font-body text-[#2D1B3D] bg-white/95 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/50 transition-all duration-300 text-base resize-none"
                               placeholder={content?.form.allergiesPlaceholder || 'Har du noen mat-allergier vi bør vite om? (valgfritt)'}
+                              aria-describedby={index === 0 && content?.form.allergiesHelpText ? 'allergies-help' : undefined}
                             />
                             {index === 0 && content?.form.allergiesHelpText && (
-                              <p className="mt-2 text-sm text-white/80 italic drop-shadow-sm">
+                              <p id="allergies-help" className="mt-2 text-sm text-white/90 italic drop-shadow-sm">
                                 {content.form.allergiesHelpText}
                               </p>
                             )}

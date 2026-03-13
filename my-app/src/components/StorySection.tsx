@@ -139,7 +139,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
 
                     <button
                       onClick={() => toggleItem(idx)}
-                      className="w-full text-left focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]/50 rounded-lg px-2 py-1.5 -ml-2 transition-colors hover:bg-white/5"
+                      className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8B4B8] rounded-lg px-2 py-1.5 -ml-2 transition-colors hover:bg-white/5"
                       aria-expanded={isExpanded}
                       aria-controls={`timeline-content-${idx}`}
                     >
