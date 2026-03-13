@@ -119,7 +119,7 @@ export const StorySection: React.FC<StorySectionProps> = () => {
             <h2 id="story-heading" className="text-3xl sm:text-4xl md:text-5xl leading-tight text-white drop-shadow-lg mb-3">
               {content?.title || 'Vår historie'}
             </h2>
-            <p className="font-body text-base md:text-lg text-white/85 leading-relaxed drop-shadow-sm">
+            <p className="font-body text-base md:text-lg text-white/90 leading-relaxed drop-shadow-sm">
               {content?.subtitle || 'Et lite tilbakeblikk på vår reise sammen'}
             </p>
           </div>
@@ -139,17 +139,17 @@ export const StorySection: React.FC<StorySectionProps> = () => {
 
                     <button
                       onClick={() => toggleItem(idx)}
-                      className="w-full text-left focus:outline-none focus:ring-2 focus:ring-[#E8B4B8]/50 rounded-lg px-2 py-1.5 -ml-2 transition-colors hover:bg-white/5"
+                      className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8B4B8] rounded-lg px-2 py-1.5 -ml-2 transition-colors hover:bg-white/5"
                       aria-expanded={isExpanded}
                       aria-controls={`timeline-content-${idx}`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-white/60 font-medium mb-0.5 uppercase tracking-wide">{item.date}</p>
+                          <p className="text-sm text-white/90 font-medium mb-0.5 uppercase tracking-wide">{item.date}</p>
                           <h3 className="text-lg sm:text-xl leading-snug text-white drop-shadow-sm font-semibold">{item.title}</h3>
                         </div>
                         <svg
-                          className={`w-4 h-4 text-white/60 shrink-0 mt-2 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+                          className={`w-4 h-4 text-white/90 shrink-0 mt-2 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
                           fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"
                         >
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
